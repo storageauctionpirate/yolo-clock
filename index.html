@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOLO: The Life Clock</title>
+<style>
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--grn:#5fe08a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:80px}
+header{background:var(--card);border-bottom:2px solid var(--gold);padding:12px 14px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:20px;color:var(--gold2)}header small{color:var(--mut);font-size:12px}
+main{padding:12px;max-width:520px;margin:auto}.card{background:var(--card);border:1px solid #23406f;border-radius:14px;padding:12px;margin-bottom:12px}
+h2{color:var(--gold2);font-size:17px;margin:2px 0 10px}button{background:var(--gold);color:var(--bg);border:0;border-radius:10px;padding:11px 14px;font-weight:800;font-size:15px;cursor:pointer}
+button.sec{background:transparent;color:var(--gold2);border:1px solid var(--gold)}button.x{background:transparent;color:var(--red);border:0;padding:4px 8px}
+input,select{width:100%;background:#0a1630;color:var(--txt);border:1px solid #2d4c7e;border-radius:8px;padding:10px;font-size:16px;margin:3px 0}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:2px solid var(--gold);z-index:9}
+nav button{flex:1;background:none;color:var(--mut);border-radius:0;padding:8px 1px;font-size:11px;line-height:1.5}nav button i{display:block;font-style:normal;font-size:18px}nav button.on{color:var(--gold2);background:#0a1630}
+.tab{display:none}.tab.on{display:block}
+.clock{width:250px;height:250px;margin:6px auto;position:relative}.clock svg{width:100%;height:100%}
+.clock .big{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.clock .num{font-size:52px;font-weight:900}.pos{color:var(--grn)}.neg{color:var(--red)}
+.hand{transform-origin:125px 125px;animation:spin 6s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.food{background:#0a1630;border:1px solid #2d4c7e;color:var(--txt);padding:9px 4px;font-size:13px;font-weight:600;border-radius:9px}
+.food b{display:block;font-size:20px}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.bar{height:8px;background:#0a1630;border-radius:5px;overflow:hidden;margin:2px 0 7px}.bar i{display:block;height:100%;background:var(--gold)}
+.li{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #23406f;font-size:14px}
+.tip{background:#0a1630;border-left:4px solid var(--gold);padding:8px;margin:6px 0;border-radius:6px;font-size:14px}
+.badge{display:inline-block;padding:6px 10px;border-radius:20px;margin:3px;font-weight:800;font-size:13px;background:#0a1630;color:var(--mut);border:1px solid #2d4c7e}.badge.got{background:var(--gold);color:var(--bg)}
+.timer{font-size:48px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;color:var(--gold2)}
+footer{text-align:center;color:var(--mut);font-size:11px;padding:8px}.mut{color:var(--mut);font-size:13px}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.chip{font-size:10px;padding:1px 6px;border-radius:8px;background:#0a1630;color:var(--mut);margin-left:4px}
+.src{font-size:13px;padding:7px 0;border-bottom:1px solid #23406f}.src a{color:var(--gold2)}.frame{font-size:12px;color:var(--mut);text-align:center;margin-top:6px}
+#onb{position:fixed;inset:0;background:var(--bg);z-index:50;overflow:auto;padding:14px}#onb h2{font-size:22px}
+.pf label{display:block;font-size:13px;color:var(--mut);margin:8px 0 2px}.stat{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat div{background:#0a1630;border-radius:10px;padding:10px;text-align:center}.stat b{display:block;font-size:22px;color:var(--gold2)}
+.seg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}.seg button{padding:7px 10px;font-size:13px}canvas{width:100%;height:220px;background:#0a1630;border-radius:10px}
+</style></head><body>
+<header><h1 style="font-size:30px;font-weight:900;letter-spacing:2px;line-height:1">YOLO <span style="font-size:15px;letter-spacing:0;font-weight:700;color:var(--txt)">The Life Clock</span></h1><small>Make more money. Free your time. Live longer.</small></header>
+<main>
+<section class="tab on" id="t-clock">
+ <div class="card" style="text-align:center"><h2>Today's minutes</h2>
+  <div class="clock"><svg viewBox="0 0 250 250"><circle cx="125" cy="125" r="115" fill="#0a1630" stroke="#d4a73a" stroke-width="6"/><g id="ticks"></g><circle id="ring" cx="125" cy="125" r="100" fill="none" stroke-width="10" stroke-linecap="round" transform="rotate(-90 125 125)" stroke-dasharray="628" stroke-dashoffset="628"/><line class="hand" x1="125" y1="125" x2="125" y2="35" stroke="#f0cf73" stroke-width="3" opacity=".35"/></svg>
+  <div class="big"><div class="num" id="todayMin">0</div><div class="mut">min today</div></div></div>
+  <div class="mut">Life total: <b id="lifeMin">0</b> min (<span id="lifeDays">0</span> days)</div>
+  <div class="mut" id="baseLine" style="margin-top:4px"></div>
+  <div class="frame">A picture of what's possible if you live this way every day. A guide, not a promise.</div></div>
+ <div class="card" id="sinceA" style="display:none"></div>
+ <div class="card"><h2>Today's moves</h2><div id="moves" class="mut"></div></div>
+ <div class="card"><h2>Low today</h2><div id="lows"></div></div>
+</section>
+<section class="tab" id="t-log">
+ <div class="card"><h2>Quick add</h2><input id="q" placeholder="Search foods & drinks…"><div class="mut" style="margin:4px 0">🌿 whole food · 🏭 ultra-processed</div><div class="grid" id="foods"></div>
+ <label class="mut" style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="garden" style="width:auto"> 🌱 Grown in my garden (bonus)</label></div>
+ <div class="card" id="ffCard"><h2>🍔 Fast food</h2><p class="mut">Typical portions people actually order. Nutrition is approximate (USDA FoodData Central typical values).</p><div id="ffList"></div></div>
+ <div class="card"><h2>Custom entry</h2><input id="cName" placeholder="Name"><div class="row"><input id="cCal" type="number" placeholder="Calories"><input id="cMin" type="number" placeholder="+/- minutes"></div><div class="row"><input id="cPro" type="number" placeholder="Protein g"><input id="cSug" type="number" placeholder="Sugar g"></div><button onclick="addCustom()" style="width:100%">Add</button></div>
+ <div class="card"><h2>Daily totals</h2><div id="totals"></div></div>
+ <div class="card"><h2>Today's log</h2><div id="logList"></div></div>
+</section>
+<section class="tab" id="t-habits">
+ <div class="card"><h2>💪 Craving beaten</h2><p class="mut">Skipped the junk? Tap it every time.</p><button style="width:100%;font-size:18px" onclick="habit('craving')">I beat a craving</button></div>
+ <div class="card"><h2>🏃 Activity</h2><div class="row"><select id="actType"></select><input id="actMin" type="number" placeholder="Minutes" value="30"></div><button style="width:100%" onclick="addActivity()">Log activity</button></div>
+ <div class="card"><h2>☀️ Sun</h2><div class="row"><input id="sunMin" type="number" placeholder="Minutes outside" value="20"></div><div class="hgrid"><button onclick="addSun(false)">Log sun time</button><button class="sec" onclick="habit('burn')">Got sunburned</button></div></div>
+ <div class="card"><h2>🧂 Salt</h2><p class="mut">A pinch of unrefined salt on real food is fine. Too much sodium overall costs you (from the food log).</p><button style="width:100%" onclick="habit('salt')">Pinch of whole salt on whole food</button></div>
+ <div class="card"><h2>📺 Screens & 😴 Sleep</h2><div class="row"><input id="tvH" type="number" step="0.5" placeholder="TV/screen hours" value="1"><button onclick="addTV()">Log screen time</button></div><div class="row"><input id="sleepH" type="number" step="0.5" placeholder="Sleep hours" value="7.5"><button onclick="setSleep()">Set last night's sleep</button></div></div>
+ <div class="card"><h2>🚬 Cigarette</h2><button class="sec" style="width:100%" onclick="habit('cig')">Log a cigarette</button></div>
+</section>
+<section class="tab" id="t-fast">
+ <div class="card" style="text-align:center"><h2>Fasting</h2><div class="timer" id="fTimer">00:00:00</div><div class="mut" id="fStatus">Not fasting</div><br><button id="fBtn" onclick="toggleFast()" style="width:100%;font-size:18px">Start fast</button></div>
+ <div class="card"><h2>Milestones</h2><div id="badges"></div><p class="mut">Streak: <b id="streak">0</b> days with a 12h+ fast · Longest: <b id="longest">0h</b></p></div>
+ <div class="card"><h2>History</h2><div id="fHist" class="mut"></div></div>
+ <div class="card"><button class="sec" onclick="demo()">Load demo data</button> <button class="sec" onclick="if(confirm('Erase all data?')){localStorage.removeItem(CONFIG.storeKey);location.reload()}">Reset</button></div>
+</section>
+<section class="tab" id="t-growth">
+ <div class="card"><h2>📈 Personal growth</h2><div class="stat" id="gStats"></div></div>
+ <div class="card" id="sinceB" style="display:none"></div>
+ <div class="card"><div class="seg" id="gSeg"></div><canvas id="gc" width="700" height="440"></canvas><p class="mut" id="gNote"></p></div>
+</section>
+<section class="tab" id="t-me">
+ <div class="card pf"><h2>👤 My profile</h2><div id="meForm"></div><button style="width:100%;margin-top:10px" onclick="saveProfile('meForm')">Save profile</button></div>
+ <div class="card"><h2>⚖️ Weight log</h2><div class="row"><input id="wIn" type="number" step="0.1" placeholder="Today's weight (lb)"><button onclick="logWeight()">Log</button></div><div id="wList" class="mut"></div></div>
+ <div class="card"><h2>Your targets</h2><div id="tgtBox" class="mut"></div></div>
+ <div class="card"><h2>Starting life estimate</h2><div id="baseBox"></div></div>
+ <div class="card"><h2>How the minutes work</h2><p class="mut">Each number comes from published research where we found one (tagged with its source), or is a rough app estimate (tagged "est"). Food numbers are per serving; habit numbers follow the units below, with daily caps so nothing runs away. Studies measure averages across big groups of people, not what will happen to you. Use this as a guide to habits, not a forecast, and not medical advice.</p></div>
+ <div class="card"><h2>Sources</h2><div id="srcList"></div></div>
+</section>
+<footer>A guide to what's possible, not a guarantee. Not medical advice; check with your doctor before big diet, fasting or exercise changes.</footer>
+</main>
+<nav><button class="on" data-t="clock"><i>⏱</i>Clock</button><button data-t="log"><i>🍽</i>Log</button><button data-t="habits"><i>💪</i>Habits</button><button data-t="fast"><i>⏳</i>Fast</button><button data-t="growth"><i>📈</i>Growth</button><button data-t="me"><i>👤</i>Me</button></nav>
+<div id="onb" style="display:none"><h2><span style="font-size:40px;font-weight:900;letter-spacing:2px">YOLO</span><br>Welcome to The Life Clock</h2><p class="mut">A few quick questions so your targets and starting estimate fit you. Everything stays on this phone. Skip anything you'd rather not answer.</p><div class="card pf" id="onbForm"></div><button style="width:100%;font-size:18px" onclick="saveProfile('onbForm',true)">Start my clock</button><p class="mut" style="text-align:center">You can change all of this later under Me.</p></div>
+<script>
+// ===== CONFIG: tweak everything here =====
+const CONFIG={
+ storeKey:'lifeClock.v1',
+ clockFullScale:120,
+ targets:{cal:2200,carbs:200,sugar:36,protein:120,fat:75,mg:420,k:3400,fe:8,zn:11,ca:1000,na:2300},
+ maxNutrients:['cal','sugar','na'],
+ lowSuggest:{mg:'pumpkin seeds or spinach',k:'a banana, potato or avocado',fe:'steak or beans',zn:'beef or pumpkin seeds',ca:'yogurt, sardines or greens',protein:'eggs, chicken or fish'},
+ profileDefaults:{name:'',age:40,sex:'M',heightIn:70,weightLb:190,goalLb:175,activity:'moderate',heaviestLb:'',smokeStatus:'never',cigs:0,smokeYears:'',smokeQuit:'',vapeStatus:'never',vapeAmt:'',vapeYears:'',vapeQuit:'',alcStatus:'current',drinksWk:4,alcYears:'',alcQuit:'',drugStatus:'',drugAmt:'',drugYears:'',drugQuit:'',ffStatus:'current',ffWk:2,ffYears:'',ffQuit:'',sleepH:7,sunMin:15,garden:'no'},
+ activityFactor:{sedentary:1.2,light:1.375,moderate:1.55,active:1.725,very:1.9},
+ activityLabel:{sedentary:'Mostly sitting',light:'Light (walks, on feet some)',moderate:'Moderate (exercise 3-5x/wk)',active:'Active (hard exercise most days)',very:'Very active (physical job + training)'},
+ lossDeficit:500, minCal:{M:1500,F:1200},
+ addedSugar:{M:36,F:25}, sodium:2300, proteinPerKg:1.0,
+ gramsPerDrink:14,
+ // baseline lifetime deltas (years). src keys map to SOURCES
+ base:{
+  smoke:{y:-10,src:'doll'},
+  quitRegain:[[30,10],[40,9],[50,6],[60,3],[70,0]], // Doll 2004: years regained by age at quitting
+  vapeFormer:{y:-0.25,src:'est'}, cigMin:20, extraDrinkMin:15, // Jackson 2025 per cigarette; Spiegelhalter per extra drink              // persistent smoker vs never
+  bmi:[[30,35,-3,'psc'],[35,40,-5.5,'est'],[40,99,-9,'psc']], // PSC: 30-35 -2 to -4, 40-45 -8 to -10 (35-40 interpolated)
+  alcohol:[[100,200,-0.5,'wood'],[200,350,-1.5,'wood'],[350,9999,-4.5,'wood']], // grams/week
+  activity:{sedentary:[0,'est'],light:[1.8,'moore'],moderate:[3,'wen'],active:[3,'wen'],very:[3,'wen']},
+  vape:{y:-1,src:'est'}, ff:{per:3,y:-1,src:'est'}, sleep:{y:-1,src:'est'}, sun:{y:0.5,src:'est'}, garden:{y:0.5,src:'est'},
+ },
+ fastFood:[
+ // [name, portion text, cal,carbs,sugar,protein,fat, mg,k,fe,zn,ca,na, minutes, src]
+ ["Kids' burger meal",'hamburger + small fries + 12oz soda',630,99,45,15,20,40,600,3,2,90,690,-17.3,'heni'],
+ ['Burger combo meal','¼-lb cheeseburger + medium fries + 21oz soda',1050,143,68,34,41,60,900,5,5,250,1400,-28.5,'heni'],
+ ['Double cheeseburger meal','double cheeseburger + medium fries + 21oz soda',970,135,65,29,38,55,850,5,5,250,1350,-30.1,'heni'],
+ ['Chicken nuggets 10pc meal','10 nuggets + medium fries + 21oz soda',950,126,58,27,40,50,800,2,1,40,1140,-27.5,'est'],
+ ['Fried chicken (bucket share)','2 pieces, breast + thigh',680,22,0,60,40,60,600,2,4,60,1800,-6.4,'heni'],
+ ['Fried chicken sandwich','one sandwich',450,45,6,28,19,40,450,3,2,80,1200,-1.0,'heni'],
+ ['Fish sandwich','one sandwich, tartar sauce',390,39,5,16,19,30,250,2,1,140,560,3.0,'heni'],
+ ['Large fries','about 150 g',490,66,0,6,23,55,1000,1,1,25,400,3.2,'heni'],
+ ['Pizza slice','1 slice of a large pepperoni',310,35,4,13,13,25,200,3,1,200,700,-4.2,'heni'],
+ ['Pizza, 3 slices','a typical sitting',930,105,12,39,39,75,600,8,4,600,2100,-12.6,'heni'],
+ ['Whole large pizza','8 slices, 14 inch',2480,280,32,104,104,200,1600,22,12,1600,5600,-33.6,'heni'],
+ ['Tacos (2)','2 crunchy beef tacos',340,26,2,16,20,40,350,2,3,120,620,-4.6,'heni'],
+ ['Large burrito','beef & bean, about 300 g',750,90,5,30,28,90,800,6,5,250,1800,-1.3,'heni'],
+ ['Breakfast sandwich','egg, sausage & cheese biscuit',450,30,3,18,30,20,250,3,2,150,1100,-12.3,'heni'],
+ ['Hash brown','1 patty',150,15,0,1,9,15,250,0,0,5,310,0.2,'heni'],
+ ['Milkshake (medium)','about 16 oz',530,86,70,12,15,40,700,1,1,400,300,1.4,'heni'],
+ ['Large soda','30 oz',310,86,86,0,0,0,10,0,0,15,60,-31.3,'heni'],
+ ['Sub sandwich 6"','cold cuts & cheese',410,46,7,20,16,40,400,3,2,200,1300,-35.2,'heni'],
+ ['Sub sandwich footlong','cold cuts & cheese',820,92,14,40,32,80,800,6,4,400,2600,-70.3,'heni'],
+ ['Hot wings (10)','fried, sauced',900,6,1,70,64,70,700,3,6,60,3000,-10,'est'],
+ ['Onion rings (medium)','about 120 g',410,47,5,5,22,20,200,2,0,40,600,-3,'est'],
+ ['Hot dog','one, plain',290,22,4,10,17,15,200,2,2,60,800,-36.3,'heni'],
+ ['Loaded nachos','large, cheese & meat',1100,90,6,35,65,90,700,5,5,500,1700,0.3,'heni'],
+ ['Takeout fried rice','one box, with chicken',900,120,4,30,30,80,500,4,4,80,2000,-8.3,'heni'],
+ ],
+ fastBadges:[12,16,24,36,48],
+ overCalPenalty:-20,          // est: per 250 cal over target
+ upfPenalty:-10,              // est: added to every ultra-processed item
+ wholeBonus:2,                // est: added to every whole food
+ gardenBonus:5, gardenCapPerDay:3, // est
+ dimPos:[1,0.5,0.25,0],       // repeat servings of a positive item: share of credit
+ dimNegStep:0.25,             // repeat servings of a negative item: each one 25% worse
+ sodiumPenaltyPer1000:-10,    // est: per 1000 mg sodium over target
+ habits:{
+  craving:{n:'Craving beaten',e:'💪',min:10,cap:10,src:'est'},
+  salt:{n:'Whole salt on whole food',e:'🧂',min:2,cap:2,src:'est'},
+  burn:{n:'Sunburn',e:'🔥',min:-30,cap:3,src:'est'},
+  cig:{n:'Cigarette',e:'🚬',min:-20,cap:999,src:'jackson'},
+ },
+ sun:{bestMin:15,maxMin:30,credit:15,src:'est'},        // full credit at 15-30 min
+ tvPerHour:-21.8,                                       // Veerman 2012
+ sleep:[[0,6,-15],[6,7,0],[7,9,15],[9,10,0],[10,99,-10]], // est: [fromH,toH,min]
+ running:{perHour:420,capMinPerDay:60,src:'lee'},       // Lee 2017; credit stops after 60 min/day
+ moderate:{first20:60,next40:30,src:'spieg'},           // Spiegelhalter 2012: 1st 20 min +60, next 40 +30, then 0
+ activities:['Walking','Cycling','Swimming','Tennis','Pickleball','Soccer','Basketball','Hiking','Yard/garden work','Weights/calisthenics','Running'],
+ // [name, emoji, cal,carbs,sugar,protein,fat, mg,k,fe,zn,ca,na, minutes(per serving number, or array by serving#), flag w/u/'', source]
+ foods:[
+ ['Water','💧',0,0,0,0,0,0,0,0,0,0,0,[5,5,5,5,5,5,5,5,0],'w','est'],
+ ['Black coffee 12oz','☕',5,0,0,0,0,10,160,0,0,5,5,[30,-10,-20],'w','spieg'],
+ ['Coffee w/ cream+sugar','☕',120,16,16,1,5,10,180,0,0,40,20,[-10,-20],'u','est'],
+ ['Green tea','🍵',2,0,0,0,0,5,30,0,0,0,0,[15,10,5,0],'w','est'],
+ ['Beer 12oz','🍺',150,13,0,2,0,25,100,0,0,15,15,[15,15,-30,-45,-60],'','spieg'],
+ ['Light beer','🍺',100,6,0,1,0,20,70,0,0,15,10,[15,10,-25,-45],'','spieg'],
+ ['Wine glass','🍷',125,4,1,0,0,15,190,1,0,10,5,[15,-15,-30],'','spieg'],
+ ['Liquor shot','🥃',100,0,0,0,0,0,0,0,0,0,0,[0,-15,-30],'','spieg'],
+ ['Cola 12oz','🥤',150,39,39,0,0,0,5,0,0,10,45,-12.5,'u','heni'],
+ ['Fruit soda 12oz','🥤',160,42,42,0,0,0,5,0,0,10,45,-12.6,'u','heni'],
+ ['Diet soda','🥤',0,0,0,0,0,0,10,0,0,10,40,-5,'u','est'],
+ ['Energy drink','⚡',110,28,27,0,0,0,10,0,0,10,200,-15,'u','est'],
+ ['Orange juice','🧃',110,26,21,2,0,27,450,0,0,25,2,[0,-10],'','est'],
+ ['Milk cup','🥛',150,12,12,8,8,24,320,0,1,300,105,-0.4,'w','heni'],
+ ['Soy milk cup','🥛',100,8,6,7,4,40,300,1,1,300,100,0.9,'','heni'],
+ ['Greek yogurt','🥛',130,8,6,20,0,20,240,0,1,200,60,1.3,'w','heni'],
+ ['Cheese oz','🧀',115,0,0,7,9,8,25,0,1,200,180,-1.4,'','heni'],
+ ['American cheese slice','🧀',100,2,1,5,8,8,60,0,1,250,400,-2.2,'u','heni'],
+ ['Egg','🥚',70,0,0,6,5,6,70,1,1,25,70,-1.2,'w','heni'],
+ ['Bacon (1 sl, 15g)','🥓',45,0,0,3,3,3,50,0,0,1,190,-6.4,'u','heni'],
+ ['Pork sausage 2oz','🌭',180,1,0,10,15,10,170,1,1,10,450,-22.2,'u','heni'],
+ ['Deli ham 2oz','🥪',60,1,1,10,2,10,170,0,1,5,600,-28.5,'u','heni'],
+ ['Steak 3oz','🥩',180,0,0,25,8,22,320,2,5,15,55,-7.0,'w','heni'],
+ ['Ground beef 3oz','🍔',215,0,0,22,13,18,270,2,5,15,65,-7.8,'w','heni'],
+ ['Lamb 3oz','🍖',220,0,0,22,14,20,270,2,4,15,65,-7.5,'w','heni'],
+ ['Chicken breast 3oz','🍗',140,0,0,26,3,25,260,1,1,10,60,-2.2,'w','heni'],
+ ['Fried chicken','🍗',400,14,0,30,24,30,350,1,2,30,800,-2.1,'u','heni'],
+ ['Salmon 3oz','🐟',175,0,0,19,10,25,350,0,1,10,50,16.0,'w','heni'],
+ ['Salmon patty','🐟',200,8,1,17,11,25,300,1,1,40,350,28.6,'','heni'],
+ ['Fried fish 3oz','🐟',200,10,0,16,11,25,300,1,1,20,300,5.5,'','heni'],
+ ['Tuna salad','🐟',190,5,2,16,10,25,200,1,1,15,400,5.7,'','heni'],
+ ['Sardines can','🐟',190,0,0,23,11,35,350,3,1,350,280,[16,8],'w','est'],
+ ['Shrimp curry','🦐',200,8,3,18,10,35,300,1,1,60,500,3.3,'','heni'],
+ ['Salad / lettuce','🥗',15,3,1,1,0,10,200,1,0,30,10,3.8,'w','heni'],
+ ['Broccoli cup','🥦',30,6,2,3,0,20,290,1,0,45,30,3.8,'w','est'],
+ ['Kale/greens cooked','🥬',40,7,1,3,2,30,300,1,0,90,30,2.6,'w','heni'],
+ ['Spinach cup cooked','🥬',40,7,1,5,0,155,840,6,1,240,125,2.6,'w','est'],
+ ['Carrots','🥕',35,8,4,1,0,10,270,0,0,30,60,3.6,'w','heni'],
+ ['Tomato','🍅',15,3,2,1,0,10,200,0,0,10,5,3.8,'w','heni'],
+ ['Cucumber','🥒',13,3,1,1,0,10,125,0,0,15,2,3.8,'w','heni'],
+ ['Coleslaw','🥗',150,12,10,1,11,10,180,0,0,30,200,4.0,'','heni'],
+ ['Sweet potato','🍠',110,26,5,2,0,30,440,1,0,40,70,3.8,'w','est'],
+ ['Potato baked','🥔',160,37,2,4,0,50,900,2,1,25,15,[3,1],'w','est'],
+ ['French fries (fast food)','🍟',220,29,0,3,10,20,400,1,0,10,150,1.5,'u','heni'],
+ ['Potato chips oz','🥔',150,15,0,2,10,20,350,0,0,5,170,0.1,'u','heni'],
+ ['Beans cup (½)','🫘',115,20,1,8,0,40,370,2,1,40,2,10.4,'w','heni'],
+ ['Rice & beans','🍚',300,55,2,11,4,60,500,3,2,50,400,13.8,'','heni'],
+ ['Hummus 2 tbsp','🫘',70,4,0,2,5,20,70,1,0,10,110,6.1,'','heni'],
+ ['Avocado half','🥑',80,4,0,1,7,15,250,0,0,6,4,2.8,'w','heni'],
+ ['Apple','🍎',95,25,19,0,0,9,195,0,0,11,2,13.5,'w','heni'],
+ ['Banana','🍌',105,27,14,1,0,32,420,0,0,6,1,13.5,'w','heni'],
+ ['Peach','🍑',60,15,13,1,0,13,280,0,0,9,0,11.9,'w','heni'],
+ ['Berries cup','🫐',85,21,15,1,0,9,115,0,0,9,1,13.5,'w','est'],
+ ['Orange','🍊',60,15,12,1,0,13,240,0,0,52,0,13.5,'w','est'],
+ ['Grapes cup','🍇',105,27,23,1,0,11,290,0,0,15,3,[8,0],'w','est'],
+ ['White bread slice','🍞',75,14,2,2,1,7,35,1,0,30,140,-0.7,'u','heni'],
+ ['Wheat bread slice','🍞',80,14,2,4,1,25,80,1,1,30,140,0.7,'','heni'],
+ ['White rice cup','🍚',205,45,0,4,0,19,55,2,1,16,2,-2.1,'','heni'],
+ ['Brown rice cup','🍚',215,45,1,5,2,85,155,1,1,20,10,0.6,'w','heni'],
+ ['Oatmeal cup','🥣',160,27,1,6,3,60,160,2,2,20,5,4.7,'w','heni'],
+ ['Granola ½ cup','🥣',270,36,12,7,12,70,250,2,2,40,15,7.0,'','heni'],
+ ['Pancakes','🥞',350,50,10,8,12,25,200,2,1,150,700,-2.8,'u','heni'],
+ ['Mac & cheese cup','🧀',350,40,5,13,15,30,200,2,2,250,800,-4.5,'u','heni'],
+ ['Pizza slice (pepperoni)','🍕',300,36,4,12,12,25,200,3,1,200,700,-5.3,'u','heni'],
+ ['Cheeseburger (fast food)','🍔',350,33,7,17,16,25,250,3,3,150,700,-6.3,'u','heni'],
+ ['Double cheeseburger','🍔',440,34,7,25,23,30,300,4,5,200,1000,-8.8,'u','heni'],
+ ['Hot dog','🌭',290,22,4,10,17,15,200,2,2,60,800,-36.3,'u','heni'],
+ ['Cold cut sub','🥖',450,45,6,22,20,40,400,3,2,200,1500,-21.4,'u','heni'],
+ ['Egg-sausage biscuit','🥯',450,30,3,18,30,20,250,3,2,150,1100,-10.4,'u','heni'],
+ ['Soft taco w/ meat','🌮',200,16,1,10,10,25,200,1,2,80,400,-4.0,'u','heni'],
+ ['Burrito meat & beans','🌯',300,35,2,14,12,50,400,3,2,100,800,-0.6,'','heni'],
+ ['PB&J sandwich','🥪',380,45,15,13,17,70,350,2,2,80,450,33.1,'','heni'],
+ ['Peanut butter 2 tbsp','🥜',190,7,3,7,16,50,200,1,1,15,140,23.9,'','heni'],
+ ['Peanuts oz','🥜',165,6,1,7,14,50,200,1,1,15,230,25.5,'w','heni'],
+ ['Pistachios oz','🌰',160,8,2,6,13,35,290,1,1,30,120,25.3,'w','heni'],
+ ['Almonds oz','🌰',165,6,1,6,14,77,210,1,1,75,0,24,'w','fadnes'],
+ ['Walnuts oz','🌰',185,4,1,4,18,45,125,1,1,28,1,24,'w','fadnes'],
+ ['Pumpkin seeds oz','🎃',160,3,0,9,14,150,230,2,2,15,5,20,'w','est'],
+ ['Sunflower seeds oz','🌻',165,7,1,6,14,37,240,1,1,20,1,20,'w','est'],
+ ['Chia seeds tbsp','🌱',60,5,0,2,4,40,50,1,0,75,2,8,'w','est'],
+ ['Snickers bar','🍫',250,33,27,4,12,20,150,0,1,50,120,3.7,'u','heni'],
+ ['Milk chocolate oz','🍫',150,17,15,2,8,18,110,1,0,55,25,-0.1,'u','heni'],
+ ['Gummy candy','🍬',140,34,22,2,0,0,0,0,0,0,10,-0.1,'u','heni'],
+ ['Cookie','🍪',140,19,10,2,7,10,60,1,0,10,100,-0.0,'u','heni'],
+ ['Donut','🍩',260,31,12,3,14,10,60,1,0,20,250,-1.0,'u','est'],
+ ['Ice cream cup','🍨',270,31,28,5,14,20,260,0,1,170,100,-0.8,'u','heni'],
+ ['Dark chocolate oz','🍫',170,13,7,2,12,65,200,3,1,20,5,[5,-5],'','est'],
+ ['Butter pat','🧈',100,0,0,0,11,0,3,0,0,3,90,-1.6,'','heni'],
+ ['Honey tbsp','🍯',64,17,17,0,0,0,10,0,0,1,1,0.0,'','heni'],
+ ['Protein bar','🍫',200,22,8,20,7,40,200,2,2,150,200,2.8,'u','heni'],
+ ]
+};
+const SOURCES={
+ heni:{t:'Stylianou, Fulgoni & Jolliet (2021). A holistic approach to the health of foods (Health Nutritional Index). Nature Food 2:616–627.',u:'https://www.nature.com/articles/s43016-021-00343-4',use:'Per-serving minutes for most foods (e.g. hot dog −36, cola −12.5, PB&J +33, peanuts +25.5, salmon +16, apple/banana +13.5). Minutes of healthy life; modelling study.'},
+ fadnes:{t:'Fadnes et al. (2022). Estimating impact of food choices on life expectancy. PLOS Medicine 19(2):e1003889.',u:'https://doi.org/10.1371/journal.pmed.1003889',use:'Nuts ~25 g/day ≈ +48 min/day sustained; used to set almonds/walnuts near the HENI nut values.'},
+ spieg:{t:'Spiegelhalter (2012). Using speed of ageing and "microlives" to communicate the effects of lifetime habits. BMJ 345:e8223.',u:'https://doi.org/10.1136/bmj.e8223',use:'First drink +30 min, more −15 each; 2–3 cups coffee +30/day; first 20 min of moderate exercise +60, next 40 min +30. Shaped the beer/coffee and activity curves.'},
+ jackson:{t:'Jackson, Jarvis & West (2025). The price of a cigarette: 20 minutes of life? Addiction 120(5):810–812.',u:'https://doi.org/10.1111/add.16757',use:'−20 min per cigarette.'},
+ veerman:{t:'Veerman et al. (2012). Television viewing time and reduced life expectancy. Br J Sports Med 46:927.',u:'https://doi.org/10.1136/bjsports-2011-085662',use:'−21.8 min per hour of TV (applied to leisure screen time).'},
+ lee:{t:'Lee et al. (2017). Running as a key lifestyle medicine for longevity. Prog Cardiovasc Dis 60:45–55.',u:'https://doi.org/10.1016/j.pcad.2017.03.005',use:'~7 h gained per hour run. Credit is capped at 60 min/day here because benefits level off.'},
+ schnohr:{t:'Schnohr et al. (2018). Various leisure-time physical activities associated with widely divergent life expectancies. Mayo Clin Proc 93:1775.',u:'https://doi.org/10.1016/j.mayocp.2018.06.025',use:'Background for the sports list (tennis, soccer, cycling, swimming); lifetime figures only, so not used as daily numbers.'},
+ usda:{t:'USDA FoodData Central (typical restaurant & fast-food entries).',u:'https://fdc.nal.usda.gov/',use:'Approximate nutrition for the fast-food portions.'},
+ msj:{t:'Mifflin et al. (1990). A new predictive equation for resting energy expenditure. Am J Clin Nutr 51:241.',u:'https://doi.org/10.1093/ajcn/51.2.241',use:'Personal calorie target (Mifflin-St Jeor × activity level).'},
+ doll:{t:'Doll et al. (2004). Mortality in relation to smoking: 50 years\' observations on male British doctors. BMJ 328:1519.',u:'https://doi.org/10.1136/bmj.38142.554479.AE',use:'Ongoing smoking ≈ −10 years vs never. Quitting at about 30 gives back about 10 years, at 40 about 9, at 50 about 6, at 60 about 3 (starting estimate for former smokers).'},
+ psc:{t:'Prospective Studies Collaboration (2009). Body-mass index and cause-specific mortality. Lancet 373:1083.',u:'https://doi.org/10.1016/S0140-6736(09)60318-4',use:'BMI 30–35 ≈ −2 to −4 years; 40–45 ≈ −8 to −10 years (starting estimate).'},
+ wood:{t:'Wood et al. (2018). Risk thresholds for alcohol consumption. Lancet 391:1513.',u:'https://doi.org/10.1016/S0140-6736(18)30134-X',use:'100–200 g/wk ≈ −0.5 y, 200–350 ≈ −1 to −2 y, over 350 ≈ −4 to −5 y (starting estimate).'},
+ moore:{t:'Moore et al. (2012). Leisure time physical activity and mortality. PLoS Med 9:e1001335.',u:'https://doi.org/10.1371/journal.pmed.1001335',use:'Light activity ≈ +1.8 years vs none.'},
+ wen:{t:'Wen et al. (2011). Minimum amount of physical activity for reduced mortality. Lancet 378:1244.',u:'https://doi.org/10.1016/S0140-6736(11)60749-6',use:'15 min/day moderate exercise ≈ +3 years vs inactive.'},
+ est:{t:'App estimate',u:'',use:'Rough placeholder where no per-serving study figure was found (water, tea, sun, sleep, salt, garden, cravings, ultra-processed adjustment). Easy to change in CONFIG.'},
+};
+// ===== app =====
+const FF=CONFIG.fastFood.map(f=>({n:f[0],p:f[1],e:'🍔',cal:f[2],carbs:f[3],sugar:f[4],protein:f[5],fat:f[6],mg:f[7],k:f[8],fe:f[9],zn:f[10],ca:f[11],na:f[12],base:f[13],flag:'u',src:f[14]}));
+const P=()=>S.profile||CONFIG.profileDefaults;
+function bmi(p=P()){return p.weightLb&&p.heightIn?703*p.weightLb/(p.heightIn*p.heightIn):0}
+function T(){const p=P(),t={...CONFIG.targets};if(!S.profile)return t;const kg=p.weightLb/2.2046,cm=p.heightIn*2.54;
+ const bmr=10*kg+6.25*cm-5*p.age+(p.sex==='F'?-161:5);let cal=bmr*(CONFIG.activityFactor[p.activity]||1.2);if(p.goalLb&&p.goalLb<p.weightLb-1)cal-=CONFIG.lossDeficit;
+ t.cal=Math.round(Math.max(cal,CONFIG.minCal[p.sex==='F'?'F':'M'])/10)*10;t.sugar=CONFIG.addedSugar[p.sex==='F'?'F':'M'];t.na=CONFIG.sodium;t.protein=Math.round(kg*CONFIG.proteinPerKg);
+ if(p.sex==='F'){t.fe=18;t.zn=8;t.mg=320;t.k=2600}return t}
+function baseline(){const p=P(),B=CONFIG.base,out=[];if(!S.profile)return out;
+ const ss=p.smokeStatus||(+p.cigs>0?'current':'never');
+ if(ss==='current')out.push(['Smoking (current)',B.smoke.y,B.smoke.src]);
+ if(ss==='former'){const qa=quitAge(p,p.smokeQuit),g=regain(qa);out.push([`Former smoker, quit ~age ${Math.round(qa)}`,r1(B.smoke.y+g),B.smoke.src])}
+ const b=bmi(p),bb=B.bmi.find(r=>b>=r[0]&&b<r[1]);if(bb)out.push([`BMI ${b.toFixed(1)}`,bb[2],bb[3]]);
+ const g=(+p.drinksWk||0)*CONFIG.gramsPerDrink,ab=B.alcohol.find(r=>g>=r[0]&&g<r[1]);if(ab&&(p.alcStatus||'current')==='current')out.push([`Alcohol ${p.drinksWk}/wk`,ab[2],ab[3]]);
+ const a=B.activity[p.activity];if(a&&a[0])out.push(['Activity',a[0],a[1]]);
+ if(p.vapeStatus==='current'||p.vape==='yes')out.push(['Vaping (current)',B.vape.y,B.vape.src]);if(p.vapeStatus==='former')out.push(['Former vaper',B.vapeFormer.y,B.vapeFormer.src]);
+ if((p.ffStatus||'current')==='current'&&+p.ffWk>=B.ff.per)out.push([`Fast food ${p.ffWk}/wk`,B.ff.y,B.ff.src]);
+ if(p.sleepH&&(p.sleepH<7||p.sleepH>9))out.push([`Sleep ${p.sleepH} h`,B.sleep.y,B.sleep.src]);
+ if(+p.sunMin>=15)out.push(['Daily sun',B.sun.y,B.sun.src]);
+ if(p.garden==='yes')out.push(['Garden food',B.garden.y,B.garden.src]);
+ return out}
+const yrsSince=d=>d?Math.max(0,(Date.now()-new Date(d+'T12:00').getTime())/31557600000):0;
+const daysSince=d=>d?Math.max(0,Math.floor((Date.now()-new Date(d+'T00:00').getTime())/86400000)):0;
+const quitAge=(p,d)=>(+p.age||40)-yrsSince(d);
+function regain(qa){const t=CONFIG.base.quitRegain;if(qa<=t[0][0])return t[0][1];for(let i=1;i<t.length;i++)if(qa<=t[i][0]){const[a,b]=t[i-1],[c,e]=t[i];return b+(e-b)*(qa-a)/(c-a)}return 0}
+function sinceQuit(){const p=P(),B=CONFIG.base,out=[];if(!S.profile)return out;
+ if(p.smokeStatus==='former'&&p.smokeQuit){const d=daysSince(p.smokeQuit);out.push(['🚭 Smoke-free',d,r1(d*(+p.cigs||10)*B.cigMin/1440),'jackson'])}
+ if(p.vapeStatus==='former'&&p.vapeQuit)out.push(['💨 Vape-free',daysSince(p.vapeQuit),null,'']);
+ if(p.alcStatus==='former'&&p.alcQuit){const d=daysSince(p.alcQuit),pd=(+p.drinksWk||0)/7;out.push(['🍺 Alcohol-free',d,r1(d*Math.max(0,pd-1)*B.extraDrinkMin/1440),'est'])}
+ if(p.drugStatus==='former'&&p.drugQuit)out.push(['💪 Drug-free',daysSince(p.drugQuit),null,'']);
+ if(p.ffStatus==='former'&&p.ffQuit)out.push(['🍔 Off fast food',daysSince(p.ffQuit),null,'']);
+ return out}
+function renderSince(){const q=sinceQuit(),h=q.length?'<h2>Since you quit</h2>'+q.map(x=>`<div class="li"><span>${x[0]}<br><span class="mut">${x[2]!==null?`≈ ${x[2]} days regained (${x[3]==='est'?'app estimate':x[3]})`:'Keep it going'}</span></span><b class="pos" style="font-size:22px">${x[1]} days</b></div>`).join(''):'';
+ ['sinceA','sinceB'].forEach(id=>{const e=$(id);e.innerHTML=h;e.style.display=q.length?'block':'none'})}
+const PF=[['name','Name (optional)','text'],['age','Age','number'],['sex','Sex','sel',{M:'Male',F:'Female'}],['heightIn','Height (inches, e.g. 70 = 5\'10")','number'],['weightLb','Weight (lb)','number'],['goalLb','Goal weight (lb)','number'],['heaviestLb','Heaviest weight ever (lb, optional)','number'],['activity','Activity level','sel',null],['h1','Smoking','hdr'],['smokeStatus','Status','sel',{never:'Never',current:'Current',former:'Former (quit)'}],['cigs','Cigarettes per day (when smoking)','number'],['smokeYears','Years smoked','number'],['smokeQuit','Quit date (if former)','date'],
+['h2','Vaping','hdr'],['vapeStatus','Status','sel',{never:'Never',current:'Current',former:'Former (quit)'}],['vapeAmt','Amount (e.g. pods/week)','text'],['vapeYears','Years vaped','number'],['vapeQuit','Quit date (if former)','date'],
+['h3','Alcohol','hdr'],['alcStatus','Status','sel',{never:'Never',current:'Current',former:'Former (quit)'}],['drinksWk','Drinks per week (when drinking)','number'],['alcYears','Years drinking','number'],['alcQuit','Quit date (if former)','date'],
+['h4','Recreational drugs (optional, private, not scored)','hdr'],['drugStatus','Status','sel',{'':'Prefer not to say',never:'Never',current:'Current',former:'Former (quit)'}],['drugAmt','Amount (optional)','text'],['drugYears','Years','number'],['drugQuit','Quit date (if former)','date'],
+['h5','Fast food','hdr'],['ffStatus','Status','sel',{never:'Rarely/never',current:'Regular',former:'Quit / cut way back'}],['ffWk','Fast-food meals per week','number'],['ffYears','Years eating it regularly','number'],['ffQuit','Date you cut back (if former)','date'],
+['h6','Everyday','hdr'],['sleepH','Usual sleep (hours)','number'],['sunMin','Usual daily sun (minutes)','number'],['garden','Eat food from your own garden?','sel',{no:'No',yes:'Yes'}]];
+function drawForm(id){const p=P();$(id).innerHTML=PF.map(([k,l,ty,o])=>{o=o||(k==='activity'?CONFIG.activityLabel:null);const v=p[k]??'';if(ty==='hdr')return`<h3 style="color:var(--gold);margin:14px 0 0">${l}</h3>`;return`<label>${l}</label>`+(ty==='sel'?`<select data-k="${k}">${Object.entries(o).map(([a,b])=>`<option value="${a}" ${String(v)===a?'selected':''}>${b}</option>`).join('')}</select>`:`<input data-k="${k}" type="${ty}" step="any" value="${v}">`)}).join('')}
+function saveProfile(id,first){const p={...P()};$(id).querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;p[k]=el.type==='number'?(el.value===''?'':+el.value):el.value});
+ const old=S.profile;S.profile=p;S.startDate=S.startDate||today();S.weights=S.weights||[];if(!old||old.weightLb!==p.weightLb){S.weights=S.weights.filter(w=>w.d!==today());S.weights.push({d:today(),lb:p.weightLb})}
+ if(!S.startWeight)S.startWeight=p.weightLb;save();$('onb').style.display='none';drawForm('meForm');render();toast(first?'Clock started ⏱':'Profile saved')}
+function logWeight(){const lb=+$('wIn').value;if(!lb)return;S.weights=(S.weights||[]).filter(w=>w.d!==today());S.weights.push({d:today(),lb});S.weights.sort((a,b)=>a.d<b.d?-1:1);if(S.profile)S.profile.weightLb=lb;if(!S.startWeight)S.startWeight=lb;$('wIn').value='';save();drawForm('meForm');render();toast('Weight logged')}
+function habitScore(d){const l=S.days[d]||[];if(!l.length)return null;let s=0;
+ if(l.filter(x=>x.flag==='w').length>=3)s+=20;if(l.filter(x=>x.flag==='u').length<=1)s+=20;if(l.filter(x=>x.act).reduce((a,x)=>a+x.dur,0)>=20)s+=20;
+ const sl=l.find(x=>x.sleep);if(sl&&sl.min>0)s+=15;if(!l.some(x=>x.h==='cig'))s+=10;if((S.fasts||[]).some(f=>hrs(f.e-f.s)>=12&&new Date(f.e).toLocaleDateString('en-CA')===d))s+=15;return s}
+function addFF(i){const f=FF[i],log=day(today());const c=log.filter(x=>x.n===f.n).length;const o={...f,min:servingMin(f,c)};delete o.base;push(o)}
+let gSer='daily';
+const SER={daily:['Daily minutes','#5fe08a'],cum:['Life total (min)','#f0cf73'],weight:['Weight (lb)','#7fb5ff'],score:['Habit score','#ff9f5a']};
+function series(){const ds=Object.keys(S.days).filter(d=>S.days[d].length).sort();let cum=0;
+ if(gSer==='weight')return (S.weights||[]).map(w=>[w.d,w.lb]);
+ return ds.map(d=>{const m=dayMinutes(S.days[d]);cum+=m;return[d,gSer==='daily'?m:gSer==='cum'?r1(cum):habitScore(d)]}).filter(x=>x[1]!==null)}
+function drawChart(){const c=$('gc'),x=c.getContext('2d'),W=c.width,H=c.height,pad=50;x.clearRect(0,0,W,H);const d=series(),[lab,col]=SER[gSer];
+ $('gSeg').innerHTML=Object.entries(SER).map(([k,v])=>`<button class="${k===gSer?'':'sec'}" onclick="gSer='${k}';drawChart()">${v[0]}</button>`).join('');
+ x.font='20px system-ui';x.fillStyle='#9fb0c9';if(d.length<2){x.fillText('Log a couple of days to see your trend.',pad,H/2);$('gNote').textContent='';return}
+ const vs=d.map(p=>p[1]);let lo=Math.min(...vs),hi=Math.max(...vs);if(gSer!=='weight'){lo=Math.min(lo,0)}if(hi===lo)hi=lo+1;const sp=(hi-lo)*0.1;lo-=sp;hi+=sp;
+ const X=i=>pad+i*(W-pad-20)/(d.length-1),Y=v=>H-35-(v-lo)/(hi-lo)*(H-60);
+ x.strokeStyle='#23406f';x.lineWidth=1;for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4;x.beginPath();x.moveTo(pad,Y(v));x.lineTo(W-10,Y(v));x.stroke();x.fillText(Math.round(v),4,Y(v)+6)}
+ if(lo<0&&hi>0){x.strokeStyle='#9fb0c9';x.beginPath();x.moveTo(pad,Y(0));x.lineTo(W-10,Y(0));x.stroke()}
+ x.strokeStyle=col;x.lineWidth=4;x.beginPath();d.forEach((p,i)=>i?x.lineTo(X(i),Y(p[1])):x.moveTo(X(i),Y(p[1])));x.stroke();x.fillStyle=col;d.forEach((p,i)=>{x.beginPath();x.arc(X(i),Y(p[1]),5,0,7);x.fill()});
+ x.fillStyle='#9fb0c9';x.fillText(d[0][0].slice(5),pad,H-8);x.fillText(d[d.length-1][0].slice(5),W-75,H-8);
+ $('gNote').textContent=`${lab}: ${d[0][1]} → ${d[d.length-1][1]}`}
+function renderGrowth(){const ws=S.weights||[],days=Object.values(S.days).filter(l=>l.length).length,life=r1(Object.values(S.days).reduce((a,l)=>a+dayMinutes(l),0));
+ const lost=ws.length&&S.startWeight?r1(S.startWeight-ws[ws.length-1].lb):0,p=P();
+ $('gStats').innerHTML=`<div><b>${lost>=0?lost:'+'+(-lost)} lb</b>${lost>=0?'lost':'gained'} since start</div><div><b>${days}</b>days logged</div><div><b>${$('streak').textContent}</b>day fasting streak</div><div><b>${sg(life)}</b>life-total minutes</div>`+(S.profile&&p.heaviestLb&&ws.length&&p.heaviestLb>ws[ws.length-1].lb?`<div style="grid-column:span 2"><b>${r1(p.heaviestLb-ws[ws.length-1].lb)} lb</b>down from your heaviest (${p.heaviestLb} lb)</div>`:'')+(S.profile&&p.goalLb&&ws.length?`<div style="grid-column:span 2"><b>${r1(Math.max(0,ws[ws.length-1].lb-p.goalLb))} lb</b>to goal (${p.goalLb} lb)</div>`:'');
+ drawChart()}
+function renderMe(){const t=T(),b=bmi();$('tgtBox').innerHTML=S.profile?`BMI <b>${b.toFixed(1)}</b> · Calories <b>${t.cal}</b> · Protein <b>${t.protein} g</b> · Added sugar ≤ <b>${t.sugar} g</b> · Sodium ≤ <b>${t.na} mg</b><br><span class="mut">Calories use Mifflin-St Jeor × your activity level${P().goalLb<P().weightLb-1?', minus 500/day toward your goal weight':''}. Updates when you log a new weight.</span>`:'Fill in your profile to personalize targets.';
+ const bl=baseline(),tot=r1(bl.reduce((a,x)=>a+x[1],0));
+ $('baseBox').innerHTML=bl.length?bl.map(x=>`<div class="li"><span>${x[0]}<span class="chip">${x[2]==='est'?'app estimate':x[2]}</span></span><b class="${x[1]>=0?'pos':'neg'}">${sg(x[1])} y</b></div>`).join('')+`<div class="li"><b>Total vs. a typical starting point</b><b class="${tot>=0?'pos':'neg'}">${sg(tot)} y</b></div><p class="mut">Rough group averages from studies, added together. Changing habits or weight updates this. A guide, not a forecast.</p>`:'<div class="mut">No sourced adjustments for your answers yet.</div>';
+ const ws=(S.weights||[]).slice(-8).reverse();$('wList').innerHTML=ws.map(w=>`<div class="li"><span>${w.d}</span><b>${w.lb} lb</b></div>`).join('')}
+
+const F=CONFIG.foods.map(f=>({n:f[0],e:f[1],cal:f[2],carbs:f[3],sugar:f[4],protein:f[5],fat:f[6],mg:f[7],k:f[8],fe:f[9],zn:f[10],ca:f[11],na:f[12],base:f[13],flag:f[14],src:f[15]}));
+const NUT={cal:'Calories',carbs:'Carbs g',sugar:'Sugar g',protein:'Protein g',fat:'Fat g',mg:'Magnesium mg',k:'Potassium mg',fe:'Iron mg',zn:'Zinc mg',ca:'Calcium mg',na:'Sodium mg'};
+const today=()=>new Date().toLocaleDateString('en-CA');
+let S=JSON.parse(localStorage.getItem(CONFIG.storeKey)||'null')||{days:{},fasts:[],fastStart:null};
+const save=()=>localStorage.setItem(CONFIG.storeKey,JSON.stringify(S));
+const day=d=>S.days[d]||(S.days[d]=[]);
+const $=id=>document.getElementById(id);
+const r1=x=>Math.round(x*10)/10, sg=x=>(x>0?'+':'')+r1(x);
+function servingMin(f,c){let m;if(Array.isArray(f.base))m=f.base[Math.min(c,f.base.length-1)];else if(f.base>=0)m=f.base*CONFIG.dimPos[Math.min(c,CONFIG.dimPos.length-1)];else m=f.base*(1+CONFIG.dimNegStep*c);
+ if(f.flag==='u')m+=CONFIG.upfPenalty;if(f.flag==='w'&&m>0)m+=CONFIG.wholeBonus;return r1(m)}
+function dayMinutes(log){let m=0;const t=totals(log);log.forEach(x=>m+=x.min);m+=Math.floor(Math.max(0,t.cal-T().cal)/250)*CONFIG.overCalPenalty;m+=Math.floor(Math.max(0,t.na-T().na)/1000)*CONFIG.sodiumPenaltyPer1000;return r1(m)}
+function totals(log){const t={};Object.keys(NUT).forEach(k=>t[k]=0);log.forEach(x=>Object.keys(NUT).forEach(k=>t[k]+=x[k]||0));return t}
+function push(o,msg){day(today()).push({...o,t:Date.now()+Math.random()});save();render();toast(msg||`${o.e} ${o.n}: ${sg(o.min)} min`)}
+function addFood(i){const f=F[i],log=day(today());const c=log.filter(x=>x.n===f.n).length;let min=servingMin(f,c),n=f.n;
+ if($('garden').checked){const g=log.filter(x=>x.garden).length;if(g<CONFIG.gardenCapPerDay){min=r1(min+CONFIG.gardenBonus);n+=' 🌱'}}
+ const o={...f,n,min,garden:$('garden').checked};delete o.base;push(o)}
+function addCustom(){const n=$('cName').value.trim();if(!n)return;push({n,e:'✏️',cal:+$('cCal').value||0,protein:+$('cPro').value||0,sugar:+$('cSug').value||0,min:+$('cMin').value||0});['cName','cCal','cMin','cPro','cSug'].forEach(i=>$(i).value='')}
+function habit(k){const h=CONFIG.habits[k],c=day(today()).filter(x=>x.h===k).length;push({n:h.n,e:h.e,h:k,min:c<h.cap?h.min:0,src:h.src})}
+function actMinutesToday(fn){return day(today()).filter(fn).reduce((a,x)=>a+(x.dur||0),0)}
+function modCredit(m){const c=CONFIG.moderate;return Math.min(m,20)/20*c.first20+Math.max(0,Math.min(m,60)-20)/40*c.next40}
+function addActivity(){const type=$('actType').value,dur=+$('actMin').value||0;if(!dur)return;let min;
+ if(type==='Running'){const prev=actMinutesToday(x=>x.act==='Running'),cap=CONFIG.running.capMinPerDay;min=(Math.min(prev+dur,cap)-Math.min(prev,cap))/60*CONFIG.running.perHour}
+ else{const prev=actMinutesToday(x=>x.act&&x.act!=='Running');min=modCredit(prev+dur)-modCredit(prev)}
+ push({n:`${type} ${dur} min`,e:'🏃',act:type,dur,min:r1(min),src:type==='Running'?'lee':'spieg'})}
+function addSun(){const dur=+$('sunMin').value||0;if(!dur)return;const prev=actMinutesToday(x=>x.sun),c=CONFIG.sun;const cr=m=>Math.min(m,c.maxMin)/c.bestMin*c.credit;
+ push({n:`Sun ${dur} min`,e:'☀️',sun:1,dur,min:r1(Math.min(cr(prev+dur),c.credit)-Math.min(cr(prev),c.credit)),src:'est'})}
+function addTV(){const h=+$('tvH').value||0;if(!h)return;push({n:`Screens ${h} h`,e:'📺',min:r1(h*CONFIG.tvPerHour),src:'veerman'})}
+function setSleep(){const h=+$('sleepH').value||0;if(!h)return;S.days[today()]=day(today()).filter(x=>!x.sleep);const b=CONFIG.sleep.find(r=>h>=r[0]&&h<r[1]);push({n:`Sleep ${h} h`,e:'😴',sleep:1,min:b?b[2]:0,src:'est'})}
+function delItem(t){S.days[today()]=day(today()).filter(x=>x.t!==t);save();render()}
+function toast(s){let d=document.createElement('div');d.textContent=s;d.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#d4a73a;color:#0b1a33;padding:10px 16px;border-radius:20px;font-weight:800;z-index:20;white-space:nowrap';document.body.appendChild(d);setTimeout(()=>d.remove(),1400)}
+const tag=f=>f.flag==='w'?'🌿 ':f.flag==='u'?'🏭 ':'';
+function drawFoods(){const q=$('q').value.toLowerCase();$('foods').innerHTML=F.map((f,i)=>f.n.toLowerCase().includes(q)?`<button class="food" onclick="addFood(${i})"><b>${f.e}</b>${tag(f)}${f.n}</button>`:'').join('')}
+let shown=0;
+const row=x=>`<span>${x.e} ${x.n}${x.src&&x.src!=='est'?`<span class="chip">${x.src}</span>`:''}</span>`;
+function render(){const log=day(today()),m=dayMinutes(log),t=totals(log);
+ const life=r1(Object.values(S.days).reduce((a,l)=>a+dayMinutes(l),0));
+ animNum(m);$('lifeMin').textContent=sg(life);$('lifeDays').textContent=(life/1440).toFixed(2);
+ const r=$('ring');r.style.stroke=m>=0?'#5fe08a':'#ff6b6b';r.style.transition='stroke-dashoffset .8s';r.style.strokeDashoffset=628-628*Math.min(1,Math.abs(m)/CONFIG.clockFullScale);
+ $('moves').innerHTML=log.length?log.slice().reverse().map(x=>`<div class="li">${row(x)}<b class="${x.min>=0?'pos':'neg'}">${sg(x.min)}</b></div>`).join(''):'Nothing logged yet. Hit Log or Habits.';
+ const lows=Object.keys(CONFIG.lowSuggest).filter(k=>t[k]<T()[k]*0.5),overs=CONFIG.maxNutrients.filter(k=>t[k]>T()[k]);
+ $('lows').innerHTML=(overs.map(k=>`<div class="tip">⚠️ Over on ${NUT[k].replace(/ .*/,'').toLowerCase()} today. Go lighter next meal.</div>`).join('')+lows.slice(0,3).map(k=>`<div class="tip">Low ${NUT[k].replace(/ .*/,'').toLowerCase()}: try ${CONFIG.lowSuggest[k]}</div>`).join(''))||'<div class="mut">Looking solid today 👊</div>';
+ $('totals').innerHTML=Object.keys(NUT).map(k=>{const p=Math.min(100,t[k]/T()[k]*100),bad=CONFIG.maxNutrients.includes(k)&&t[k]>T()[k];return`<div class="row mut" style="justify-content:space-between"><span>${NUT[k]}</span><span style="text-align:right">${Math.round(t[k])} / ${T()[k]}</span></div><div class="bar"><i style="width:${p}%;${bad?'background:#ff6b6b':''}"></i></div>`}).join('');
+ $('logList').innerHTML=log.length?log.map(x=>`<div class="li"><span>${x.e} ${x.n} <span class="mut">${x.cal?x.cal+' cal':''}</span></span><span><b class="${x.min>=0?'pos':'neg'}">${sg(x.min)}</b><button class="x" onclick="delItem(${x.t})">✕</button></span></div>`).join(''):'<div class="mut">Empty</div>';
+ renderFast();
+ if(S.profile){const tot=r1(baseline().reduce((a,x)=>a+x[1],0));$('baseLine').innerHTML=`Starting estimate: <b class="${tot>=0?'pos':'neg'}">${sg(tot)} years</b> · details under Me`}
+ $('ffList').innerHTML=FF.map((f,i)=>`<div class="li" onclick="addFF(${i})" style="cursor:pointer"><span>🏭 <b>${f.n}</b><br><span class="mut">${f.p} · ${f.cal} cal · ${f.na} mg sodium</span></span><span><b class="${servingMin(f,0)>=0?'pos':'neg'}">${sg(servingMin(f,0))}</b> <button style="padding:6px 10px">+</button></span></div>`).join('');
+ renderGrowth();renderMe();renderSince()}
+function animNum(to){const el=$('todayMin'),from=shown,st=performance.now();shown=to;el.className='num '+(to>=0?'pos':'neg');(function f(n){const p=Math.min(1,(n-st)/700),v=Math.round(from+(to-from)*p);el.textContent=(v>0?'+':'')+v;if(p<1)requestAnimationFrame(f)})(st)}
+const hrs=ms=>ms/3600000,fmt=ms=>{const s=Math.floor(ms/1000);return[s/3600,s%3600/60,s%60].map(x=>String(Math.floor(x)).padStart(2,'0')).join(':')};
+function toggleFast(){if(S.fastStart){S.fasts.push({s:S.fastStart,e:Date.now()});S.fastStart=null;toast('Fast logged 💪')}else S.fastStart=Date.now();save();render()}
+function renderFast(){const now=Date.now(),cur=S.fastStart?now-S.fastStart:0;$('fTimer').textContent=fmt(cur);$('fStatus').textContent=S.fastStart?'Fasting since '+new Date(S.fastStart).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Not fasting';$('fBtn').textContent=S.fastStart?'End fast':'Start fast';
+ const all=S.fasts.map(f=>hrs(f.e-f.s)).concat(S.fastStart?[hrs(cur)]:[]),max=Math.max(0,...all);
+ $('badges').innerHTML=CONFIG.fastBadges.map(b=>`<span class="badge ${max>=b?'got':''}">${max>=b?'🏅':'🔒'} ${b}h</span>`).join('');
+ $('longest').textContent=max.toFixed(1)+'h';
+ const ds=new Set(S.fasts.filter(f=>hrs(f.e-f.s)>=12).map(f=>new Date(f.e).toLocaleDateString('en-CA')));let st=0,d=new Date();if(!ds.has(d.toLocaleDateString('en-CA')))d.setDate(d.getDate()-1);while(ds.has(d.toLocaleDateString('en-CA'))){st++;d.setDate(d.getDate()-1)}$('streak').textContent=st;
+ $('fHist').innerHTML=S.fasts.length?S.fasts.slice().reverse().slice(0,20).map(f=>`<div class="li"><span>${new Date(f.s).toLocaleDateString([], {month:'short',day:'numeric'})}</span><b>${hrs(f.e-f.s).toFixed(1)}h</b></div>`).join(''):'No fasts yet.'}
+function demoHistory(){const H=3600000,n=['Black coffee 12oz','Water','Egg','Banana','Salad / lettuce','Peanuts oz','Beer 12oz','Chicken breast 3oz','Apple','Oatmeal cup'],bad=['Cola 12oz','Hot dog','Donut','Potato chips oz'];
+ S.profile={...CONFIG.profileDefaults,name:'Mike',weightLb:198,goalLb:180,cigs:0,drinksWk:10,ffWk:4,heaviestLb:212,smokeStatus:'former',cigs:15,smokeYears:12,smokeQuit:'2025-03-01',ffStatus:'current'};S.startDate=null;S.weights=[];S.startWeight=198;
+ for(let i=20;i>=1;i--){const d=new Date(Date.now()-i*86400000).toLocaleDateString('en-CA'),l=[];const k=Math.max(0,4-Math.floor((20-i)/5));
+  n.slice(0,5+((20-i)%5)).forEach(nm=>{const f=F.find(x=>x.n===nm),c=l.filter(x=>x.n===nm).length;l.push({...f,min:servingMin(f,c),t:i*1e6+l.length})});
+  bad.slice(0,k).forEach(nm=>{const f=F.find(x=>x.n===nm);l.push({...f,min:servingMin(f,0),t:i*1e6+l.length})});
+  if(i%2)l.push({n:'Walking 30 min',e:'🏃',act:'Walking',dur:30,min:67.5,t:i*1e6+99});l.push({n:'Sleep 7.5 h',e:'😴',sleep:1,min:15,t:i*1e6+98});S.days[d]=l;
+  if(i%3===0)S.weights.push({d,lb:r1(198-(20-i)*0.6)});if(!S.startDate)S.startDate=d}}
+function demo(){demoHistory();$('onb').style.display='none';drawForm('meForm');const d=new Date(),H=3600000;S.fasts=[];for(let i=4;i>=1;i--){const e=d.getTime()-i*86400000+8*H;S.fasts.push({s:e-[13,16.5,14,17][i-1]*H,e})}S.fastStart=Date.now()-(14*H+23*60000);S.days[today()]=[];
+ const idx=n=>F.findIndex(f=>f.n===n);['Black coffee 12oz','Water','Egg','Egg','Banana','Salmon 3oz','Salad / lettuce','Peanuts oz','Beer 12oz','Beer 12oz','Cola 12oz'].forEach(n=>addFood(idx(n)));S.weights.push({d:today(),lb:186.4});S.profile.weightLb=186.4;
+ $('actType').value='Walking';$('actMin').value=30;addActivity();addSun();habit('craving');$('tvH').value=1;addTV();setSleep();save();render()}
+$('srcList').innerHTML=Object.entries(SOURCES).map(([k,s])=>`<div class="src"><b>[${k}]</b> ${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.t}</a>`:s.t}<div class="mut">${s.use}</div></div>`).join('');
+$('actType').innerHTML=CONFIG.activities.map(a=>`<option>${a}</option>`).join('');
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('t-'+b.dataset.t).classList.add('on');scrollTo(0,0);if(b.dataset.t==='growth')drawChart()});
+$('q').oninput=drawFoods;
+$('ticks').innerHTML=[...Array(12)].map((_,i)=>`<line x1="125" y1="15" x2="125" y2="27" stroke="#d4a73a" stroke-width="3" transform="rotate(${i*30} 125 125)"/>`).join('');
+drawForm('meForm');drawForm('onbForm');if(!S.profile)$('onb').style.display='block';drawFoods();render();setInterval(()=>S.fastStart&&renderFast(),1000);
+</script></body></html>
