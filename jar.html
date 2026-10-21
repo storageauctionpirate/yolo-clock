@@ -8,16 +8,18 @@
 :root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a;--gray:#9aa0aa}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
-#jar{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+#app{position:relative;width:100%;height:100%;margin:0 auto;overflow:hidden;transform:translateZ(0);background:var(--bg)}
+@media (min-width:600px){body{background:radial-gradient(circle at 50% 30%,#13284d,#040a16 70%)}#app{width:430px;height:min(932px,calc(100vh - 32px));margin:16px auto;border-radius:38px;box-shadow:0 0 0 10px #18233a,0 0 0 11px #ffffff22,0 30px 80px #000d}}
+#jar{position:absolute;inset:0;width:100%;height:100%;display:block}
 #hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 52px) 22px 0;text-align:center;pointer-events:none}
 #hud .t{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase}
 #pct{font-size:68px;font-weight:900;line-height:1;margin-top:4px;text-shadow:0 2px 14px #000c}
 #pct small{font-size:24px;font-weight:800}
 #left{font-size:21px;font-weight:800;text-shadow:0 2px 10px #000c}
 #left span{color:var(--gold2)}
-#pace{margin:8px auto 0;display:inline-block;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:6px 10px;font-size:13px;font-weight:700;backdrop-filter:blur(4px);white-space:nowrap;max-width:96vw}
+#pace{margin:8px auto 0;display:inline-block;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:6px 10px;font-size:13px;font-weight:700;backdrop-filter:blur(4px);white-space:nowrap;max-width:96%}
 #pace{pointer-events:auto;overflow:hidden;text-overflow:ellipsis}#pace b{color:var(--gold2)} #pace .gap{color:var(--amber)} #goalBtn{background:none;border:0;border-bottom:1.5px dashed var(--gold2);color:var(--txt);font:inherit;font-weight:700;padding:0;cursor:pointer} #pace .ahead{color:var(--grn)}
-#goalPop{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 250px);transform:translateX(-50%);width:min(92vw,360px);background:#0d1f3ef7;border:1px solid var(--gold);border-radius:16px;padding:12px 14px;z-index:7;display:none;box-shadow:0 10px 30px #000b}
+#goalPop{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 250px);transform:translateX(-50%);width:min(92%,360px);background:#0d1f3ef7;border:1px solid var(--gold);border-radius:16px;padding:12px 14px;z-index:7;display:none;box-shadow:0 10px 30px #000b}
 #goalPop.on{display:block}
 .gctl{display:flex;align-items:center;gap:8px}.gctl button{width:38px;height:38px;border-radius:10px;border:1px solid #ffffff30;background:#13284d;color:var(--txt);font-size:20px;font-weight:800}.gctl input{flex:1;accent-color:var(--gold)}.gctl b{min-width:40px;text-align:center;font-size:20px;color:var(--gold2)}
 .gnote{font-size:11px;color:var(--mut);margin-top:6px} 
@@ -34,8 +36,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family
 #bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:8px;padding:10px 12px calc(env(safe-area-inset-bottom) + 8px);background:linear-gradient(#0b1a3300,#0b1a33ee 35%)}
 #bar button{flex:1;border:0;border-radius:14px;padding:11px 4px;font-weight:800;font-size:13.5px;color:#1b1400;background:linear-gradient(var(--gold2),var(--gold));box-shadow:0 3px 12px #0008}
 #bar button.alt{background:#13284de6;color:var(--txt);border:1px solid #ffffff30}
-#note{position:fixed;left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;bottom:calc(env(safe-area-inset-bottom) + 64px);text-align:center;font-size:10.5px;color:#d5dceb;background:#0b1a33d9;border-radius:10px;padding:4px 10px;pointer-events:none}
-.sheet{position:fixed;left:0;right:0;bottom:0;max-height:58vh;overflow:auto;background:#0d1f3ef5;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding:14px 16px calc(env(safe-area-inset-bottom) + 18px);transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px #000a;z-index:5}
+#note{position:fixed;left:50%;transform:translateX(-50%);width:max-content;max-width:92%;bottom:calc(env(safe-area-inset-bottom) + 64px);text-align:center;font-size:10.5px;color:#d5dceb;background:#0b1a33d9;border-radius:10px;padding:4px 10px;pointer-events:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:58%;overflow:auto;background:#0d1f3ef5;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding:14px 16px calc(env(safe-area-inset-bottom) + 18px);transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px #000a;z-index:5}
 .sheet.on{transform:none}
 .sheet h2{margin:0 0 4px;font-size:18px;display:flex;justify-content:space-between;align-items:center}
 .sheet h2 button{background:none;border:0;color:var(--mut);font-size:24px;line-height:1}
@@ -68,6 +70,7 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
 #toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 </style></head>
 <body>
+<div id="app">
 <canvas id="jar"></canvas>
 <a id="back" href="./">← Clock</a>
 <button id="who" onclick="openSheet('prof')">48 · M ✎</button>
@@ -105,6 +108,7 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
  <div class="sl" style="grid-template-columns:18px 1fr 52px"><i style="background:transparent"></i><label>Retire at age<input type="range" id="retire" min="45" max="85" step="1"></label><b id="retireV"></b></div>
  <div id="dayTable"></div></div>
 
+</div>
 <script>
 'use strict';
 /* =========================================================================
@@ -238,7 +242,7 @@ function layout(sp){ // hex packing from the bottom up; returns positions sorted
   for(const x of rowPts)out.push(x,y);
  }return out}
 function build(){
- S.goal=goalOf();DAYS=Math.round(S.goal*365.25);DPR=Math.min(3,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;J=jarShape();
+ S.goal=goalOf();DAYS=Math.round(S.goal*365.25);DPR=Math.min(3,window.devicePixelRatio||1);W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;cv.width=W*DPR;cv.height=H*DPR;J=jarShape();
  let lo=1,hi=8;for(let i=0;i<30;i++){const m=(lo+hi)/2;(layout(m).length/2>=DAYS)?lo=m:hi=m}
  s=lo;const p=layout(s);POS=new Float32Array(p.slice(0,DAYS*2));
  RAND=new Float32Array(DAYS);let seed=1234567;for(let i=0;i<DAYS;i++){seed=(seed*1103515245+12345)&0x7fffffff;RAND[i]=seed/0x7fffffff}
@@ -368,7 +372,7 @@ function saveProfile(){const a=Math.max(1,Math.min(99,Math.round(+$('inAge').val
  if(S.smoke.quit>a)S.smoke.quit=a;if(sexChanged){CATS.forEach(c=>S.hours[c.id]=c[S.sex]);S.hab.tv=S.hours.tv}
  closeSheets();assignColors();render()}
 // tap a marble to see what it is
-cv.addEventListener('click',e=>{const x=e.clientX,y=e.clientY;let bi=-1,bd=1e9;const left=DAYS-Math.round(view.lived);for(let i=0;i<DAYS;i++){const dx=POS[i*2]-x,dy=POS[i*2+1]-y,d=dx*dx+dy*dy;if(d<bd){bd=d;bi=i}}
+cv.addEventListener('click',e=>{const rc=cv.getBoundingClientRect(),x=e.clientX-rc.left,y=e.clientY-rc.top;let bi=-1,bd=1e9;const left=DAYS-Math.round(view.lived);for(let i=0;i<DAYS;i++){const dx=POS[i*2]-x,dy=POS[i*2+1]-y,d=dx*dx+dy*dy;if(d<bd){bd=d;bi=i}}
  const tip=$('tip');if(bi<0||bd>s*s*9){tip.style.display='none';return}
  const d=DAYS-1-bi,age=d/365.25;let what;if(bi>=left)what='already lived';else if(bi>=left-Math.round(view.gray))what='cracked: at risk from current habits';else{const c=[...CATS,FREE].find(c=>c.id===COLOR[bi]);what=c.label}
  tip.textContent='Day '+fmt(d+1)+' · age '+Math.floor(age)+' · '+what;tip.style.display='block';tip.style.left=Math.min(W-200,Math.max(6,x-90))+'px';tip.style.top=(y-34)+'px';clearTimeout(tip._t);tip._t=setTimeout(()=>tip.style.display='none',2200)});
