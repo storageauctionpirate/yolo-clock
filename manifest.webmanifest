@@ -1,0 +1,16 @@
+{
+  "name": "YOLO Life Clock",
+  "short_name": "Life Clock",
+  "description": "Your life as one 24-hour day, plus routine, eating window and remedies. Rough draft; not medical advice.",
+  "start_url": "./clock.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1a33",
+  "theme_color": "#0b1a33",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
