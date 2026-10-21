@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOLO · Look it up (draft)</title>
+<meta name="theme-color" content="#0b1a33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⏱%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+#app{max-width:430px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 24px)}
+@media (min-width:600px){body{background:radial-gradient(circle at 50% 30%,#13284d,#040a16 70%);min-height:100vh}}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+#back{color:var(--mut);font-size:13px;text-decoration:none;background:#13284dcc;border:1px solid #ffffff2a;border-radius:16px;padding:6px 11px}
+.draft{font-size:10.5px;color:#1b1400;background:var(--gold2);border-radius:8px;padding:2px 7px;font-weight:800;letter-spacing:1px}
+h1{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase;margin:10px 0 2px;text-align:center}
+.lead{text-align:center;color:var(--mut);font-size:12.5px;margin:0 0 10px}
+#sbox{position:sticky;top:0;z-index:3;background:linear-gradient(var(--bg) 80%,#0b1a3300);padding:6px 0 10px}
+#q{width:100%;background:#13284d;color:var(--txt);border:1px solid #ffffff30;border-radius:14px;padding:12px 40px 12px 14px;font-size:16px;outline:none}
+#q:focus{border-color:var(--gold)}
+#clr{position:absolute;right:8px;top:12px;background:none;border:0;color:var(--mut);font-size:20px;display:none}
+#cnt{font-size:11.5px;color:var(--mut);margin-top:5px;padding-left:4px}
+.grp{background:var(--card);border:1px solid #ffffff1c;border-radius:16px;margin:8px 0;overflow:hidden}
+.gh,.sh{width:100%;display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--txt);text-align:left;cursor:pointer}
+.gh{padding:13px 14px;font-size:15.5px;font-weight:800}
+.gh .ic{font-size:18px;width:24px;text-align:center}
+.gh .n,.sh .n{margin-left:auto;font-size:12px;font-weight:700;color:var(--mut);background:#0b1a3399;border-radius:10px;padding:2px 8px}
+.ar{color:var(--gold2);font-size:12px;transition:transform .2s;width:12px}
+.open>.gh .ar,.sub.open>.sh .ar{transform:rotate(90deg)}
+.gb,.sb{display:none}.open>.gb,.sub.open>.sb{display:block}
+.sub{border-top:1px solid #ffffff14}
+.sh{padding:10px 14px 10px 22px;font-size:14px;font-weight:700;color:#dbe3f0}
+.it{border-top:1px solid #ffffff10;padding:9px 14px 9px 22px;cursor:pointer;background:#0b1a3340}
+.it .top{display:flex;gap:8px;align-items:flex-start}
+.it .nm{flex:1;font-size:13.5px;line-height:1.3}
+.chip{font-size:10px;font-weight:800;border-radius:8px;padding:2px 6px;white-space:nowrap;margin-top:1px}
+.chip.P{background:#5fe08a22;color:var(--grn);border:1px solid #5fe08a55}
+.chip.E{background:#ffb86b1c;color:var(--amber);border:1px solid #ffb86b55}
+.ef{font-size:13px;font-weight:800;margin-top:3px}
+.pos{color:var(--grn)}.neg{color:var(--red)}.zero{color:var(--mut)}
+.dt{display:none;font-size:12px;color:#c9d3e3;margin-top:6px;line-height:1.45}
+.it.x .dt{display:block}
+.dt a{color:var(--gold2);word-break:break-word}
+.dt .k{color:var(--mut)}
+.where{font-size:11px;color:var(--mut);margin-top:2px}
+#foot{margin-top:18px;font-size:11.5px;color:var(--mut);line-height:1.5;text-align:center;border-top:1px solid #ffffff14;padding-top:12px}
+#foot a{color:var(--gold2)}
+.empty{text-align:center;color:var(--mut);padding:30px 0;font-size:14px}
+</style></head><body><div id="app">
+<header><a id="back" href="clock.html">← Life Clock</a><span class="draft">DRAFT</span></header>
+<h1>Look it up</h1>
+<p class="lead">What everyday things add to, or take from, your clock</p>
+<div id="sbox"><div style="position:relative"><input id="q" type="text" enterkeyhint="search" placeholder="Search: bike, booze, coffee, roofer…" autocomplete="off"><button id="clr" aria-label="clear">×</button></div><div id="cnt"></div></div>
+<div id="list"></div>
+<div id="foot">These are averages from studies, not personal predictions. They show odds, not guarantees, and they are not medical advice.<br><b class="pos">Proven</b> = taken from a checked study or official stats · <b style="color:var(--amber)">Estimate</b> = worked out from study numbers.<br><a href="clock.html">← Back to the Life Clock</a></div>
+</div>
+<script>
+const IC={'Food':'🥗','Drinks':'🥤','Exercise & sports':'🏃','Jobs':'👷','Travel & roads':'🚗','Screens & sitting':'📺','Sleep':'😴','Habits & substances':'🚬','Mind & social':'🧠','Environment & body/health':'🌍'};
+const SYN={bike:'cycl|bicycl|bike',bicycle:'cycl|bicycl',biking:'cycl|bicycl',booze:'alcohol|beer|wine|spirits|ethanol|liquor|drunk|BAC',beer:'beer|alcohol',wine:'wine|alcohol',drinking:'alcohol|beer|wine|spirits',
+ smoke:'smok|cigar|tobacco',smoking:'smok|cigar',cig:'cigar',cigs:'cigar',weed:'cannabis|marijuana',pot:'cannabis|marijuana',car:'car|driv|vehicle',drive:'driv|car',
+ plane:'flight|air|aviation|flying',fly:'flight|air|aviation|flying',train:'train|rail',run:'run|jog|marathon',running:'run|jog',jogging:'jog|run',walk:'walk|step|pedestrian',
+ swim:'swim',gym:'fitness|strength|exercise|club',lift:'strength|muscle|weight',tv:'tv|television',phone:'phone|cell',screen:'screen|tv|computer|phone',
+ job:'worker|occupation|job',work:'work|job|occupation',nap:'nap',sleep:'sleep|insomnia|nap',soda:'soda|soft drink|cola|sugar-sweetened',pop:'soda|soft drink|cola',
+ sugar:'sugar|sweet|candy|soda',meat:'meat|beef|pork|bacon|sausage|ham',burger:'burger',fries:'fries|french',junk:'fast food|hot dog|burger|pizza|fries',
+ coffee:'coffee|espresso',tea:'tea\\b',ski:'ski',skiing:'ski',climb:'climb|mountain|everest',divorce:'divorc',married:'marri',lonely:'lonel',friends:'social|friend|lonel',
+ stress:'stress|strain',pollution:'pollution|pm2|air',fat:'obes|bmi|weight|fat',weight:'weight|bmi|obes',moto:'motorcycl',motorbike:'motorcycl',scooter:'scooter',church:'relig|faith'};
+let D=[],ORDER=[],openG=new Set(),openS=new Set();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmtMin(m){const a=Math.abs(m);let v,u;
+ if(a<1){v=(a*60).toFixed(0);u='sec'} else if(a<120){v=a<10?a.toFixed(1):a.toFixed(0);u='min'} else if(a<2880){v=(a/60).toFixed(1);u='hours'} else if(a<525960){v=(a/1440).toFixed(a<14400?1:0);u='days'} else {v=(a/525960).toFixed(1);u='years'}
+ return v.replace(/\.0$/,'')+' '+u}
+function unitPhrase(u){if(!u)return'';const l=u.toLowerCase();
+ if(/^(per|each|for|over)\b/.test(l))return u.replace(/\s*\((?:[^)]{25,})\)$/,'');
+ if(l.startsWith('lifetime')||l==='years_lifetime')return'over a lifetime';
+ if(u.length<=26)return'per '+u; return''}
+function eff(o){
+ if(o.m!==undefined){const s=o.m>0?'+':o.m<0?'−':'±';const c=o.m>0?'pos':o.m<0?'neg':'zero';
+  if(o.m===0)return['zero','no measurable change '+(unitPhrase(o.u)||'')];
+  return[c,s+fmtMin(o.m)+' '+unitPhrase(o.u)]}
+ const y=o.y;const c=y>0?'pos':y<0?'neg':'zero';const LT=/telomere/i.test(o.u)?'years of cell aging (telomere estimate)':'years over a lifetime';
+ if(o.yt)return[c,(y>0&&!/^[+]/.test(o.yt)?'+':'')+o.yt.replace(/-/g,'−')+' '+LT];
+ if(y===0)return['zero','no measurable change over a lifetime'];
+ return[c,(y>0?'+':'−')+(Math.abs(y)<1?(Math.abs(y)*12).toFixed(1).replace(/\.0$/,'')+' months':Math.abs(y).toFixed(1).replace(/\.0$/,'')+' years')+(LT==='years over a lifetime'?' over a lifetime':' of cell aging (telomere estimate)')]}
+function key(o){return o.y!==undefined&&o.m===undefined?1e9+Math.abs(o.y):Math.abs(o.m)}
+function rx(q){return q.toLowerCase().split(/\s+/).filter(Boolean).map(w=>{const e=w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return new RegExp(SYN[w]?'('+SYN[w]+'|'+e+')':e,'i')})}
+function itemHTML(o,showWhere){const [c,t]=eff(o);
+ return `<div class="it" data-i="${o._i}"><div class="top"><div class="nm">${esc(o.i)}${showWhere?`<div class="where">${esc(o.g)} › ${esc(o.s)}</div>`:''}<div class="ef ${c}">${esc(t)}</div></div><span class="chip ${o.t[0]}">${o.t}</span></div>
+ <div class="dt"><span class="k">Measured:</span> ${esc(o.u||'—')}${o.yt&&o.m!==undefined?`<br><span class="k">Lifetime view:</span> ${esc(o.yt)} years`:''}<br><span class="k">Source:</span> ${esc(o.src)}${o.url?`<br><a href="${esc(o.url)}" target="_blank" rel="noopener">Open source ↗</a>`:''}</div></div>`}
+function render(){const q=document.getElementById('q').value.trim();document.getElementById('clr').style.display=q?'block':'none';const L=document.getElementById('list');
+ if(q){const R=rx(q);const hits=D.filter(o=>R.every(r=>r.test(o._h))).sort((a,b)=>key(b)-key(a));
+  document.getElementById('cnt').textContent=hits.length+' of '+D.length+' items match';
+  L.innerHTML=hits.length?'<div class="grp" style="padding-bottom:2px">'+hits.slice(0,200).map(o=>itemHTML(o,1)).join('')+'</div>'+(hits.length>200?'<div class="empty">Showing top 200 — type more to narrow</div>':''):'<div class="empty">Nothing found. Try a simpler word.</div>';return}
+ document.getElementById('cnt').textContent=D.length+' items in '+ORDER.length+' groups · tap a group to open';
+ L.innerHTML=ORDER.map(g=>{const its=D.filter(o=>o.g===g);if(!its.length)return'';const subs={};its.forEach(o=>(subs[o.s]=subs[o.s]||[]).push(o));
+  const sk=Object.keys(subs).sort((a,b)=>subs[b].length-subs[a].length);const go=openG.has(g);
+  return `<div class="grp${go?' open':''}" data-g="${esc(g)}"><button class="gh"><span class="ar">▶</span><span class="ic">${IC[g]||'•'}</span>${esc(g)}<span class="n">${its.length}</span></button><div class="gb">${go?sk.map(s=>{const k=g+'|'+s,so=openS.has(k);
+   return `<div class="sub${so?' open':''}" data-s="${esc(k)}"><button class="sh"><span class="ar">▶</span>${esc(s)}<span class="n">${subs[s].length}</span></button><div class="sb">${so?subs[s].sort((a,b)=>key(b)-key(a)).map(o=>itemHTML(o,0)).join(''):''}</div></div>`}).join(''):''}</div></div>`}).join('')}
+document.getElementById('list').addEventListener('click',e=>{const it=e.target.closest('.it');if(it){if(e.target.closest('a'))return;it.classList.toggle('x');return}
+ const sh=e.target.closest('.sh');if(sh){const k=sh.parentNode.dataset.s;openS.has(k)?openS.delete(k):openS.add(k);render();return}
+ const gh=e.target.closest('.gh');if(gh){const g=gh.parentNode.dataset.g;openG.has(g)?openG.delete(g):openG.add(g);render()}});
+document.getElementById('q').addEventListener('input',render);
+document.getElementById('clr').onclick=()=>{document.getElementById('q').value='';render()};
+fetch('lookup.json').then(r=>r.json()).then(j=>{ORDER=j.order;D=j.items.map((o,i)=>(o._i=i,o._h=(o.i+' '+o.u+' '+o.g+' '+o.s).toLowerCase(),o));window.LOOKUP_COUNT=D.length;render()})
+ .catch(()=>{document.getElementById('list').innerHTML='<div class="empty">Could not load the list.</div>'});
+</script></body></html>
