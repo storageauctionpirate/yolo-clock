@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOLO · Clean streak (draft)</title>
+<meta name="theme-color" content="#0b1a33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⏱%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+@media (min-width:600px){body{background:radial-gradient(circle at 50% 30%,#13284d,#040a16 70%);min-height:100vh}}
+#app{max-width:430px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 24px)}
+header{display:flex;align-items:center;justify-content:space-between}
+.pill{color:var(--mut);font-size:13px;text-decoration:none;background:#13284dcc;border:1px solid #ffffff2a;border-radius:16px;padding:6px 11px}
+.draft{font-size:10.5px;color:#1b1400;background:var(--gold2);border-radius:8px;padding:2px 7px;font-weight:800;letter-spacing:1px}
+h1{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase;margin:12px 0 2px;text-align:center}
+.lead{text-align:center;color:var(--mut);font-size:12.5px;margin:0 0 6px}
+.card{background:#13284d99;border:1px solid #ffffff1a;border-radius:16px;padding:12px 13px;margin:10px 0}
+.card h3{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ns{font-size:11px;color:var(--mut);font-weight:600}
+.cnt{display:flex;gap:6px;justify-content:center;margin:8px 0 4px}
+.cnt div{background:#0b1a33aa;border:1px solid #ffffff1a;border-radius:12px;min-width:66px;padding:6px 4px;text-align:center}
+.cnt b{display:block;font-size:26px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--txt)}
+.cnt span{font-size:10.5px;color:var(--mut);letter-spacing:1px;text-transform:uppercase}
+.since{text-align:center;font-size:11.5px;color:var(--mut)}
+.bar{height:9px;background:#0b1a33;border-radius:6px;overflow:hidden;border:1px solid #ffffff1a;margin:5px 0 3px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:6px}
+.nx{font-size:12.5px;display:flex;justify-content:space-between;margin-top:10px}
+.nx b{color:var(--gold2)}
+.lad{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 2px}
+.lad span{font-size:11px;font-weight:700;border-radius:10px;padding:3px 8px;border:1px solid #ffffff22;color:var(--mut)}
+.lad span.on{background:var(--gold);color:#1b1400;border-color:var(--gold2)}
+.note{font-size:12px;color:#d5dceb;background:#0b1a3380;border-radius:10px;padding:7px 9px;margin-top:7px;line-height:1.4}
+.note .k{color:var(--gold2);font-weight:800}
+.stat{display:flex;gap:8px;margin-top:8px}.stat div{flex:1;background:#0b1a3380;border-radius:10px;padding:7px 8px;font-size:11px;color:var(--mut)}
+.stat b{display:block;font-size:16px;color:var(--grn);font-variant-numeric:tabular-nums}
+.stat .best b{color:var(--gold2)}
+.est{font-size:9.5px;font-weight:800;color:var(--amber);border:1px solid #ffb86b55;border-radius:7px;padding:1px 5px;margin-left:4px}
+.acts{display:flex;gap:8px;margin-top:10px}
+button{font-family:inherit}
+.btn{flex:1;border:0;border-radius:12px;padding:10px 6px;font-weight:800;font-size:13.5px;color:#1b1400;background:linear-gradient(var(--gold2),var(--gold))}
+.btn.alt{background:#13284d;color:var(--txt);border:1px solid #ffffff30}
+.btn.slip{background:#13284d;color:var(--amber);border:1px solid #ffb86b55}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chips button{border:1px solid #ffffff2e;background:#13284d;color:var(--txt);border-radius:12px;padding:7px 10px;font-size:12.5px;font-weight:600}
+.chips button.on{background:var(--gold);color:#1b1400;border-color:var(--gold2)}
+label.f{font-size:12px;color:var(--mut);display:block;margin-top:8px}
+input{background:#13284d;color:var(--txt);border:1px solid #ffffff30;border-radius:10px;padding:9px;font-size:15px;width:100%;font-family:inherit;color-scheme:dark}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.set{display:none;border-top:1px solid #ffffff14;margin-top:10px;padding-top:4px}.set.on{display:block}
+.log{font-size:11.5px;color:var(--mut);margin-top:6px}
+.help a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--txt);background:#0b1a3380;border:1px solid #ffffff1a;border-radius:12px;padding:10px;margin-top:7px}
+.help a b{color:var(--gold2);font-size:15px}.help a small{display:block;color:var(--mut);font-size:11.5px}
+.help .ic{font-size:20px}
+.src{font-size:10.5px;color:#8193ad;margin-top:6px;line-height:1.4}.src a{color:#8193ad}
+#foot{margin-top:16px;font-size:11.5px;color:var(--mut);line-height:1.5;text-align:center;border-top:1px solid #ffffff14;padding-top:12px}
+#foot a{color:var(--gold2)}
+.empty{text-align:center;color:var(--mut);font-size:13.5px;padding:8px 0}
+#toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.8);opacity:0;transition:all .35s;background:#0b1a33f2;border:1px solid var(--gold);border-radius:16px;padding:14px 18px;font-weight:800;font-size:16px;color:var(--gold2);pointer-events:none;z-index:6;text-align:center;width:max-content;max-width:86%;line-height:1.35}
+#toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.party{font-size:12.5px;color:var(--gold2);text-align:center;font-weight:800;margin-top:6px}
+</style></head><body><div id="app">
+<header><a class="pill" href="clock.html">← Life Clock</a><span class="draft">DRAFT</span><a class="pill" href="lookup.html">Look it up</a></header>
+<h1>Clean streak</h1>
+<p class="lead">Count the time you've won back. Saved only on this phone.</p>
+<div id="list"></div>
+<div class="card" id="addCard">
+ <h3>Add a streak <span class="ns">track several at once</span></h3>
+ <div class="chips" id="presets"></div>
+ <label class="f">Name<input id="nName" maxlength="40" placeholder="e.g. Alcohol"></label>
+ <label class="f">Last time (when you last used)<input id="nWhen" type="datetime-local"></label>
+ <label class="f">Money you used to spend, $ per day (optional)<input id="nCost" type="number" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 10"></label>
+ <div class="acts"><button class="btn" id="addBtn">Start counting</button></div>
+</div>
+<div class="card help">
+ <h3>Need to talk to someone?</h3>
+ <a href="tel:18006624357"><span class="ic">📞</span><span><b>1-800-662-4357</b><small>SAMHSA National Helpline · free, confidential, 24/7, English &amp; Spanish</small></span></a>
+ <a href="tel:988"><span class="ic">🆘</span><span><b>Call or text 988</b><small>Suicide &amp; Crisis Lifeline · if you're in crisis or thinking of harming yourself</small></span></a>
+</div>
+<div id="foot">Not medical advice. If you're stopping alcohol or other drugs after heavy use, talk to a doctor first. Stopping suddenly can be risky.<br>
+<span class="src">Milestone body notes appear for cigarettes only, from the CDC's "Benefits of Quitting Smoking" timeline (cdc.gov, May 2024). Life won back is an estimate from Doll 2004 (BMJ) and Jha 2013 (NEJM): quitting at ~30/40/50/60 gains about 10/9/6/3 years vs continuing. Helpline: samhsa.gov.</span><br>
+<a href="clock.html">← Life Clock</a> · <a href="lookup.html">Look it up</a></div>
+</div>
+<div id="toast"></div>
+<script>
+const KEY='yolostreak_v1';
+const PRESETS=['Alcohol','Crack/cocaine','Weed','Cigarettes/nicotine','Vaping'];
+const H=3600e3,DAY=24*H;
+const MS=[{k:'24h',t:DAY,l:'24 hours'},{k:'3d',t:3*DAY,l:'3 days'},{k:'1w',t:7*DAY,l:'1 week'},{k:'30d',t:30*DAY,l:'30 days'},{k:'90d',t:90*DAY,l:'90 days'},{k:'1y',t:365*DAY,l:'1 year'}];
+// Cigarette notes: CDC "Benefits of Quitting Smoking" (May 15 2024), "Health benefits of quitting smoking over time" table, verified 2026-10-21.
+const CIG={'24h':'Nicotine level in the blood drops to zero. Heart rate already dropped within minutes. (CDC)',
+ '3d':'Within several days, carbon monoxide in the blood drops to the level of someone who does not smoke. (CDC)',
+ '1w':'Carbon monoxide is back to a non-smoker\'s level (CDC: several days). Coughing and shortness of breath start to ease from 1 to 12 months. (CDC)',
+ '30d':'From 1 to 12 months, coughing and shortness of breath decrease. (CDC)',
+ '90d':'Still in the 1 to 12 month window where coughing and shortness of breath decrease. (CDC)',
+ '1y':'At 1 to 2 years, the risk of heart attack drops sharply. (CDC)'};
+const DOLL=[[30,10],[40,9],[50,6],[60,3]]; // Doll 2004 BMJ / Jha 2013 NEJM: years gained by quitting at age vs continuing
+const quitGain=q=>{if(q<=30)return 10;if(q>=60)return 3;for(let i=0;i<3;i++){const[a,ga]=DOLL[i],[b,gb]=DOLL[i+1];if(q<=b)return ga+(gb-ga)*(q-a)/(b-a)}};
+const isCig=n=>/cigar|nicotine|smok|tobacco/i.test(n)&&!/vap/i.test(n);
+let S;try{S=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+if(!S||!Array.isArray(S.streaks))S={streaks:[]};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const clockAge=()=>{try{const c=JSON.parse(localStorage.getItem('yolojar_v1')||'{}');return +c.age||''}catch(e){return''}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const toLocal=t=>{const d=new Date(t);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())};
+const dur=ms=>{ms=Math.max(0,ms);const d=Math.floor(ms/DAY),h=Math.floor(ms%DAY/H),m=Math.floor(ms%H/60e3);return d?`${d} day${d==1?'':'s'}${h?' '+h+' h':''}`:h?`${h} h ${m} min`:`${m} min`};
+const fmtDate=t=>new Date(t).toLocaleString([], {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+const money=v=>'$'+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+function toast(t,ms=2600){const e=document.getElementById('toast');e.innerHTML=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),ms)}
+let pick='';
+document.getElementById('presets').innerHTML=PRESETS.map(p=>`<button data-p="${p}">${p}</button>`).join('')+'<button data-p="">Custom…</button>';
+document.getElementById('presets').onclick=e=>{const b=e.target.closest('button');if(!b)return;pick=b.dataset.p;document.querySelectorAll('#presets button').forEach(x=>x.classList.toggle('on',x===b));const n=document.getElementById('nName');n.value=pick;if(!pick)n.focus()};
+document.getElementById('nWhen').value=toLocal(Date.now());
+document.getElementById('addBtn').onclick=()=>{const name=document.getElementById('nName').value.trim();if(!name){toast('Pick or type a name first');return}
+ let start=new Date(document.getElementById('nWhen').value).getTime();if(!start||start>Date.now())start=Date.now();
+ const cost=Math.max(0,+document.getElementById('nCost').value||0);
+ S.streaks.push({id:Date.now().toString(36),name,start,cost,best:0,slips:[],seen:MS.filter(m=>Date.now()-start>=m.t).map(m=>m.k),age:isCig(name)?clockAge():''});
+ save();document.getElementById('nName').value='';document.getElementById('nCost').value='';document.getElementById('nWhen').value=toLocal(Date.now());
+ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on'));render();toast('Counting. You\'ve got this.')};
+const openSet=new Set();
+function card(s){return `<div class="card" data-id="${s.id}"><h3>${esc(s.name)}<span class="ns">best ${esc(dur(Math.max(s.best||0,Date.now()-s.start)))}</span></h3>
+ <div class="cnt"><div><b class="d">0</b><span>days</span></div><div><b class="h">00</b><span>hrs</span></div><div><b class="m">00</b><span>min</span></div><div><b class="s">00</b><span>sec</span></div></div>
+ <div class="since">clean since ${esc(fmtDate(s.start))}</div>
+ <div class="nxw"></div><div class="lad"></div><div class="party"></div><div class="notes"></div><div class="stat"></div>
+ <div class="acts"><button class="btn slip" data-a="slip">I slipped</button><button class="btn alt" data-a="set">Edit</button></div>
+ <div class="set${openSet.has(s.id)?' on':''}">
+  <label class="f">Last time<input type="datetime-local" data-f="start" value="${toLocal(s.start)}"></label>
+  <div class="grid2"><label class="f">$ per day<input type="number" min="0" step="0.5" data-f="cost" value="${s.cost||''}"></label>
+  ${isCig(s.name)?`<label class="f">Your age when you quit<input type="number" min="12" max="99" data-f="age" value="${s.age||''}"></label>`:'<span></span>'}</div>
+  <div class="log">${s.slips.length?'Slips logged: '+s.slips.length+' · last '+esc(fmtDate(s.slips[s.slips.length-1].t)):'No slips logged.'}</div>
+  <div class="acts"><button class="btn alt" data-a="del" style="color:var(--red)">Delete streak</button></div></div></div>`}
+function render(){const L=document.getElementById('list');
+ L.innerHTML=S.streaks.length?S.streaks.map(card).join(''):'<div class="card empty">No streaks yet. Add one below. It starts counting right away.</div>';tick(true)}
+function tick(full){const now=Date.now();let changed=false;
+ S.streaks.forEach(s=>{const el=document.querySelector(`.card[data-id="${s.id}"]`);if(!el)return;const t=now-s.start;
+  el.querySelector('.d').textContent=Math.floor(t/DAY);el.querySelector('.h').textContent=pad(Math.floor(t%DAY/H));el.querySelector('.m').textContent=pad(Math.floor(t%H/60e3));el.querySelector('.s').textContent=pad(Math.floor(t%60e3/1e3));
+  const reached=MS.filter(m=>t>=m.t),next=MS.find(m=>t<m.t),prevT=reached.length?reached[reached.length-1].t:0;
+  const fresh=reached.filter(m=>!s.seen.includes(m.k));
+  if(fresh.length){s.seen.push(...fresh.map(m=>m.k));changed=true;const m=fresh[fresh.length-1];toast(`🎉 ${m.l} clean from ${esc(s.name)}!<br><small style="color:var(--txt);font-weight:600">Milestone reached. Keep going.</small>`,4000)}
+  const lk=reached.map(m=>m.k).join(),cig=isCig(s.name);
+  if(full||el.dataset.lk!==lk){el.dataset.lk=lk;
+   el.querySelector('.lad').innerHTML=MS.map(m=>`<span class="${t>=m.t?'on':''}">${t>=m.t?'✓ ':''}${m.l}</span>`).join('');
+   el.querySelector('.party').textContent=reached.length?`🎉 ${reached.length} milestone${reached.length>1?'s':''} reached: latest ${reached[reached.length-1].l}`:'';
+   const last=reached[reached.length-1];let nt='';
+   if(cig){if(last)nt+=`<div class="note"><span class="k">${last.l}:</span> ${CIG[last.k]}</div>`;if(next)nt+=`<div class="note"><span class="k">Next, ${next.l}:</span> ${CIG[next.k]}</div>`}
+   else if(last)nt=`<div class="note"><span class="k">${last.l} clean.</span> Every hour counts. Notice what's working and keep doing it.</div>`;
+   el.querySelector('.notes').innerHTML=nt}
+  el.querySelector('.nxw').innerHTML=next?`<div class="nx"><span>Next: <b>${next.l}</b></span><span>${esc(dur(next.t-t))} to go</span></div><div class="bar"><i style="width:${(100*(t-prevT)/(next.t-prevT)).toFixed(1)}%"></i></div>`:`<div class="nx"><span><b>All milestones reached</b></span><span>${Math.floor(t/365/DAY)} yr+</span></div>`;
+  let st='';if(s.cost)st+=`<div><b>${money(s.cost*t/DAY)}</b>money saved</div>`;
+  if(cig){const a=+s.age;st+=a?`<div><b>+${quitGain(a).toFixed(1)} yrs</b>life won back if you stay quit <span class="est">ESTIMATE</span></div>`:`<div><b style="color:var(--mut);font-size:13px">Add age in Edit</b>to see life won back <span class="est">ESTIMATE</span></div>`}
+  st+=`<div class="best"><b>${esc(dur(Math.max(s.best,t)))}</b>best streak</div>`;
+  el.querySelector('.stat').innerHTML=st});
+ if(changed)save()}
+document.getElementById('list').addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(!b)return;const id=b.closest('.card').dataset.id,s=S.streaks.find(x=>x.id===id);if(!s)return;const a=b.dataset.a;
+ if(a==='set'){openSet.has(id)?openSet.delete(id):openSet.add(id);b.closest('.card').querySelector('.set').classList.toggle('on');return}
+ if(a==='del'){if(confirm('Delete the "'+s.name+'" streak? This can\'t be undone.')){S.streaks=S.streaks.filter(x=>x!==s);save();render()}return}
+ if(a==='slip'){if(!confirm('Log a slip and restart the count for "'+s.name+'"?'))return;const now=Date.now(),len=now-s.start;s.best=Math.max(s.best||0,len);s.slips.push({t:now,len});s.start=now;s.seen=[];save();render();
+  toast(`Reset. Best streak still ${esc(dur(s.best))}.<br>Start again.`,4500)}});
+document.getElementById('list').addEventListener('change',e=>{const i=e.target.closest('input[data-f]');if(!i)return;const s=S.streaks.find(x=>x.id===i.closest('.card').dataset.id);const f=i.dataset.f;
+ if(f==='start'){const v=new Date(i.value).getTime();if(v&&v<=Date.now()){s.start=v;s.seen=MS.filter(m=>Date.now()-v>=m.t).map(m=>m.k)}}
+ if(f==='cost')s.cost=Math.max(0,+i.value||0);if(f==='age')s.age=Math.max(12,Math.min(99,+i.value||0))||'';save();render()});
+render();setInterval(()=>tick(false),1000);
+</script></body></html>
