@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOLO · Life Clock</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⏱%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a;--gray:#9aa0aa}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#app{position:relative;width:100%;height:100%;margin:0 auto;overflow:hidden;transform:translateZ(0);background:var(--bg)}
+@media (min-width:600px){body{background:radial-gradient(circle at 50% 30%,#13284d,#040a16 70%)}#app{width:430px;height:min(932px,calc(100vh - 32px));margin:16px auto;border-radius:38px;box-shadow:0 0 0 10px #18233a,0 0 0 11px #ffffff22,0 30px 80px #000d}}
+#face{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer}
+#top{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top) + 50px);text-align:center;pointer-events:none}
+#top .t{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800}
+#top .its{font-size:15px;color:var(--mut);font-weight:700;margin-top:6px}
+#nowT{font-size:54px;font-weight:900;line-height:1.05;text-shadow:0 2px 14px #000c;letter-spacing:-1px}
+#below{position:absolute;left:0;right:0;top:600px;text-align:center;padding:0 14px;pointer-events:none}
+#paceLine{display:inline-block;pointer-events:auto;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:7px 12px;font-size:14px;font-weight:700;white-space:nowrap}
+#paceLine b{color:var(--gold2)}
+#subLine{margin-top:6px;font-size:12.5px;color:var(--mut)}
+.sheet .src{display:none}.sheet.math .src{display:block}
+.mathBtn{background:none;border:1px solid #ffffff30!important;border-radius:10px;color:var(--mut)!important;font-size:12px!important;padding:3px 8px;margin-left:auto;margin-right:8px}
+#clockFree{font-size:13px;color:#ffe27a;margin:4px 0 8px}
+#hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 52px) 22px 0;text-align:center;pointer-events:none}
+#hud .t{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase}
+#pct{font-size:68px;font-weight:900;line-height:1;margin-top:4px;text-shadow:0 2px 14px #000c}
+#pct small{font-size:24px;font-weight:800}
+#left{font-size:21px;font-weight:800;text-shadow:0 2px 10px #000c}
+#left span{color:var(--gold2)}
+#pace{margin:8px auto 0;display:inline-block;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:6px 10px;font-size:13px;font-weight:700;backdrop-filter:blur(4px);white-space:nowrap;max-width:96%}
+#pace{pointer-events:auto;overflow:hidden;text-overflow:ellipsis}#pace b{color:var(--gold2)} #pace .gap{color:var(--amber)} #goalBtn{background:none;border:0;border-bottom:1.5px dashed var(--gold2);color:var(--txt);font:inherit;font-weight:700;padding:0;cursor:pointer} #pace .ahead{color:var(--grn)}
+#goalPop{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 250px);transform:translateX(-50%);width:min(92%,360px);background:#0d1f3ef7;border:1px solid var(--gold);border-radius:16px;padding:12px 14px;z-index:7;display:none;box-shadow:0 10px 30px #000b}
+#goalPop.on{display:block}
+.gctl{display:flex;align-items:center;gap:8px}.gctl button{width:38px;height:38px;border-radius:10px;border:1px solid #ffffff30;background:#13284d;color:var(--txt);font-size:20px;font-weight:800}.gctl input{flex:1;accent-color:var(--gold)}.gctl b{min-width:40px;text-align:center;font-size:20px;color:var(--gold2)}
+.gnote{font-size:11px;color:var(--mut);margin-top:6px} 
+#freeLine{margin-top:6px;font-size:14px;font-weight:700;color:#ffe27a;text-shadow:0 1px 8px #000}
+#consent{position:fixed;inset:0;background:#050d1ce6;z-index:20;display:none;align-items:center;justify-content:center;padding:20px}#consent.on{display:flex}
+#consent .box{background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:20px 18px;max-width:360px;font-size:14.5px;line-height:1.45}
+#consent h3{margin:0 0 8px;color:var(--gold2);font-size:19px}
+#note a{color:var(--gold2);pointer-events:auto}
+#about p{font-size:12.5px;line-height:1.45;color:#d5dceb;margin:6px 0}
+#grayNote{margin-top:6px;font-size:12.5px;color:#d7dbe2;text-shadow:0 1px 6px #000}
+#grayNote i{display:inline-block;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#d9dce1,#6d727b);vertical-align:-1px;margin-right:4px}
+#who{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:12px;background:#13284dcc;border:1px solid #ffffff2a;color:var(--txt);border-radius:16px;padding:6px 11px;font-size:13px;font-weight:700}
+#back{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:12px;color:var(--mut);font-size:13px;text-decoration:none;background:#13284dcc;border:1px solid #ffffff2a;border-radius:16px;padding:6px 11px}
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:8px;padding:10px 12px calc(env(safe-area-inset-bottom) + 8px);background:linear-gradient(#0b1a3300,#0b1a33ee 35%)}
+#bar button{flex:1;border:0;border-radius:14px;padding:11px 4px;font-weight:800;font-size:13.5px;color:#1b1400;background:linear-gradient(var(--gold2),var(--gold));box-shadow:0 3px 12px #0008}
+#bar button.alt{background:#13284de6;color:var(--txt);border:1px solid #ffffff30}
+#note{position:fixed;left:50%;transform:translateX(-50%);width:max-content;max-width:92%;bottom:calc(env(safe-area-inset-bottom) + 64px);text-align:center;font-size:10.5px;color:#d5dceb;background:#0b1a33d9;border-radius:10px;padding:4px 10px;pointer-events:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:58%;overflow:auto;background:#0d1f3ef5;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding:14px 16px calc(env(safe-area-inset-bottom) + 18px);transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px #000a;z-index:5}
+.sheet.on{transform:none}
+.sheet h2{margin:0 0 4px;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+.sheet h2 button{background:none;border:0;color:var(--mut);font-size:24px;line-height:1}
+.sub{color:var(--mut);font-size:12.5px;margin-bottom:10px}
+.row{padding:10px 0;border-top:1px solid #ffffff14}
+.row .lab{display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-bottom:6px}
+.eff{font-weight:800}.pos{color:var(--grn)}.neg{color:var(--amber)}.zero{color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid #ffffff2e;background:#13284d;color:var(--txt);border-radius:12px;padding:6px 10px;font-size:12.5px;font-weight:600}
+.chips button.on{background:var(--gold);color:#1b1400;border-color:var(--gold2)}
+.src{font-size:10.5px;color:#8193ad;margin-top:4px}
+.big{width:100%;border:0;border-radius:14px;padding:12px;font-weight:800;font-size:15px;color:#062b12;background:linear-gradient(#8ff0ad,var(--grn));margin:6px 0 4px}
+input[type=number],select{background:#13284d;color:var(--txt);border:1px solid #ffffff30;border-radius:10px;padding:8px;font-size:15px;width:100%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{font-size:12px;color:var(--mut);display:block}
+.sl{display:grid;grid-template-columns:18px 1fr 52px;align-items:center;gap:8px;margin:5px 0}
+.sl i{width:14px;height:14px;border-radius:50%;display:block;box-shadow:inset -2px -2px 3px #0006}
+.sl label{font-size:13px;display:flex;flex-direction:column}
+.sl input{width:100%;accent-color:var(--gold)}
+.sl b{text-align:right;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:right}
+.free td{color:#ffe27a;font-weight:800}
+.gapitem{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #ffffff14}
+.gapitem .g{font-weight:900;color:var(--grn);min-width:62px;font-size:16px}
+.gapitem .d{flex:1;font-size:13px}
+.gapitem button{border:0;border-radius:10px;padding:7px 10px;font-weight:800;background:var(--gold);color:#1b1400}
+#tip{position:fixed;padding:5px 9px;border-radius:9px;background:#000c;font-size:12px;pointer-events:none;display:none;z-index:4;white-space:nowrap}
+#toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.8);opacity:0;transition:all .35s;background:#0b1a33ee;border:1px solid var(--gold);border-radius:16px;padding:12px 18px;font-weight:900;font-size:18px;color:var(--gold2);pointer-events:none;z-index:6;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+</style></head>
+<body>
+<div id="app">
+<canvas id="face"></canvas>
+<a id="back" href="./">← Clock app</a>
+<button id="who" onclick="openSheet('prof')">48 · M ✎</button>
+<div id="top"><div class="t">YOLO · LIFE CLOCK</div><div class="its">It's</div><div id="nowT">12:00 AM</div><div class="its" style="margin-top:0">in your life</div></div>
+<div id="below"><div id="paceLine"></div><div id="subLine"></div></div>
+<div id="tip"></div><div id="toast"></div>
+<div id="note">Population estimates, not a prediction or medical advice. Your goal is a motivator. <a href="#" onclick="openSheet('about');return false">About the numbers</a></div>
+<div id="consent"><div class="box"><h3>Before you start the clock ⏱</h3><p>These numbers are <b>estimates from large population studies</b>. They are not a prediction, a guarantee, or medical advice, and they can't know your genes, health history, or luck.</p><p>Please <b>talk with your doctor</b> before making big changes to your health habits.</p><p>Your goal age is a <b>motivator, not a forecast</b>. Every good day counts.</p><button class="big" onclick="acceptConsent()">Got it, show my clock</button><div class="gnote" style="text-align:center"><a href="#" style="color:var(--gold2)" onclick="acceptConsent();openSheet('about');return false">About the numbers</a></div></div></div>
+<div class="sheet" id="about"><h2>About the numbers <button onclick="closeSheets()">×</button></h2><p><b>Starting point:</b> US Social Security period life table 2023 (2026 Trustees Report): remaining life expectancy for your age and sex. ssa.gov/oact/STATS/table4c6.html</p><p><b>Habit effects:</b> verified rows from published studies: Doll 2004 &amp; Jha 2013 (smoking, quitting), Zhuang 2026 (steps), Moore 2012 (exercise), Qian 2023 (sleep), Wood 2018 (alcohol), Veerman 2012 (TV), Prospective Studies Collaboration 2009 (BMI), Fadnes 2022 &amp; Bellavia 2013 (diet). Capped by Nguyen (Million Veteran Program: 8 healthy habits ≈ +24 y men / +20.5 y women).</p><p><b>Where days go:</b> BLS American Time Use Survey 2025; commute from Census ACS 2024 (27.2 min each way).</p><p><b>Limits:</b> these are averages from observational studies; effects overlap and are shrunk for older ages. They describe groups of people, not you. Not medical advice.</p><p><b>The clock:</b> your life from birth to your goal age is drawn as one day, midnight to midnight. <span id="scaleNote"></span> The hour hand sits at your age, the gold marker where your current pace ends; the gray slice after it is time habits can win back.</p>
+  <p><b>Goal range:</b> up to 122, the age reached by Jeanne Calment, the oldest verified human.</p></div>
+<div id="goalPop"><div style="display:flex;justify-content:space-between;align-items:center;font-weight:800">Jar goal age <button onclick="$('goalPop').classList.remove('on')" style="background:none;border:0;color:var(--mut);font-size:22px">×</button></div><div class="gctl" style="margin-top:6px"><button onclick="stepGoal(-1)" aria-label="minus">−</button><input type="range" class="goalIn" min="70" max="122" step="1" oninput="setGoal(this.value)"><button onclick="stepGoal(1)" aria-label="plus">+</button><b class="goalTxt">100</b></div><div class="gnote" title="Jeanne Calment of France (1875–1997) lived 122 years, 164 days, the oldest verified human on record.">Range 70–122. ⓘ 122 = Jeanne Calment, the oldest verified human on record. Your goal age is midnight on the clock.</div></div>
+<div id="bar"><button class="alt" onclick="openSheet('hab')">My habits</button><button onclick="openSheet('gap')">Win back time</button><button class="alt" onclick="openSheet('days')">My day</button></div>
+
+<div class="sheet" id="prof"><h2>About you <button onclick="closeSheets()">×</button></h2>
+ <div class="sub">Your life to your goal age = one 24-hour day. Goal <span class="goalTxt">100</span> = midnight = <span id="capTxt">36,525</span> days.</div>
+ <div class="grid2"><div><label class="f">Age</label><input type="number" id="inAge" min="1" max="99" inputmode="numeric"></div>
+ <div><label class="f">Sex (life tables differ)</label><select id="inSex"><option value="m">Male</option><option value="f">Female</option></select></div></div>
+ <label class="f" style="margin-top:12px">Jar goal age (70–122)</label><div class="gctl"><button onclick="stepGoal(-1)">−</button><input type="range" class="goalIn" min="70" max="122" step="1" oninput="setGoal(this.value)"><button onclick="stepGoal(1)">+</button><b class="goalTxt">100</b></div><div class="gnote" title="Jeanne Calment (1875–1997), 122 years: oldest verified human.">ⓘ 122 = Jeanne Calment, oldest verified human.</div>
+ <button class="big" style="margin-top:14px" onclick="saveProfile()">Show my clock</button>
+</div>
+<div class="sheet" id="hab"><h2>My habits <button class="mathBtn" onclick="toggleMath('hab')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
+ <div class="sub">Pick what's true today. The gray slice after your pace marker is time you can win back.</div>
+ <button class="big" onclick="allGood()">✨ Switch on all good habits</button>
+ <div id="habList"></div></div>
+<div class="sheet" id="gap"><h2>Win back time <button class="mathBtn" onclick="toggleMath('gap')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
+ <div class="sub" id="gapSub"></div><div id="gapList"></div></div>
+<div class="sheet" id="days"><h2>Where your day goes <button class="mathBtn" onclick="toggleMath('days')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
+ <div id="clockFree"></div>
+ <div class="sub">The colored arcs on the clock show the rest of your day. Hours per day during working years (defaults: US averages, BLS American Time Use Survey 2025). After retirement, work and commute time turn into free time.</div>
+ <div id="sliders"></div>
+ <div class="sl" style="grid-template-columns:18px 1fr 52px"><i style="background:transparent"></i><label>Retire at age<input type="range" id="retire" min="45" max="85" step="1"></label><b id="retireV"></b></div>
+ <div id="dayTable"></div></div>
+
+</div>
+<script>
+'use strict';
+/* =========================================================================
+   YOLO · Life Clock (rough draft; shares engine with jar.html) — for Mike / Pirate
+   Single file, vanilla JS, canvas. Saves to localStorage key 'yolojar_v1'.
+   ========================================================================= */
+
+/* --- SSA period life table, 2023, as used in the 2026 Trustees Report ---
+   Source: https://www.ssa.gov/oact/STATS/table4c6.html (fetched 2026-10-20)
+   Values = period life expectancy (remaining years) at exact age 0..119. */
+const SSA_M=[75.79,75.25,74.28,73.31,72.33,71.34,70.35,69.36,68.37,67.38,66.39,65.39,64.40,63.41,62.43,61.45,60.48,59.51,58.56,57.62,56.69,55.76,54.83,53.90,52.98,52.06,51.14,50.23,49.32,48.41,47.50,46.60,45.70,44.81,43.91,43.02,42.13,41.24,40.36,39.47,38.59,37.71,36.83,35.95,35.08,34.21,33.34,32.48,31.62,30.76,29.90,29.05,28.21,27.38,26.55,25.73,24.92,24.12,23.34,22.56,21.79,21.04,20.29,19.56,18.83,18.12,17.41,16.71,16.02,15.34,14.66,14.00,13.34,12.69,12.05,11.42,10.80,10.19,9.61,9.04,8.50,7.97,7.46,6.97,6.50,6.04,5.61,5.20,4.81,4.45,4.11,3.80,3.50,3.23,2.99,2.77,2.58,2.41,2.27,2.15,2.04];
+const SSA_F=[81.06,80.48,79.51,78.53,77.54,76.55,75.56,74.57,73.58,72.59,71.59,70.60,69.61,68.62,67.63,66.64,65.66,64.67,63.69,62.72,61.74,60.77,59.80,58.83,57.86,56.90,55.93,54.97,54.00,53.04,52.08,51.13,50.18,49.23,48.28,47.34,46.39,45.45,44.51,43.58,42.64,41.71,40.78,39.86,38.93,38.01,37.10,36.18,35.27,34.36,33.45,32.55,31.66,30.77,29.89,29.01,28.14,27.28,26.42,25.57,24.73,23.90,23.08,22.27,21.46,20.66,19.87,19.08,18.30,17.53,16.76,16.01,15.26,14.53,13.81,13.10,12.41,11.73,11.08,10.44,9.82,9.22,8.64,8.08,7.54,7.02,6.53,6.05,5.61,5.19,4.80,4.44,4.10,3.79,3.50,3.23,2.99,2.77,2.57,2.39,2.23];
+const ex=(age,sex)=>{const t=sex==='f'?SSA_F:SSA_M;const a=Math.max(0,Math.min(100,age));const i=Math.floor(a),fr=a-i;return i>=100?t[100]:t[i]+(t[i+1]-t[i])*fr};
+
+/* --- Habit effects: ONLY rows labeled verified/corrected & illustrative=no in
+   /workspace/pirate-apps/life-clock-research/MASTER-LIFE-MINUTES-v3.csv (1,429 rows).
+   Row ids are noted per habit. Values are lifetime years vs the study's reference group.
+   Many were reported "at age 40" (or 20/25/30/45); for older users we shrink them by
+   SSA e(age)/e(refAge) (never inflate) — a draft shortcut, see report. */
+const HABITS=[
+ {id:'steps',g:'move',label:'Daily steps',ref:40,def:0,
+  opts:[['Under 4,000',0],['4–6k',1.5],['6–8k',4.5],['8–10k',7.5],['10k+',9]],
+  src:'zhuang_1k: +1.5 y per extra 1,000 steps/day above <4k, LE at 40 (Zhuang 2026, J Phys Act Health). Capped at 10k. Conservative vs zhuang_8k (+15.7 y).'},
+ {id:'exercise',g:'move',label:'Workouts / sports',ref:40,def:0,
+  opts:[['None',0],['Up to 75 min/wk',1.8],['~150 min/wk',3.4],['~300 min/wk',4.2],['450+ min/wk',4.5]],
+  src:'moore_75, yolo_moore_150 (Moore 2012 PLoS Med, LE after 40; bands +1.8/+2.5/+3.4/+4.2/+4.5). Steps & workouts overlap: only the bigger of the two counts.'},
+ {id:'sleep',label:'Sleep',ref:30,def:0,
+  opts:[['Short / restless',0],['7–8 h, wake rested',{m:4.7,f:2.4}]],
+  src:'sleep_qian: all 5 healthy sleep factors vs 0–1, at age 30: +4.7 y men / +2.4 y women (Qian, ACC 2023 abstract).'},
+ {id:'alcohol',label:'Alcohol (US drinks/week)',ref:40,def:0,
+  opts:[['0–7',0],['8–14',-0.5],['15–25',-1.5],['25+',-4.5]],
+  src:'alc_wood, wood_100_200, wood_gt350 (Wood 2018 Lancet, at age 40). 100/200/350 g/wk ≈ 7/14/25 drinks of 14 g. 15–25 uses the midpoint of −1 to −2 y.'},
+ {id:'tv',label:'TV (hours/day)',ref:25,def:2.38,tv:true,
+  opts:[['Under 1 h',0.5],['2 h',2],['3 h',3],['4 h',4],['6 h+',6]],
+  src:'tv_6h_life: 6 h/day vs none = −4.8 y → −0.8 y per daily hour (Veerman 2012 BJSM, age 25+). Default = ATUS 2025 men 2.81 / women 2.42 h… set via “Where days go”.'},
+ {id:'bmi',label:'Body weight (BMI)',ref:40,def:0,
+  opts:[['Under 30',0],['30–39',-3],['40+',-9]],
+  src:'bmi_psc: BMI 30–35 −2 to −4 y, 40–45 −8 to −10 y vs 22.5–25 (Prospective Studies Collaboration 2009 Lancet). Midpoints; 35–39 uses the 30–35 value (conservative).'},
+ {id:'fv',g:'diet',label:'Fruit & veg, 5 servings/day',ref:45,def:0,opts:[['No',0],['Yes',3]],
+  src:'yolo_fv5_bellavia: 5/day vs never = +3 y (Bellavia 2013 Am J Clin Nutr, Swedish adults 45–83).'},
+ {id:'nuts',g:'diet',label:'Handful of nuts daily (25 g)',ref:20,def:0,opts:[['No',0],['Yes',2.0]],src:'fadnes_nuts: +2.0 y sustained from age 20 (Fadnes 2022 PLOS Med).'},
+ {id:'legumes',g:'diet',label:'Beans / lentils daily',ref:20,def:0,opts:[['No',0],['Yes',2.5]],src:'fadnes_legumes: 0→200 g/day +2.5 y from age 20 (Fadnes 2022).'},
+ {id:'grains',g:'diet',label:'Whole grains daily',ref:20,def:0,opts:[['No',0],['Yes',2.3]],src:'fadnes_wholegrains: +175 g/day +2.3 y from age 20 (Fadnes 2022).'},
+ {id:'redmeat',g:'diet',label:'Red meat most days (~100 g)',ref:20,def:0,opts:[['No',0],['Yes',-1.9]],src:'fadnes_redmeat: 100 g/day → 0 gains 1.9 y from age 20 (Fadnes 2022).'},
+ {id:'procmeat',g:'diet',label:'Processed meat most days (~50 g)',ref:20,def:0,opts:[['No',0],['Yes',-1.9]],src:'fadnes_procmeat: 50 g/day → 0 gains 1.9 y from age 20 (Fadnes 2022).'}
+];
+/* Smoking: smoke_lifetime / substance_smoker_jha / yolo2_pack_10y = −10 y persistent smoker vs never.
+   Quitting (substance_quit_doll_30/40/50/60, Doll 2004 BMJ) gains ~10/9/6/3 y vs continuing → residual
+   loss = 10 − gain(quit age), linear between those ages. Jha 2013 NEJM rows (10/9/6/4) agree. */
+const DOLL=[[30,10],[40,9],[50,6],[60,3]];
+const quitGain=q=>{if(q<=30)return 10;if(q>=60)return 3;for(let i=0;i<3;i++){const[a,ga]=DOLL[i],[b,gb]=DOLL[i+1];if(q<=b)return ga+(gb-ga)*(q-a)/(b-a)}};
+/* Caps (verified rows): mvp8 all 8 lifestyle factors vs none at 40 = +24 y M / +20.5 y F (Nguyen, AJCN; Million Veteran
+   Program) caps total habit GAINS; fadnes_uk unhealthy→Eatwell diet at 40 = +8.9 M / +8.6 F caps diet gains. */
+const CAP_ALL={m:24,f:20.5},CAP_DIET={m:8.9,f:8.6};
+
+/* --- Where days go: BLS American Time Use Survey 2025 results (released 2026-06-25)
+   https://www.bls.gov/news.release/atus.t08b.htm (Table 8B, employed adults, no household children; men/women)
+   https://www.bls.gov/news.release/atus.nr0.htm (games & computer leisure incl. social media = 37 min/day)
+   Commute: Census ACS 2024 mean one-way travel time 27.2 min (S0801) ×2 ×5/7 = 0.65 h/day.
+   https://www.census.gov/topics/employment/commuting/guidance/acs-1yr.html
+   grooming = personal care − sleeping; chores = household activities + purchasing; caring = household + nonhousehold members. */
+const CATS=[
+ {id:'sleep',label:'Sleep',col:'#4656a8',m:8.66,f:9.02},
+ {id:'work',label:'Work',col:'#4f86c0',m:5.24,f:4.83,job:1},
+ {id:'commute',label:'Commuting',col:'#9a7350',m:0.65,f:0.65,job:1},
+ {id:'screens',label:'Phone / computer / games',col:'#a15fe0',m:0.62,f:0.62},
+ {id:'tv',label:'TV',col:'#e0546f',m:2.38,f:2.04},
+ {id:'chores',label:'Chores & errands',col:'#2fb3a6',m:2.00,f:2.65},
+ {id:'eating',label:'Eating',col:'#ef9440',m:1.17,f:1.14},
+ {id:'grooming',label:'Grooming & self-care',col:'#e48bc2',m:0.67,f:0.86},
+ {id:'caring',label:'Caring for others',col:'#63c463',m:0.24,f:0.19}
+];
+const FREE={id:'free',label:'Free time: trips, family, freedom',col:'#ffd84a'};
+const GRAY='#9aa0aa';
+
+/* ----------------------------- state ----------------------------- */
+const KEY='yolojar_v1';
+function defaults(sex){const h={};CATS.forEach(c=>h[c.id]=c[sex||'m']);const hb={};HABITS.forEach(x=>hb[x.id]=x.def);hb.tv=h.tv;
+ return{age:48,sex:'m',goal:100,retire:67,hours:h,hab:hb,smoke:{status:'never',packs:1,years:25,quit:43},seen:false}}
+let S;try{S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=defaults()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ----------------------------- math ----------------------------- */
+let DAYS=36525; // = round(goal × 365.25); set in build()
+const goalOf=()=>Math.max(70,Math.min(122,Math.round(+S.goal||100)));
+function scale(ref){return Math.min(1,ex(S.age,S.sex)/ex(ref,S.sex))}
+function optVal(v){return typeof v==='object'?v[S.sex]:v}
+function habitYears(h,val){ // val = selected option value (or tv hours)
+ if(h.tv)return -0.8*val*scale(h.ref);
+ return optVal(val)*scale(h.ref)}
+function bestVal(h){if(h.tv)return h.opts[0][1];let b=h.opts[0][1],by=-1e9;h.opts.forEach(o=>{const y=optVal(o[1]);if(y>by){by=y;b=o[1]}});return b}
+function smokeYears(sm,age){if(sm.status==='current')return -10;if(sm.status==='former')return -(10-quitGain(Math.min(sm.quit,age)));return 0}
+function calc(hab,sm){
+ const e=ex(S.age,S.sex),parts={};let diet=0,dietNeg=0,pos=0,neg=0;
+ HABITS.forEach(h=>{parts[h.id]=habitYears(h,hab[h.id])});
+ const move=Math.max(parts.steps,parts.exercise);
+ HABITS.forEach(h=>{const y=parts[h.id];if(h.g==='move')return;if(h.g==='diet'){y>0?diet+=y:dietNeg+=y}else{y>0?pos+=y:neg+=y}});
+ diet=Math.min(diet,CAP_DIET[S.sex]*scale(40));
+ pos=Math.min(pos+diet+move,CAP_ALL[S.sex]*scale(40));
+ const smk=smokeYears(sm,S.age);
+ const total=pos+neg+dietNeg+smk;
+ return{e,parts,move,smk,total,proj:S.age+e+total}}
+function bestHab(){const b={};HABITS.forEach(h=>b[h.id]=bestVal(h));return b}
+function bestSmoke(){const sm=Object.assign({},S.smoke);if(sm.status==='current'){sm.status='former';sm.quit=S.age}return sm}
+function model(){
+ const cur=calc(S.hab,S.smoke),best=calc(bestHab(),bestSmoke());
+ const permanent=-smokeYears(bestSmoke(),S.age); // past smoking that can't be undone
+ const lived=Math.min(DAYS,Math.round(S.age*365.25)),left=DAYS-lived;
+ let grayYrs=Math.max(0,best.proj-cur.proj)+permanent;
+ const grayDays=Math.min(left,Math.round(grayYrs*365.25));
+ return{cur,best,permanent,lived,left,grayYrs,grayDays}}
+
+/* ----------------------------- UI ----------------------------- */
+const $=id=>document.getElementById(id);const fmt=n=>Math.round(n).toLocaleString('en-US');const f1=n=>(Math.round(n*10)/10).toFixed(1);
+function sgn(y){const r=Math.round(y*10)/10;return(r>0?'+':r<0?'−':'±')+Math.abs(r).toFixed(1)+' y'}
+function cls(y){return Math.abs(y)<0.05?'zero':y>0?'pos':'neg'}
+function freeDays(end){const now=S.age,ret=Math.max(now,S.retire),pw=props(true),pr=props(false);const w=Math.max(0,Math.min(end,ret)-now),r=Math.max(0,end-Math.max(now,ret));return(w*pw.free+r*pr.free)*365.25}
+
+function chips(id,opts,cur,fn){return'<div class="chips">'+opts.map((o,k)=>`<button class="${(o[1]===cur||(typeof o[1]==='object'&&JSON.stringify(o[1])===JSON.stringify(cur)))?'on':''}" onclick="${fn}('${id}',${k})">${o[0]}</button>`).join('')+'</div>'}
+function renderHabits(M){
+ const sm=S.smoke,sy=M.cur.smk;let h=`<div class="row"><div class="lab">Smoking <span class="eff ${cls(sy)}">${sgn(sy)}</span></div>
+ ${chips('smk',[['Never',0],['Quit',1],['Smoke now',2]],{never:0,former:1,current:2}[sm.status],'setSmoke')}
+ ${sm.status!=='never'?`<div class="grid2" style="margin-top:8px"><div><label class="f">Packs/day</label><input type="number" step="0.5" min="0" max="5" value="${sm.packs}" onchange="S.smoke.packs=+this.value;render()"></div><div><label class="f">Years smoked</label><input type="number" min="0" max="80" value="${sm.years}" onchange="S.smoke.years=+this.value;if(S.smoke.status==='former'){S.smoke.quit=Math.min(S.age,18+S.smoke.years)};render()"></div>${sm.status==='former'?`<div><label class="f">Quit at age</label><input type="number" min="10" max="${S.age}" value="${sm.quit}" onchange="S.smoke.quit=+this.value;render()"></div>`:''}</div>`:''}
+ <div class="src">Persistent smoking −10 y vs never (Doll 2004 BMJ; Jha 2013 NEJM). Quitting at ~30/40/50/60 wins back ~10/9/6/3 y (Doll 2004). Pack size isn't modeled yet.</div></div>`;
+ HABITS.forEach(x=>{const v=S.hab[x.id];const y=M.cur.parts[x.id];const counted=x.g!=='move'||Math.abs(y-M.cur.move)<1e-9;
+  let sel=v;if(x.tv){let k=0,bd=1e9;x.opts.forEach((o,i)=>{const d=Math.abs(o[1]-v);if(d<bd){bd=d;k=i}});sel=x.opts[k][1]}
+  h+=`<div class="row"><div class="lab">${x.label}${x.tv?' · '+f1(v)+' h':''} <span class="eff ${cls(y)}" style="${counted?'':'opacity:.45'}">${sgn(y)}${counted?'':' (overlaps)'}</span></div>${chips(x.id,x.opts,sel,'setHab')}<div class="src">${x.src}</div></div>`});
+ $('habList').innerHTML=h}
+function setHab(id,k){const x=HABITS.find(h=>h.id===id);S.hab[id]=x.opts[k][1];if(x.tv)S.hours.tv=x.opts[k][1];assignColors();render()}
+function setSmoke(_,k){const st=['never','former','current'][k];if(st==='former'&&S.smoke.status==='current')S.smoke.quit=S.age;S.smoke.status=st;render()}
+function gains(M){const out=[];const base=calc(S.hab,S.smoke).proj;
+ if(S.smoke.status==='current'){const g=calc(S.hab,bestSmoke()).proj-base;out.push({k:'smoke',label:'Quit smoking today',g,src:'Doll 2004 / Jha 2013 quit-age rows'})}
+ HABITS.forEach(x=>{const b=bestVal(x);const h2=Object.assign({},S.hab,{[x.id]:b});const g=calc(h2,S.smoke).proj-base;if(g>0.05){const o=x.opts.find(o=>o[1]===b);out.push({k:x.id,label:x.label+' → '+o[0],g,src:x.src.split(/[:(]/)[0]})}});
+ return out.sort((a,b)=>b.g-a.g)}
+function renderGap(M){const G=gains(M);const GO=S.goal;
+ $('gapSub').innerHTML=`On pace for <b>${f1(M.cur.proj)}</b>. With every good habit below: <b>${f1(M.best.proj)}</b>. ${M.best.proj<GO?'Gap to your goal of '+GO+' still left after that: '+f1(GO-M.best.proj)+' yrs (genes, luck, and medicine studies can\'t measure yet).':'That reaches your goal of '+GO+' (ahead by '+f1(M.best.proj-GO)+' yrs).'} Gains overlap, so they don\'t simply add.`;
+ $('gapList').innerHTML=G.length?G.map(x=>`<div class="gapitem"><div class="g">+${f1(x.g)}y</div><div class="d">${x.label}<div class="src">${x.src}</div></div><button onclick="applyGain('${x.k}')">Switch on</button></div>`).join('')+`<button class="big" onclick="allGood()">✨ Switch on all of them</button>`:'<div class="sub">Every habit in this draft is already switched on. Nice work, Pirate. 🏴‍☠️</div>'}
+function renderDays(M){
+ let h='';CATS.forEach(c=>{h+=`<div class="sl"><i style="background:${c.col}"></i><label>${c.label}<input type="range" min="0" max="${c.id==='sleep'?12:c.id==='work'?14:8}" step="0.25" value="${S.hours[c.id]}" oninput="setHour('${c.id}',this.value)"></label><b id="hv_${c.id}">${(+S.hours[c.id]).toFixed(2)}h</b></div>`});
+ if(!$('sliders').dataset.built){$('sliders').innerHTML=h;$('sliders').dataset.built=1}else{CATS.forEach(c=>{const el=$('hv_'+c.id);el.textContent=(+S.hours[c.id]).toFixed(2)+'h';el.previousElementSibling.querySelector('input').value=S.hours[c.id]})}
+ $('retire').value=S.retire;$('retireV').textContent=S.retire;
+ // split remaining days (to on-pace age, and to goal age) by category
+ const GO=S.goal,now=S.age,end=Math.min(122,M.cur.proj),ret=Math.max(now,S.retire);
+ const pw=props(true),pr=props(false);
+ const yrsW=e=>Math.max(0,Math.min(e,ret)-now),yrsR=e=>Math.max(0,e-Math.max(now,ret));
+ const row=(id,e)=>(yrsW(e)*pw[id]+yrsR(e)*pr[id])*365.25;
+ const rows=[...CATS,FREE].map(c=>({c,a:row(c.id,end),b:row(c.id,GO)}));
+ const freeW=pw.free*24,freeR=pr.free*24,over=24-CATS.reduce((a,c)=>a+ +S.hours[c.id],0);
+ $('dayTable').innerHTML=(over<0?`<div class="sub" style="color:var(--red)">Your hours add up to more than 24. Free time is set to 0.</div>`:'')+
+ `<div class="sub" style="margin-top:8px">Your free time: <b style="color:#ffe27a">${freeW.toFixed(1)} h/day</b> while working → <b style="color:#ffe27a">${freeR.toFixed(1)} h/day</b> after ${S.retire}.</div>
+ <table><tr><td><b>Days left by activity</b><div class="src">(24-hour days' worth)</div></td><td>to ${f1(end)}</td><td>to ${GO}</td></tr>${rows.map(r=>`<tr class="${r.c.id==='free'?'free':''}"><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${r.c.col};margin-right:6px"></span>${r.c.label}</td><td>${fmt(r.a)}</td><td>${fmt(r.b)}</td></tr>`).join('')}</table>
+ <div class="sub" style="margin-top:8px">🟡 <b style="color:#ffe27a">${fmt(rows.at(-1).a)} free days to spend your way</b> (trips, family, freedom, less work) on your current pace, <b style="color:#ffe27a">${fmt(rows.at(-1).b)}</b> if you make it to ${GO}. ${GO>=end?`Reaching ${GO} adds ${fmt(rows.at(-1).b-rows.at(-1).a)} free days, ${fmt(rows[1].b-rows[1].a)} work days.`:`You're on pace to pass ${GO}: ${fmt(rows.at(-1).a-rows.at(-1).b)} bonus free days beyond it.`}</div>`}
+function setHour(id,v){S.hours[id]=+v;if(id==='tv')S.hab.tv=+v;assignColors();render(false)}
+$('retire').oninput=e=>{S.retire=+e.target.value;assignColors();render(false)};
+function acceptConsent(){S.accepted=true;save();$('consent').classList.remove('on');if(!S.seen)openSheet('prof')}
+function openGoal(){$('goalPop').classList.toggle('on')}
+function stepGoal(d){setGoal(S.goal+d)}
+function openSheet(id){closeSheets();if(id==='prof'){$('inAge').value=S.age;$('inSex').value=S.sex}$(id).classList.add('on')}
+function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'))}
+function saveProfile(){const a=Math.max(1,Math.min(99,Math.round(+$('inAge').value||S.age)));const sexChanged=$('inSex').value!==S.sex;S.age=a;S.sex=$('inSex').value;S.seen=true;
+ if(S.smoke.quit>a)S.smoke.quit=a;if(sexChanged){CATS.forEach(c=>S.hours[c.id]=c[S.sex]);S.hab.tv=S.hours.tv}
+ closeSheets();assignColors();render()}
+/* ----------------------------- clock engine ----------------------------- */
+/* Concept: your whole life, birth → goal age, is one 24-hour day (midnight to midnight).
+   life time (h) = age / goal × 24.  48 of 100 → 11.52 h → 11:31 AM.  1 clock hour = goal/24 years. */
+function props(working){const t={};let sum=0;CATS.forEach(c=>{const v=(c.job&&!working)?0:+S.hours[c.id];t[c.id]=v;sum+=v});t.free=Math.max(0,24-sum);const tot=sum+t.free;Object.keys(t).forEach(k=>t[k]/=tot);return t}
+function assignColors(){} // (jar-only; kept so shared UI code can call it)
+const toH=age=>age/S.goal*24;                       // life age → clock hours
+function clockTime(h,opts={}){ // exact 12-hour time with AM/PM, rounded to the minute
+ let m=Math.round(h*60);if(m>=1440&&!opts.wrap)return'midnight';m=((m%1440)+1440)%1440;const hh=Math.floor(m/60),mm=m%60;
+ return(hh%12===0?12:hh%12)+':'+String(mm).padStart(2,'0')+' '+(hh<12?'AM':'PM')}
+function dur(h){const m=Math.round(h*60);const hh=Math.floor(m/60),mm=m%60;return(hh?hh+'h ':'')+mm+'m'}
+const cv=document.getElementById('face'),ctx=cv.getContext('2d');
+let W,H,DPR,G={cx:0,cy:0,R:100},mode='life';
+let view={now:0,pace:0,best:0},target={now:0,pace:0,best:0},anim=null,sparks=[],t0=performance.now();
+function build(){S.goal=goalOf();DAYS=Math.round(S.goal*365.25);DPR=Math.min(3,window.devicePixelRatio||1);W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;cv.width=W*DPR;cv.height=H*DPR;
+ const top=172,bottom=H-170;G.R=Math.max(90,Math.min(W*0.44,(bottom-top-70)/2));G.cx=W/2;G.cy=Math.max(top+G.R,(top+bottom-70)/2);
+ const hud=$('below');if(hud)hud.style.top=(G.cy+G.R+14)+'px'}
+const ang=h=>-Math.PI/2+h/24*Math.PI*2;
+// sky colors through the day (decorative; free time is gold in "Where your day goes")
+const SKY=[[0,'#3a3f8f'],[5,'#6b5bb5'],[7,'#e98aa6'],[9,'#6fb7ff'],[13,'#57d1e8'],[16.5,'#7ddc9c'],[18.5,'#ffb35c'],[20,'#e8667a'],[22,'#8a63c9'],[24,'#3a3f8f']];
+function lerpCol(a,b,t){const pa=parseInt(a.slice(1),16),pb=parseInt(b.slice(1),16);const r=(pa>>16)+((pb>>16)-(pa>>16))*t,g=(pa>>8&255)+((pb>>8&255)-(pa>>8&255))*t,bl=(pa&255)+((pb&255)-(pa&255))*t;return`rgb(${r|0},${g|0},${bl|0})`}
+function skyAt(h){for(let i=0;i<SKY.length-1;i++){const[a,ca]=SKY[i],[b,cb]=SKY[i+1];if(h<=b)return lerpCol(ca,cb,(h-a)/(b-a))}return SKY[0][1]}
+function arc(r,h1,h2,w,style,cap){if(h2<=h1)return;ctx.beginPath();ctx.arc(G.cx,G.cy,r,ang(h1),ang(h2));ctx.lineWidth=w;ctx.strokeStyle=style;ctx.lineCap=cap||'butt';ctx.stroke()}
+function segments(){ // activity slices from now → end of pace (capped at midnight), chronological
+ const now=view.now,end=Math.min(24,view.pace),ret=Math.max(now,Math.min(end,toH(S.retire)));const out=[];
+ const push=(a,b,p)=>{let x=a;[...CATS,FREE].forEach(c=>{const w=(b-a)*p[c.id];if(w>0){out.push([x,x+w,c.col,c.id]);x+=w}})};
+ if(ret>now)push(now,ret,props(true));if(end>ret)push(ret,end,props(false));return{out,ret}}
+function draw(ts){
+ const{cx,cy,R}=G;ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);
+ const bg=ctx.createRadialGradient(cx,cy,R*0.2,cx,cy,Math.max(W,H));bg.addColorStop(0,'#14305a');bg.addColorStop(1,'#071224');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ // bezel + face
+ const bz=ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);bz.addColorStop(0,'#f6dc8c');bz.addColorStop(.5,'#9c7524');bz.addColorStop(1,'#f0cf73');
+ ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fillStyle=bz;ctx.fill();
+ const fc=ctx.createRadialGradient(cx,cy-R*0.3,R*0.1,cx,cy,R);fc.addColorStop(0,'#16325e');fc.addColorStop(1,'#0a1830');ctx.beginPath();ctx.arc(cx,cy,R-6,0,7);ctx.fillStyle=fc;ctx.fill();
+ const rr=R-24,w=20;
+ // track
+ arc(rr,0,24,w,'#ffffff10');
+ // lived (dimmed)
+ arc(rr,0,view.now,w,'#ffffff24');
+ // remaining day up to pace
+ const end=Math.min(24,view.pace);
+ if(mode==='days'){const{out}=segments();out.forEach(s=>arc(rr,s[0],s[1]+0.01,w,s[2]))}
+ else{const step=0.08;for(let h=view.now;h<end;h+=step)arc(rr,h,Math.min(end,h+step+0.01),w,skyAt(h))}
+ // gray slice: pace → midnight (goal). brighter = winnable with habits, faint = beyond
+ if(view.pace<24){const bestEnd=Math.min(24,Math.max(view.pace,view.best));
+  arc(rr,view.pace,bestEnd,w,'#a9aeb7');
+  // crack hatch on the winnable part
+  ctx.save();ctx.strokeStyle='#3b3f46';ctx.lineWidth=1.2;for(let h=view.pace+0.12;h<bestEnd;h+=0.22){const a=ang(h);ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*(rr-w/2+2),cy+Math.sin(a)*(rr-w/2+2));const a2=ang(h+0.09);ctx.lineTo(cx+Math.cos(a2)*(rr+w/2-2),cy+Math.sin(a2)*(rr+w/2-2));ctx.stroke()}ctx.restore();
+  arc(rr,bestEnd,24,w,'#a9aeb740')}
+ else{ // ahead of goal: bonus ring past midnight
+  arc(rr+w/2+5,0,Math.min(24,view.pace-24),4,'#5fe08a','round')}
+ // ticks + labels
+ ctx.save();ctx.translate(cx,cy);for(let i=0;i<96;i++){const h=i/4,a=ang(h),maj=i%12===0,mid=i%4===0;const r1=rr-w/2-(maj?14:mid?9:5),r2=rr-w/2-3;ctx.beginPath();ctx.moveTo(Math.cos(a)*r1,Math.sin(a)*r1);ctx.lineTo(Math.cos(a)*r2,Math.sin(a)*r2);ctx.strokeStyle=maj?'#f0cf73':mid?'#ffffff88':'#ffffff30';ctx.lineWidth=maj?2.4:mid?1.4:1;ctx.stroke()}
+ ctx.fillStyle='#dfe7f3';ctx.textAlign='center';ctx.textBaseline='middle';
+ [[0,'12 AM'],[3,'3'],[6,'6 AM'],[9,'9'],[12,'12 PM'],[15,'3'],[18,'6 PM'],[21,'9']].forEach(([h,l])=>{const a=ang(h),r=rr-w/2-30;ctx.font=(h%6===0?'700 13px':'600 12px')+' system-ui,sans-serif';ctx.fillText(l,Math.cos(a)*r,Math.sin(a)*r)});
+ ctx.font='600 10.5px system-ui,sans-serif';ctx.fillStyle='#9fb0c9';ctx.fillText('midnight = age '+S.goal,0,-(rr-w/2-50));ctx.fillStyle='#f0cf73aa';ctx.fillText(mode==='days'?'tap to close':'tap for your day',0,-(rr-w/2-66));
+ ctx.restore();
+ // pace marker
+ if(view.pace<24.0001){const a=ang(view.pace);const px=cx+Math.cos(a)*rr,py=cy+Math.sin(a)*rr;ctx.beginPath();ctx.arc(px,py,w/2+3,0,7);ctx.fillStyle='#0b1a33';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#ffe27a';ctx.stroke();ctx.beginPath();ctx.arc(px,py,3.5,0,7);ctx.fillStyle='#ffe27a';ctx.fill()}
+ // hands: hour (24h), minute, seconds (real-time tick)
+ const hA=ang(view.now),mA=-Math.PI/2+((view.now*60)%60)/60*Math.PI*2;
+ const sec=Math.floor((Date.now())/1000)%60,sA=-Math.PI/2+sec/60*Math.PI*2;
+ const hand=(a,len,wd,col,tail)=>{ctx.save();ctx.translate(cx,cy);ctx.rotate(a);ctx.beginPath();ctx.moveTo(-(tail||0),0);ctx.lineTo(len,0);ctx.lineWidth=wd;ctx.lineCap='round';ctx.strokeStyle=col;ctx.shadowColor='#000a';ctx.shadowBlur=6;ctx.stroke();ctx.restore()};
+ hand(hA,rr-w/2-6,7,'#f0cf73',14);hand(sA,rr-w/2-12,1.4,'#ffb86b',18);
+ ctx.beginPath();ctx.arc(cx,cy,7,0,7);ctx.fillStyle='#f0cf73';ctx.fill();ctx.beginPath();ctx.arc(cx,cy,2.6,0,7);ctx.fillStyle='#0b1a33';ctx.fill();
+ // sparks
+ for(const p of sparks){ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r*(0.5+p.l),0,7);ctx.fill()}ctx.globalAlpha=1}
+let lastM=null,last=0;
+function loop(ts){const dt=Math.min(50,ts-(last||ts));last=ts;
+ mode=$('days').classList.contains('on')?'days':'life';
+ if(anim){anim.p=Math.min(1,anim.p+dt/anim.dur);const e=1-Math.pow(1-anim.p,3);const prev=view.pace;['now','pace','best'].forEach(k=>view[k]=anim.from[k]+(target[k]-anim.from[k])*e);
+  if(view.pace>prev+1e-4&&anim.from.now===target.now){const a=ang(Math.min(24,view.pace)),rr=G.R-24;for(let k=0;k<4;k++)sparks.push({x:G.cx+Math.cos(a)*rr,y:G.cy+Math.sin(a)*rr,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,l:1,r:1.5+Math.random()*2.4,c:Math.random()<.6?'#ffe27a':'#fff'})}
+  if(anim.p>=1)anim=null}
+ for(const p of sparks){p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt/800}sparks=sparks.filter(p=>p.l>0);
+ draw(ts);requestAnimationFrame(loop)}
+
+/* ----------------------------- clock UI ----------------------------- */
+function render(animate=true){
+ const M=model();lastM=M;const proj=M.cur.proj,GO=S.goal;
+ target.now=toH(S.age);target.pace=toH(proj);target.best=toH(M.best.proj);
+ if(animate)anim={p:0,dur:1500,from:{...view}};else{Object.assign(view,target)}
+ $('nowT').textContent=clockTime(target.now);
+ const paceTxt=proj>=GO?'Your pace runs past midnight 🎯':'Your pace ends at <b>'+clockTime(target.pace)+'</b>';
+ $('paceLine').innerHTML=paceTxt+' · <button id="goalBtn" onclick="openGoal()" title="Tap to change your goal age">Goal: <b>'+GO+'</b> ✎</button>';
+ const gap=GO-proj,rec=Math.max(0,M.best.proj-proj);$('subLine').innerHTML=fmt(Math.max(0,M.left))+' days left · '+(gap>0.05?'gap '+f1(gap)+' yrs':'<span style="color:var(--grn)">ahead of goal by '+f1(-gap)+' yrs</span>')+(rec>0.05?' · <b style="color:var(--grn)">win back up to '+dur(toH(rec))+'</b>':'');
+ document.querySelectorAll('.goalTxt').forEach(e=>e.textContent=GO);document.querySelectorAll('.goalIn').forEach(e=>e.value=GO);$('capTxt').textContent=fmt(DAYS);
+ $('who').textContent=S.age+' · '+(S.sex==='f'?'F':'M')+' ✎';
+ const fd=freeDays(Math.min(GO,proj));$('clockFree').innerHTML='🟡 <b>'+fmt(fd)+' free days</b> to spend your way: trips, family, freedom. That\'s <b>'+dur(fd/DAYS*24)+'</b> of gold on your clock.';
+ $('scaleNote').textContent='On this clock 1 hour = '+f1(GO/24)+' years, 1 minute ≈ '+fmt(GO*365.25/1440)+' days.';
+ renderHabits(M);renderGap(M);renderDays(M);save()}
+function toast(beforeProj){const M=model();const g=M.cur.proj-beforeProj;if(g<0.05)return;const t=$('toast');t.innerHTML='+'+dur(toH(g))+' back on your clock<div style="font-size:13px;color:var(--txt);margin-top:4px">'+(M.cur.proj>=S.goal?'Your pace now runs past midnight':'Pace now ends at '+clockTime(toH(M.cur.proj)))+'</div>';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+function applyGain(k){const b=model().cur.proj;if(k==='smoke'){S.smoke=bestSmoke()}else{const x=HABITS.find(h=>h.id===k);S.hab[k]=bestVal(x);if(x.tv)S.hours.tv=S.hab.tv}render();toast(b)}
+function allGood(){const b=model().cur.proj;S.hab=bestHab();S.hours.tv=S.hab.tv;S.smoke=bestSmoke();render();closeSheets();toast(b)}
+let gT;function setGoal(v){const g=Math.max(70,Math.min(122,Math.round(+v)));if(g===S.goal)return;S.goal=g;document.querySelectorAll('.goalTxt').forEach(e=>e.textContent=g);clearTimeout(gT);gT=setTimeout(()=>{build();render(true)},60)}
+function toggleMath(id){$(id).classList.toggle('math')}
+cv.addEventListener('click',e=>{const rc=cv.getBoundingClientRect(),x=e.clientX-rc.left-G.cx,y=e.clientY-rc.top-G.cy;if(x*x+y*y<=G.R*G.R){if($('days').classList.contains('on'))closeSheets();else openSheet('days')}});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(build,150)});
+window.LJ={get state(){return S},model,allGood,render,setGoal,clockTime,toH,get DAYS(){return DAYS}};
+build();view.now=0;view.pace=0;view.best=0;render(true);if(!S.accepted)$('consent').classList.add('on');else if(!S.seen)openSheet('prof');requestAnimationFrame(loop);
+
+</script>
+</body></html>
