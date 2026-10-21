@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOLO · Life Jar</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🫙%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--grn:#5fe08a;--gray:#9aa0aa}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#jar{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+#hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 52px) 22px 0;text-align:center;pointer-events:none}
+#hud .t{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase}
+#pct{font-size:68px;font-weight:900;line-height:1;margin-top:4px;text-shadow:0 2px 14px #000c}
+#pct small{font-size:24px;font-weight:800}
+#left{font-size:21px;font-weight:800;text-shadow:0 2px 10px #000c}
+#left span{color:var(--gold2)}
+#pace{margin:8px auto 0;display:inline-block;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:6px 12px;font-size:14px;font-weight:700;backdrop-filter:blur(4px)}
+#pace b{color:var(--gold2)} #pace .gap{color:var(--red)}
+#grayNote{margin-top:6px;font-size:12.5px;color:#d7dbe2;text-shadow:0 1px 6px #000}
+#grayNote i{display:inline-block;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#d9dce1,#6d727b);vertical-align:-1px;margin-right:4px}
+#who{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:12px;background:#13284dcc;border:1px solid #ffffff2a;color:var(--txt);border-radius:16px;padding:6px 11px;font-size:13px;font-weight:700}
+#back{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:12px;color:var(--mut);font-size:13px;text-decoration:none;background:#13284dcc;border:1px solid #ffffff2a;border-radius:16px;padding:6px 11px}
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:8px;padding:10px 12px calc(env(safe-area-inset-bottom) + 8px);background:linear-gradient(#0b1a3300,#0b1a33ee 35%)}
+#bar button{flex:1;border:0;border-radius:14px;padding:11px 4px;font-weight:800;font-size:13.5px;color:#1b1400;background:linear-gradient(var(--gold2),var(--gold));box-shadow:0 3px 12px #0008}
+#bar button.alt{background:#13284de6;color:var(--txt);border:1px solid #ffffff30}
+#note{position:fixed;left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;bottom:calc(env(safe-area-inset-bottom) + 64px);text-align:center;font-size:10.5px;color:#d5dceb;background:#0b1a33d9;border-radius:10px;padding:4px 10px;pointer-events:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:58vh;overflow:auto;background:#0d1f3ef5;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding:14px 16px calc(env(safe-area-inset-bottom) + 18px);transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px #000a;z-index:5}
+.sheet.on{transform:none}
+.sheet h2{margin:0 0 4px;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+.sheet h2 button{background:none;border:0;color:var(--mut);font-size:24px;line-height:1}
+.sub{color:var(--mut);font-size:12.5px;margin-bottom:10px}
+.row{padding:10px 0;border-top:1px solid #ffffff14}
+.row .lab{display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-bottom:6px}
+.eff{font-weight:800}.pos{color:var(--grn)}.neg{color:var(--red)}.zero{color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid #ffffff2e;background:#13284d;color:var(--txt);border-radius:12px;padding:6px 10px;font-size:12.5px;font-weight:600}
+.chips button.on{background:var(--gold);color:#1b1400;border-color:var(--gold2)}
+.src{font-size:10.5px;color:#8193ad;margin-top:4px}
+.big{width:100%;border:0;border-radius:14px;padding:12px;font-weight:800;font-size:15px;color:#062b12;background:linear-gradient(#8ff0ad,var(--grn));margin:6px 0 4px}
+input[type=number],select{background:#13284d;color:var(--txt);border:1px solid #ffffff30;border-radius:10px;padding:8px;font-size:15px;width:100%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{font-size:12px;color:var(--mut);display:block}
+.sl{display:grid;grid-template-columns:18px 1fr 52px;align-items:center;gap:8px;margin:5px 0}
+.sl i{width:14px;height:14px;border-radius:50%;display:block;box-shadow:inset -2px -2px 3px #0006}
+.sl label{font-size:13px;display:flex;flex-direction:column}
+.sl input{width:100%;accent-color:var(--gold)}
+.sl b{text-align:right;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:right}
+.free td{color:#ffe27a;font-weight:800}
+.gapitem{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #ffffff14}
+.gapitem .g{font-weight:900;color:var(--grn);min-width:62px;font-size:16px}
+.gapitem .d{flex:1;font-size:13px}
+.gapitem button{border:0;border-radius:10px;padding:7px 10px;font-weight:800;background:var(--gold);color:#1b1400}
+#tip{position:fixed;padding:5px 9px;border-radius:9px;background:#000c;font-size:12px;pointer-events:none;display:none;z-index:4;white-space:nowrap}
+#toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.8);opacity:0;transition:all .35s;background:#0b1a33ee;border:1px solid var(--gold);border-radius:16px;padding:12px 18px;font-weight:900;font-size:18px;color:var(--gold2);pointer-events:none;z-index:6;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+</style></head>
+<body>
+<canvas id="jar"></canvas>
+<a id="back" href="./">← Clock</a>
+<button id="who" onclick="openSheet('prof')">48 · M ✎</button>
+<div id="hud">
+  <div class="t">YOLO · Life Jar</div>
+  <div id="pct">52<small>% full</small></div>
+  <div id="left"><span>18,993</span> days left in the jar</div>
+  <div id="pace"></div>
+  <div id="grayNote"></div>
+</div>
+<div id="note">Estimates from population studies, not a promise or medical advice. 100 is a goal, not a forecast.</div>
+<div id="bar"><button class="alt" onclick="openSheet('hab')">My habits</button><button onclick="openSheet('gap')">What closes the gap</button><button class="alt" onclick="openSheet('days')">Where days go</button></div>
+<div id="tip"></div><div id="toast"></div>
+
+<div class="sheet" id="prof"><h2>About you <button onclick="closeSheets()">×</button></h2>
+ <div class="sub">One marble = one day. A full jar = 100 years = 36,525 marbles.</div>
+ <div class="grid2"><div><label class="f">Age</label><input type="number" id="inAge" min="1" max="99" inputmode="numeric"></div>
+ <div><label class="f">Sex (life tables differ)</label><select id="inSex"><option value="m">Male</option><option value="f">Female</option></select></div></div>
+ <button class="big" style="margin-top:14px" onclick="saveProfile()">Show my jar</button>
+</div>
+<div class="sheet" id="hab"><h2>My habits <button onclick="closeSheets()">×</button></h2>
+ <div class="sub">Pick what's true today. Gray cracked marbles at the surface = time these habits are costing you.</div>
+ <button class="big" onclick="allGood()">✨ Switch on all good habits</button>
+ <div id="habList"></div></div>
+<div class="sheet" id="gap"><h2>What closes the gap <button onclick="closeSheets()">×</button></h2>
+ <div class="sub" id="gapSub"></div><div id="gapList"></div></div>
+<div class="sheet" id="days"><h2>Where your days go <button onclick="closeSheets()">×</button></h2>
+ <div class="sub">Hours per day during working years (defaults: US averages, BLS American Time Use Survey 2025). After retirement, work and commute time turn into free time.</div>
+ <div id="sliders"></div>
+ <div class="sl" style="grid-template-columns:18px 1fr 52px"><i style="background:transparent"></i><label>Retire at age<input type="range" id="retire" min="45" max="85" step="1"></label><b id="retireV"></b></div>
+ <div id="dayTable"></div></div>
+
+<script>
+'use strict';
+/* =========================================================================
+   YOLO · Life Jar (rough draft) — for Mike / Pirate
+   Single file, vanilla JS, canvas. Saves to localStorage key 'yolojar_v1'.
+   ========================================================================= */
+
+/* --- SSA period life table, 2023, as used in the 2026 Trustees Report ---
+   Source: https://www.ssa.gov/oact/STATS/table4c6.html (fetched 2026-10-20)
+   Values = period life expectancy (remaining years) at exact age 0..119. */
+const SSA_M=[75.79,75.25,74.28,73.31,72.33,71.34,70.35,69.36,68.37,67.38,66.39,65.39,64.40,63.41,62.43,61.45,60.48,59.51,58.56,57.62,56.69,55.76,54.83,53.90,52.98,52.06,51.14,50.23,49.32,48.41,47.50,46.60,45.70,44.81,43.91,43.02,42.13,41.24,40.36,39.47,38.59,37.71,36.83,35.95,35.08,34.21,33.34,32.48,31.62,30.76,29.90,29.05,28.21,27.38,26.55,25.73,24.92,24.12,23.34,22.56,21.79,21.04,20.29,19.56,18.83,18.12,17.41,16.71,16.02,15.34,14.66,14.00,13.34,12.69,12.05,11.42,10.80,10.19,9.61,9.04,8.50,7.97,7.46,6.97,6.50,6.04,5.61,5.20,4.81,4.45,4.11,3.80,3.50,3.23,2.99,2.77,2.58,2.41,2.27,2.15,2.04];
+const SSA_F=[81.06,80.48,79.51,78.53,77.54,76.55,75.56,74.57,73.58,72.59,71.59,70.60,69.61,68.62,67.63,66.64,65.66,64.67,63.69,62.72,61.74,60.77,59.80,58.83,57.86,56.90,55.93,54.97,54.00,53.04,52.08,51.13,50.18,49.23,48.28,47.34,46.39,45.45,44.51,43.58,42.64,41.71,40.78,39.86,38.93,38.01,37.10,36.18,35.27,34.36,33.45,32.55,31.66,30.77,29.89,29.01,28.14,27.28,26.42,25.57,24.73,23.90,23.08,22.27,21.46,20.66,19.87,19.08,18.30,17.53,16.76,16.01,15.26,14.53,13.81,13.10,12.41,11.73,11.08,10.44,9.82,9.22,8.64,8.08,7.54,7.02,6.53,6.05,5.61,5.19,4.80,4.44,4.10,3.79,3.50,3.23,2.99,2.77,2.57,2.39,2.23];
+const ex=(age,sex)=>{const t=sex==='f'?SSA_F:SSA_M;const a=Math.max(0,Math.min(100,age));const i=Math.floor(a),fr=a-i;return i>=100?t[100]:t[i]+(t[i+1]-t[i])*fr};
+
+/* --- Habit effects: ONLY rows labeled verified/corrected & illustrative=no in
+   /workspace/pirate-apps/life-clock-research/MASTER-LIFE-MINUTES-v3.csv (1,429 rows).
+   Row ids are noted per habit. Values are lifetime years vs the study's reference group.
+   Many were reported "at age 40" (or 20/25/30/45); for older users we shrink them by
+   SSA e(age)/e(refAge) (never inflate) — a draft shortcut, see report. */
+const HABITS=[
+ {id:'steps',g:'move',label:'Daily steps',ref:40,def:0,
+  opts:[['Under 4,000',0],['4–6k',1.5],['6–8k',4.5],['8–10k',7.5],['10k+',9]],
+  src:'zhuang_1k: +1.5 y per extra 1,000 steps/day above <4k, LE at 40 (Zhuang 2026, J Phys Act Health). Capped at 10k. Conservative vs zhuang_8k (+15.7 y).'},
+ {id:'exercise',g:'move',label:'Workouts / sports',ref:40,def:0,
+  opts:[['None',0],['Up to 75 min/wk',1.8],['~150 min/wk',3.4],['~300 min/wk',4.2],['450+ min/wk',4.5]],
+  src:'moore_75, yolo_moore_150 (Moore 2012 PLoS Med, LE after 40; bands +1.8/+2.5/+3.4/+4.2/+4.5). Steps & workouts overlap: only the bigger of the two counts.'},
+ {id:'sleep',label:'Sleep',ref:30,def:0,
+  opts:[['Short / restless',0],['7–8 h, wake rested',{m:4.7,f:2.4}]],
+  src:'sleep_qian: all 5 healthy sleep factors vs 0–1, at age 30: +4.7 y men / +2.4 y women (Qian, ACC 2023 abstract).'},
+ {id:'alcohol',label:'Alcohol (US drinks/week)',ref:40,def:0,
+  opts:[['0–7',0],['8–14',-0.5],['15–25',-1.5],['25+',-4.5]],
+  src:'alc_wood, wood_100_200, wood_gt350 (Wood 2018 Lancet, at age 40). 100/200/350 g/wk ≈ 7/14/25 drinks of 14 g. 15–25 uses the midpoint of −1 to −2 y.'},
+ {id:'tv',label:'TV (hours/day)',ref:25,def:2.38,tv:true,
+  opts:[['Under 1 h',0.5],['2 h',2],['3 h',3],['4 h',4],['6 h+',6]],
+  src:'tv_6h_life: 6 h/day vs none = −4.8 y → −0.8 y per daily hour (Veerman 2012 BJSM, age 25+). Default = ATUS 2025 men 2.81 / women 2.42 h… set via “Where days go”.'},
+ {id:'bmi',label:'Body weight (BMI)',ref:40,def:0,
+  opts:[['Under 30',0],['30–39',-3],['40+',-9]],
+  src:'bmi_psc: BMI 30–35 −2 to −4 y, 40–45 −8 to −10 y vs 22.5–25 (Prospective Studies Collaboration 2009 Lancet). Midpoints; 35–39 uses the 30–35 value (conservative).'},
+ {id:'fv',g:'diet',label:'Fruit & veg, 5 servings/day',ref:45,def:0,opts:[['No',0],['Yes',3]],
+  src:'yolo_fv5_bellavia: 5/day vs never = +3 y (Bellavia 2013 Am J Clin Nutr, Swedish adults 45–83).'},
+ {id:'nuts',g:'diet',label:'Handful of nuts daily (25 g)',ref:20,def:0,opts:[['No',0],['Yes',2.0]],src:'fadnes_nuts: +2.0 y sustained from age 20 (Fadnes 2022 PLOS Med).'},
+ {id:'legumes',g:'diet',label:'Beans / lentils daily',ref:20,def:0,opts:[['No',0],['Yes',2.5]],src:'fadnes_legumes: 0→200 g/day +2.5 y from age 20 (Fadnes 2022).'},
+ {id:'grains',g:'diet',label:'Whole grains daily',ref:20,def:0,opts:[['No',0],['Yes',2.3]],src:'fadnes_wholegrains: +175 g/day +2.3 y from age 20 (Fadnes 2022).'},
+ {id:'redmeat',g:'diet',label:'Red meat most days (~100 g)',ref:20,def:0,opts:[['No',0],['Yes',-1.9]],src:'fadnes_redmeat: 100 g/day → 0 gains 1.9 y from age 20 (Fadnes 2022).'},
+ {id:'procmeat',g:'diet',label:'Processed meat most days (~50 g)',ref:20,def:0,opts:[['No',0],['Yes',-1.9]],src:'fadnes_procmeat: 50 g/day → 0 gains 1.9 y from age 20 (Fadnes 2022).'}
+];
+/* Smoking: smoke_lifetime / substance_smoker_jha / yolo2_pack_10y = −10 y persistent smoker vs never.
+   Quitting (substance_quit_doll_30/40/50/60, Doll 2004 BMJ) gains ~10/9/6/3 y vs continuing → residual
+   loss = 10 − gain(quit age), linear between those ages. Jha 2013 NEJM rows (10/9/6/4) agree. */
+const DOLL=[[30,10],[40,9],[50,6],[60,3]];
+const quitGain=q=>{if(q<=30)return 10;if(q>=60)return 3;for(let i=0;i<3;i++){const[a,ga]=DOLL[i],[b,gb]=DOLL[i+1];if(q<=b)return ga+(gb-ga)*(q-a)/(b-a)}};
+/* Caps (verified rows): mvp8 all 8 lifestyle factors vs none at 40 = +24 y M / +20.5 y F (Nguyen, AJCN; Million Veteran
+   Program) caps total habit GAINS; fadnes_uk unhealthy→Eatwell diet at 40 = +8.9 M / +8.6 F caps diet gains. */
+const CAP_ALL={m:24,f:20.5},CAP_DIET={m:8.9,f:8.6};
+
+/* --- Where days go: BLS American Time Use Survey 2025 results (released 2026-06-25)
+   https://www.bls.gov/news.release/atus.t08b.htm (Table 8B, employed adults, no household children; men/women)
+   https://www.bls.gov/news.release/atus.nr0.htm (games & computer leisure incl. social media = 37 min/day)
+   Commute: Census ACS 2024 mean one-way travel time 27.2 min (S0801) ×2 ×5/7 = 0.65 h/day.
+   https://www.census.gov/topics/employment/commuting/guidance/acs-1yr.html
+   grooming = personal care − sleeping; chores = household activities + purchasing; caring = household + nonhousehold members. */
+const CATS=[
+ {id:'sleep',label:'Sleep',col:'#4656a8',m:8.66,f:9.02},
+ {id:'work',label:'Work',col:'#4f86c0',m:5.24,f:4.83,job:1},
+ {id:'commute',label:'Commuting',col:'#9a7350',m:0.65,f:0.65,job:1},
+ {id:'screens',label:'Phone / computer / games',col:'#a15fe0',m:0.62,f:0.62},
+ {id:'tv',label:'TV',col:'#e0546f',m:2.38,f:2.04},
+ {id:'chores',label:'Chores & errands',col:'#2fb3a6',m:2.00,f:2.65},
+ {id:'eating',label:'Eating',col:'#ef9440',m:1.17,f:1.14},
+ {id:'grooming',label:'Grooming & self-care',col:'#e48bc2',m:0.67,f:0.86},
+ {id:'caring',label:'Caring for others',col:'#63c463',m:0.24,f:0.19}
+];
+const FREE={id:'free',label:'Free time',col:'#ffd84a'};
+const GRAY='#9aa0aa';
+
+/* ----------------------------- state ----------------------------- */
+const KEY='yolojar_v1';
+function defaults(sex){const h={};CATS.forEach(c=>h[c.id]=c[sex||'m']);const hb={};HABITS.forEach(x=>hb[x.id]=x.def);hb.tv=h.tv;
+ return{age:48,sex:'m',retire:67,hours:h,hab:hb,smoke:{status:'never',packs:1,years:25,quit:43},seen:false}}
+let S;try{S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=defaults()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ----------------------------- math ----------------------------- */
+const DAYS=36525;
+function scale(ref){return Math.min(1,ex(S.age,S.sex)/ex(ref,S.sex))}
+function optVal(v){return typeof v==='object'?v[S.sex]:v}
+function habitYears(h,val){ // val = selected option value (or tv hours)
+ if(h.tv)return -0.8*val*scale(h.ref);
+ return optVal(val)*scale(h.ref)}
+function bestVal(h){if(h.tv)return h.opts[0][1];let b=h.opts[0][1],by=-1e9;h.opts.forEach(o=>{const y=optVal(o[1]);if(y>by){by=y;b=o[1]}});return b}
+function smokeYears(sm,age){if(sm.status==='current')return -10;if(sm.status==='former')return -(10-quitGain(Math.min(sm.quit,age)));return 0}
+function calc(hab,sm){
+ const e=ex(S.age,S.sex),parts={};let diet=0,dietNeg=0,pos=0,neg=0;
+ HABITS.forEach(h=>{parts[h.id]=habitYears(h,hab[h.id])});
+ const move=Math.max(parts.steps,parts.exercise);
+ HABITS.forEach(h=>{const y=parts[h.id];if(h.g==='move')return;if(h.g==='diet'){y>0?diet+=y:dietNeg+=y}else{y>0?pos+=y:neg+=y}});
+ diet=Math.min(diet,CAP_DIET[S.sex]*scale(40));
+ pos=Math.min(pos+diet+move,CAP_ALL[S.sex]*scale(40));
+ const smk=smokeYears(sm,S.age);
+ const total=pos+neg+dietNeg+smk;
+ return{e,parts,move,smk,total,proj:S.age+e+total}}
+function bestHab(){const b={};HABITS.forEach(h=>b[h.id]=bestVal(h));return b}
+function bestSmoke(){const sm=Object.assign({},S.smoke);if(sm.status==='current'){sm.status='former';sm.quit=S.age}return sm}
+function model(){
+ const cur=calc(S.hab,S.smoke),best=calc(bestHab(),bestSmoke());
+ const permanent=-smokeYears(bestSmoke(),S.age); // past smoking that can't be undone
+ const lived=Math.round(S.age*365.25),left=DAYS-lived;
+ let grayYrs=Math.max(0,best.proj-cur.proj)+permanent;
+ const grayDays=Math.min(left,Math.round(grayYrs*365.25));
+ return{cur,best,permanent,lived,left,grayYrs,grayDays}}
+
+/* ----------------------------- jar geometry ----------------------------- */
+const cv=document.getElementById('jar'),ctx=cv.getContext('2d');
+let W,H,DPR,J,POS=[],RAND,SPR={},s=3;
+function jarShape(){
+ const L=Math.round(W*0.045),R=W-L,top=Math.round(H*0.03),neckB=top+56,shoulder=neckB+44,bot=H-6;
+ const nl=W*0.24,nr=W-nl;return{L,R,top,neckB,shoulder,bot,nl,nr,rb:Math.min(46,W*0.12)}}
+function halfWidthAt(y){ // interior half-width at y (CSS px) or -1 outside
+ const j=J,cx=W/2;if(y<j.neckB||y>j.bot-3)return -1;
+ const full=(j.R-j.L)/2-5;
+ if(y<j.shoulder){const t=(y-j.neckB)/(j.shoulder-j.neckB);const e=1-Math.pow(1-t,2.2);return (j.nr-j.nl)/2-4+(full-((j.nr-j.nl)/2-4))*e}
+ if(y>j.bot-j.rb){const dy=y-(j.bot-j.rb);const r=j.rb-5;return full-r+Math.sqrt(Math.max(0,r*r-dy*dy))}
+ return full}
+function layout(sp){ // hex packing from the bottom up; returns positions sorted bottom→top
+ const out=[],rh=sp*0.866;let row=0;
+ for(let y=J.bot-3-sp/2;y>J.neckB+sp/2;y-=rh,row++){
+  const hw=halfWidthAt(y)-sp*0.5;if(hw<=0)continue;
+  const off=(row%2)*sp/2,cx=W/2;const n=Math.floor((2*hw-off)/sp)+1;const x0=cx-hw+off;
+  const rowPts=[];for(let k=0;k<n;k++)rowPts.push(x0+k*sp);
+  for(const x of rowPts)out.push(x,y);
+ }return out}
+function build(){
+ DPR=Math.min(3,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;J=jarShape();
+ let lo=1,hi=8;for(let i=0;i<30;i++){const m=(lo+hi)/2;(layout(m).length/2>=DAYS)?lo=m:hi=m}
+ s=lo;const p=layout(s);POS=new Float32Array(p.slice(0,DAYS*2));
+ RAND=new Float32Array(DAYS);let seed=1234567;for(let i=0;i<DAYS;i++){seed=(seed*1103515245+12345)&0x7fffffff;RAND[i]=seed/0x7fffffff}
+ makeSprites();assignColors();}
+function sprite(col,kind){
+ const d=Math.max(2,s*0.94*DPR),sz=Math.ceil(d)+2,c=document.createElement('canvas');c.width=c.height=sz;const g=c.getContext('2d');const r=d/2,cx=sz/2;
+ const gr=g.createRadialGradient(cx-r*0.35,cx-r*0.4,r*0.1,cx,cx,r);
+ if(kind==='gray'){gr.addColorStop(0,'#e9ebee');gr.addColorStop(.55,'#8d929b');gr.addColorStop(1,'#4a4e56')}
+ else{gr.addColorStop(0,'#ffffff');gr.addColorStop(.25,col);gr.addColorStop(1,shade(col,-0.45))}
+ g.fillStyle=gr;g.beginPath();g.arc(cx,cx,r,0,7);g.fill();
+ if(kind==='gray'&&d>=4){g.strokeStyle='#2b2e33';g.lineWidth=Math.max(.6,d*0.09);g.beginPath();g.moveTo(cx-r*.6,cx-r*.5);g.lineTo(cx-r*.05,cx);g.lineTo(cx+r*.25,cx-r*.2);g.lineTo(cx+r*.6,cx+r*.55);g.stroke()}
+ return c}
+function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=p<0?0:255,t=Math.abs(p);r=Math.round((f-r)*t+r);g=Math.round((f-g)*t+g);b=Math.round((f-b)*t+b);return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
+function makeSprites(){SPR={};[...CATS,FREE].forEach(c=>SPR[c.id]=sprite(c.col));SPR.gray=sprite(GRAY,'gray');SPR.spark=sprite('#fff6c0')}
+let COLOR=[]; // per-marble category id (index 0 = bottom = day 36,524 of life)
+function props(working){const t={};let sum=0;CATS.forEach(c=>{const v=(c.job&&!working)?0:+S.hours[c.id];t[c.id]=v;sum+=v});t.free=Math.max(0,24-sum);const tot=sum+t.free;Object.keys(t).forEach(k=>t[k]/=tot);return t}
+function assignColors(){
+ const pw=props(true),pr=props(false),keys=[...CATS.map(c=>c.id),'free'];COLOR=new Array(DAYS);
+ for(let i=0;i<DAYS;i++){const d=DAYS-1-i,age=d/365.25,p=age<S.retire?pw:pr;let u=RAND[i],acc=0,k='free';for(const id of keys){acc+=p[id];if(u<acc){k=id;break}}COLOR[i]=k}}
+
+/* ----------------------------- drawing ----------------------------- */
+let view={lived:0,gray:0},target={lived:0,gray:0},anim=null,sparks=[],pulse=0;
+function drawGlassBack(){
+ const g=ctx.createLinearGradient(0,0,0,H*DPR);g.addColorStop(0,'#0b1a33');g.addColorStop(1,'#071224');ctx.fillStyle=g;ctx.fillRect(0,0,W*DPR,H*DPR);
+ ctx.save();ctx.scale(DPR,DPR);jarPath();const gg=ctx.createLinearGradient(J.L,0,J.R,0);gg.addColorStop(0,'#9fc4ff14');gg.addColorStop(.5,'#ffffff05');gg.addColorStop(1,'#9fc4ff12');ctx.fillStyle=gg;ctx.fill();ctx.restore()}
+function jarPath(){const j=J;ctx.beginPath();ctx.moveTo(j.nl,j.top+10);ctx.lineTo(j.nl,j.neckB);
+ ctx.bezierCurveTo(j.nl,j.shoulder-10,j.L,j.neckB+18,j.L,j.shoulder+14);ctx.lineTo(j.L,j.bot-j.rb);ctx.quadraticCurveTo(j.L,j.bot,j.L+j.rb,j.bot);ctx.lineTo(j.R-j.rb,j.bot);ctx.quadraticCurveTo(j.R,j.bot,j.R,j.bot-j.rb);ctx.lineTo(j.R,j.shoulder+14);ctx.bezierCurveTo(j.R,j.neckB+18,j.nr,j.shoulder-10,j.nr,j.neckB);ctx.lineTo(j.nr,j.top+10);ctx.closePath()}
+function drawGlassFront(){
+ ctx.save();ctx.scale(DPR,DPR);jarPath();ctx.lineWidth=3;ctx.strokeStyle='#cfe3ff55';ctx.stroke();ctx.lineWidth=1;ctx.strokeStyle='#ffffff30';ctx.stroke();
+ // highlights
+ ctx.globalAlpha=.07;ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect(J.L+10,J.shoulder+30,9,(J.bot-J.shoulder)*0.55,5);ctx.fill();ctx.globalAlpha=.05;ctx.beginPath();ctx.roundRect(J.R-22,J.shoulder+60,6,(J.bot-J.shoulder)*0.35,4);ctx.fill();ctx.globalAlpha=1;
+ // lid (plain, no branding)
+ const lg=ctx.createLinearGradient(0,J.top-6,0,J.top+16);lg.addColorStop(0,'#e6c46a');lg.addColorStop(1,'#8a6a1f');ctx.fillStyle=lg;ctx.beginPath();ctx.roundRect(J.nl-8,J.top-4,J.nr-J.nl+16,18,6);ctx.fill();
+ ctx.strokeStyle='#00000040';ctx.lineWidth=1;for(let x=J.nl;x<J.nr;x+=7){ctx.beginPath();ctx.moveTo(x,J.top-2);ctx.lineTo(x,J.top+12);ctx.stroke()}
+ ctx.restore()}
+function draw(){
+ drawGlassBack();
+ const left=DAYS-Math.round(view.lived),grayFrom=left-Math.round(view.gray); // indices [0,left) are marbles
+ const half=Math.ceil(s*0.94*DPR)/2+1;
+ for(let i=0;i<left;i++){const sp=i>=grayFrom?SPR.gray:SPR[COLOR[i]];ctx.drawImage(sp,POS[i*2]*DPR-half,POS[i*2+1]*DPR-half)}
+ // at-risk shimmer over gray layer
+ if(view.gray>1&&left>0){const a=0.10+0.08*Math.sin(pulse);const yTop=POS[(left-1)*2+1],yBot=POS[Math.max(0,grayFrom)*2+1];
+  ctx.save();ctx.scale(DPR,DPR);ctx.globalAlpha=a;ctx.fillStyle='#ff6b6b';ctx.fillRect(J.L,yTop-s,J.R-J.L,yBot-yTop+2*s);ctx.restore();
+  ctx.save();ctx.scale(DPR,DPR);ctx.setLineDash([4,4]);ctx.strokeStyle='#ffffff55';ctx.beginPath();ctx.moveTo(J.L+8,yBot+s);ctx.lineTo(J.R-8,yBot+s);ctx.stroke();ctx.restore()}
+ // surface line
+ if(left>0&&left<DAYS){const y=POS[(left-1)*2+1]-s*0.6;ctx.save();ctx.scale(DPR,DPR);ctx.strokeStyle='#ffffff40';ctx.beginPath();ctx.moveTo(J.L+6,y);ctx.lineTo(J.R-6,y);ctx.stroke();ctx.restore()}
+ // sparks
+ ctx.save();ctx.scale(DPR,DPR);for(const p of sparks){ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r*(0.5+p.l),0,7);ctx.fill()}ctx.restore();
+ drawGlassFront()}
+let last=0,raf=0;
+function loop(t){
+ const dt=Math.min(50,t-(last||t));last=t;pulse+=dt*0.004;
+ if(anim){anim.p=Math.min(1,anim.p+dt/anim.dur);const e=easeOut(anim.p);
+  const prevGray=view.gray;view.lived=anim.from.lived+(target.lived-anim.from.lived)*e;view.gray=anim.from.gray+(target.gray-anim.from.gray)*e;
+  if(view.gray<prevGray){ // marbles healing: sparks at the conversion front
+   const left=DAYS-Math.round(view.lived);const n=Math.min(14,Math.ceil((prevGray-view.gray)/40));
+   for(let k=0;k<n;k++){const i=Math.max(0,Math.min(left-1,Math.round(left-view.gray)-Math.floor(Math.random()*30)));const x=POS[i*2],y=POS[i*2+1];sparks.push({x:x+(Math.random()-.5)*W*0.5,y,vx:(Math.random()-.5)*.08,vy:-Math.random()*.12-.03,l:1,r:1.5+Math.random()*2.2,c:Math.random()<.6?'#ffe27a':'#fff'})}}
+  if(anim.p>=1)anim=null}
+ for(const p of sparks){p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt/900}sparks=sparks.filter(p=>p.l>0);
+ draw();raf=requestAnimationFrame(loop)}
+const easeOut=x=>1-Math.pow(1-x,3);
+
+/* ----------------------------- UI ----------------------------- */
+const $=id=>document.getElementById(id);const fmt=n=>Math.round(n).toLocaleString('en-US');const f1=n=>(Math.round(n*10)/10).toFixed(1);
+function sgn(y){const r=Math.round(y*10)/10;return(r>0?'+':r<0?'−':'±')+Math.abs(r).toFixed(1)+' y'}
+function cls(y){return Math.abs(y)<0.05?'zero':y>0?'pos':'neg'}
+function render(animate=true){
+ const M=model();target.lived=M.lived;target.gray=M.grayDays;
+ if(animate){anim={p:0,dur:Math.abs(target.gray-view.gray)>200||Math.abs(target.lived-view.lived)>200?1500:500,from:{lived:view.lived,gray:view.gray}}}else{view.lived=target.lived;view.gray=target.gray}
+ const pct=M.left/DAYS*100;$('pct').innerHTML=Math.round(pct)+'<small>% full</small>';
+ $('left').innerHTML='<span>'+fmt(M.left)+'</span> days left in the jar';
+ const proj=M.cur.proj,gap=100-proj;
+ $('pace').innerHTML='On pace for <b>'+f1(proj)+'</b> · Jar goal: <b>100</b> · '+(gap>0?'Gap: <span class="gap">'+f1(gap)+' yrs</span>':'<b style="color:var(--grn)">Goal reached 🎯</b>');
+ const rec=Math.max(0,M.best.proj-M.cur.proj);
+ $('grayNote').innerHTML=M.grayDays>0?'<i></i>'+fmt(M.grayDays)+' cracked marbles ('+f1(M.grayYrs)+' yrs) at the surface'+(rec>0.05?' · '+f1(rec)+' yrs you can win back':' · past habits, already banked'):'';
+ $('who').textContent=S.age+' · '+(S.sex==='f'?'F':'M')+' ✎';
+ renderHabits(M);renderGap(M);renderDays(M);save()}
+function chips(id,opts,cur,fn){return'<div class="chips">'+opts.map((o,k)=>`<button class="${(o[1]===cur||(typeof o[1]==='object'&&JSON.stringify(o[1])===JSON.stringify(cur)))?'on':''}" onclick="${fn}('${id}',${k})">${o[0]}</button>`).join('')+'</div>'}
+function renderHabits(M){
+ const sm=S.smoke,sy=M.cur.smk;let h=`<div class="row"><div class="lab">Smoking <span class="eff ${cls(sy)}">${sgn(sy)}</span></div>
+ ${chips('smk',[['Never',0],['Quit',1],['Smoke now',2]],{never:0,former:1,current:2}[sm.status],'setSmoke')}
+ ${sm.status!=='never'?`<div class="grid2" style="margin-top:8px"><div><label class="f">Packs/day</label><input type="number" step="0.5" min="0" max="5" value="${sm.packs}" onchange="S.smoke.packs=+this.value;render()"></div><div><label class="f">Years smoked</label><input type="number" min="0" max="80" value="${sm.years}" onchange="S.smoke.years=+this.value;if(S.smoke.status==='former'){S.smoke.quit=Math.min(S.age,18+S.smoke.years)};render()"></div>${sm.status==='former'?`<div><label class="f">Quit at age</label><input type="number" min="10" max="${S.age}" value="${sm.quit}" onchange="S.smoke.quit=+this.value;render()"></div>`:''}</div>`:''}
+ <div class="src">Persistent smoking −10 y vs never (Doll 2004 BMJ; Jha 2013 NEJM). Quitting at ~30/40/50/60 wins back ~10/9/6/3 y (Doll 2004). Pack size isn't modeled yet.</div></div>`;
+ HABITS.forEach(x=>{const v=S.hab[x.id];const y=M.cur.parts[x.id];const counted=x.g!=='move'||Math.abs(y-M.cur.move)<1e-9;
+  let sel=v;if(x.tv){let k=0,bd=1e9;x.opts.forEach((o,i)=>{const d=Math.abs(o[1]-v);if(d<bd){bd=d;k=i}});sel=x.opts[k][1]}
+  h+=`<div class="row"><div class="lab">${x.label}${x.tv?' · '+f1(v)+' h':''} <span class="eff ${cls(y)}" style="${counted?'':'opacity:.45'}">${sgn(y)}${counted?'':' (overlaps)'}</span></div>${chips(x.id,x.opts,sel,'setHab')}<div class="src">${x.src}</div></div>`});
+ $('habList').innerHTML=h}
+function setHab(id,k){const x=HABITS.find(h=>h.id===id);S.hab[id]=x.opts[k][1];if(x.tv)S.hours.tv=x.opts[k][1];assignColors();render()}
+function setSmoke(_,k){const st=['never','former','current'][k];if(st==='former'&&S.smoke.status==='current')S.smoke.quit=S.age;S.smoke.status=st;render()}
+function gains(M){const out=[];const base=calc(S.hab,S.smoke).proj;
+ if(S.smoke.status==='current'){const g=calc(S.hab,bestSmoke()).proj-base;out.push({k:'smoke',label:'Quit smoking today',g,src:'Doll 2004 / Jha 2013 quit-age rows'})}
+ HABITS.forEach(x=>{const b=bestVal(x);const h2=Object.assign({},S.hab,{[x.id]:b});const g=calc(h2,S.smoke).proj-base;if(g>0.05){const o=x.opts.find(o=>o[1]===b);out.push({k:x.id,label:x.label+' → '+o[0],g,src:x.src.split(/[:(]/)[0]})}});
+ return out.sort((a,b)=>b.g-a.g)}
+function renderGap(M){const G=gains(M);const gap=100-M.cur.proj;
+ $('gapSub').innerHTML=`On pace for <b>${f1(M.cur.proj)}</b>. With every good habit below: <b>${f1(M.best.proj)}</b>. ${M.best.proj<100?'Gap still left after that: '+f1(100-M.best.proj)+' yrs (genes, luck, medicine, and stuff studies can\'t measure yet).':'That reaches the jar goal.'} Gains overlap, so they don\'t simply add.`;
+ $('gapList').innerHTML=G.length?G.map(x=>`<div class="gapitem"><div class="g">+${f1(x.g)}y</div><div class="d">${x.label}<div class="src">${x.src}</div></div><button onclick="applyGain('${x.k}')">Switch on</button></div>`).join('')+`<button class="big" onclick="allGood()">✨ Switch on all of them</button>`:'<div class="sub">Every habit in this draft is already switched on. Nice work, Pirate. 🏴‍☠️</div>'}
+function applyGain(k){if(k==='smoke'){S.smoke=bestSmoke()}else{const x=HABITS.find(h=>h.id===k);S.hab[k]=bestVal(x);if(x.tv)S.hours.tv=S.hab.tv}assignColors();const before=model().grayDays;render();toast(before)}
+function allGood(){const before=model().grayDays;S.hab=bestHab();S.hours.tv=S.hab.tv;S.smoke=bestSmoke();assignColors();render();closeSheets();toast(before)}
+function toast(before){const M=model();const healed=Math.max(0,before-M.grayDays);if(!healed)return;const t=$('toast');t.innerHTML='+'+fmt(healed)+' marbles back in the jar<div style="font-size:13px;color:var(--txt);margin-top:4px">On pace for '+f1(M.cur.proj)+'</div>';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+function renderDays(M){
+ let h='';CATS.forEach(c=>{h+=`<div class="sl"><i style="background:${c.col}"></i><label>${c.label}<input type="range" min="0" max="${c.id==='sleep'?12:c.id==='work'?14:8}" step="0.25" value="${S.hours[c.id]}" oninput="setHour('${c.id}',this.value)"></label><b id="hv_${c.id}">${(+S.hours[c.id]).toFixed(2)}h</b></div>`});
+ if(!$('sliders').dataset.built){$('sliders').innerHTML=h;$('sliders').dataset.built=1}else{CATS.forEach(c=>{const el=$('hv_'+c.id);el.textContent=(+S.hours[c.id]).toFixed(2)+'h';el.previousElementSibling.querySelector('input').value=S.hours[c.id]})}
+ $('retire').value=S.retire;$('retireV').textContent=S.retire;
+ // split remaining days (to on-pace age, and to 100) by category
+ const now=S.age,end=Math.min(100,M.cur.proj),ret=Math.max(now,S.retire);
+ const pw=props(true),pr=props(false);
+ const yrsW=e=>Math.max(0,Math.min(e,ret)-now),yrsR=e=>Math.max(0,e-Math.max(now,ret));
+ const row=(id,e)=>(yrsW(e)*pw[id]+yrsR(e)*pr[id])*365.25;
+ const rows=[...CATS,FREE].map(c=>({c,a:row(c.id,end),b:row(c.id,100)}));
+ const freeW=pw.free*24,freeR=pr.free*24,over=24-CATS.reduce((a,c)=>a+ +S.hours[c.id],0);
+ $('dayTable').innerHTML=(over<0?`<div class="sub" style="color:var(--red)">Your hours add up to more than 24. Free time is set to 0.</div>`:'')+
+ `<div class="sub" style="margin-top:8px">Free time: <b style="color:#ffe27a">${freeW.toFixed(1)} h/day</b> while working → <b style="color:#ffe27a">${freeR.toFixed(1)} h/day</b> after ${S.retire}.</div>
+ <table><tr><td><b>Days left by activity</b><div class="src">(24-hour days' worth)</div></td><td>to ${f1(end)}</td><td>to 100</td></tr>${rows.map(r=>`<tr class="${r.c.id==='free'?'free':''}"><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${r.c.col};margin-right:6px"></span>${r.c.label}</td><td>${fmt(r.a)}</td><td>${fmt(r.b)}</td></tr>`).join('')}</table>
+ <div class="sub" style="margin-top:8px">🟡 <b style="color:#ffe27a">${fmt(rows.at(-1).a)} free days left</b> on your current pace, <b style="color:#ffe27a">${fmt(rows.at(-1).b)}</b> if you make it to 100. Reaching 100 adds ${fmt(rows.at(-1).b-rows.at(-1).a)} free days, ${fmt(rows[1].b-rows[1].a)} work days.</div>`}
+function setHour(id,v){S.hours[id]=+v;if(id==='tv')S.hab.tv=+v;assignColors();render(false)}
+$('retire').oninput=e=>{S.retire=+e.target.value;assignColors();render(false)};
+function openSheet(id){closeSheets();if(id==='prof'){$('inAge').value=S.age;$('inSex').value=S.sex}$(id).classList.add('on')}
+function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'))}
+function saveProfile(){const a=Math.max(1,Math.min(99,Math.round(+$('inAge').value||S.age)));const sexChanged=$('inSex').value!==S.sex;S.age=a;S.sex=$('inSex').value;S.seen=true;
+ if(S.smoke.quit>a)S.smoke.quit=a;if(sexChanged){CATS.forEach(c=>S.hours[c.id]=c[S.sex]);S.hab.tv=S.hours.tv}
+ closeSheets();assignColors();render()}
+// tap a marble to see what it is
+cv.addEventListener('click',e=>{const x=e.clientX,y=e.clientY;let bi=-1,bd=1e9;const left=DAYS-Math.round(view.lived);for(let i=0;i<DAYS;i++){const dx=POS[i*2]-x,dy=POS[i*2+1]-y,d=dx*dx+dy*dy;if(d<bd){bd=d;bi=i}}
+ const tip=$('tip');if(bi<0||bd>s*s*9){tip.style.display='none';return}
+ const d=DAYS-1-bi,age=d/365.25;let what;if(bi>=left)what='already lived';else if(bi>=left-Math.round(view.gray))what='cracked: at risk from current habits';else{const c=[...CATS,FREE].find(c=>c.id===COLOR[bi]);what=c.label}
+ tip.textContent='Day '+fmt(d+1)+' · age '+Math.floor(age)+' · '+what;tip.style.display='block';tip.style.left=Math.min(W-200,Math.max(6,x-90))+'px';tip.style.top=(y-34)+'px';clearTimeout(tip._t);tip._t=setTimeout(()=>tip.style.display='none',2200)});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{build();},150)});
+// test hook
+window.LJ={get state(){return S},model,allGood,render};
+build();view.lived=0;view.gray=0;render(true);if(!S.seen)openSheet('prof');raf=requestAnimationFrame(loop);
+</script>
+</body></html>
