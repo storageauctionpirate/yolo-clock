@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>YOLO · Life Clock</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b1a33"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Life Clock">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⏱%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a;--gray:#9aa0aa}
@@ -122,13 +123,46 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
 #jarFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
 #p-jar{padding:0}
 
+/* ---- v3: eating window, hunger pause, fasting challenge, reminders, remedy library ---- */
+#kitLine{display:none;margin:8px auto 0;pointer-events:auto;cursor:pointer;background:#0b1a33cc;border:1px solid #5fe08a66;border-radius:14px;padding:6px 12px;font-size:13px;font-weight:700;max-width:96%;line-height:1.35}
+#kitLine.on{display:inline-block}#kitLine.closed{border-color:#9fb6ff66;background:#101a3acc}
+#kitLine b{color:var(--gold2)}#kitLine .cd{font-variant-numeric:tabular-nums;color:#cfe1ff}
+#kitLine .lg{display:block;font-size:10.5px;font-weight:600;color:var(--mut);margin-top:1px}
+#chBadge{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:12px;background:#13284dcc;border:1px solid #f0cf7366;color:var(--gold2);border-radius:16px;padding:6px 11px;font-size:12.5px;font-weight:800;display:none;max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#chBadge.on{display:block}
+.tog2{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tog2 input{width:44px;height:24px;accent-color:var(--grn);flex:none}
+.panel input[type=time]{background:#0f2242;color:var(--txt);border:1px solid #ffffff30;border-radius:10px;padding:8px;font-size:15px;width:100%;font-family:inherit;color-scheme:dark}
+.kstat{margin-top:8px;font-size:13.5px;font-weight:700;background:#0f2242;border:1px solid #ffffff1a;border-radius:10px;padding:8px 10px}
+.kstat .cd{font-variant-numeric:tabular-nums;color:#cfe1ff}
+.warnnote{font-size:12px;color:#ffe9b8;background:#3a2c0d66;border:1px solid #f0cf7344;border-radius:10px;padding:8px 10px;margin-top:8px;line-height:1.4}
+.hscale{display:flex;justify-content:space-between;font-size:11px;color:var(--mut)}
+#hungerS input[type=range]{width:100%;accent-color:var(--gold);height:28px}
+.card.soft{background:#12305a;border-color:#7fb5ff55;font-size:14px;line-height:1.4}
+.chips.plate button{padding:10px 18px;font-size:14px}
+.chpick{border:1px solid #ffffff22;border-radius:14px;padding:10px 12px;margin-top:8px;background:#0f2242}
+.chpick h4{margin:0 0 4px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.chpick h4 span{font-size:12px;color:var(--mut);font-weight:700}
+.chpick p{margin:0 0 8px;font-size:13px;line-height:1.4;color:#dfe7f3}
+.chpick .big{margin:4px 0 0;padding:9px}
+.chtop{display:flex;gap:12px;align-items:center}
+.chdots{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.chdots i{width:12px;height:12px;border-radius:50%;background:#ffffff18;display:block}
+.chdots i.did{background:var(--grn)}.chdots i.part{background:var(--gold)}.chdots i.miss{background:#ffb86b}.chdots i.today{outline:2px solid #fff;outline-offset:1px}
+.chk3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}.chk3 button{border:1px solid #ffffff30;background:#13284d;color:var(--txt);border-radius:12px;padding:10px 4px;font-weight:800;font-size:13.5px}
+.chk3 button.on.did{background:var(--grn);color:#062b12}.chk3 button.on.part{background:var(--gold);color:#1b1400}.chk3 button.on.miss{background:#ffb86b;color:#2b1600}
+.celebrate{text-align:center;font-size:15px;line-height:1.45}.celebrate .bigE{font-size:46px}
+.lib{border-top:1px solid #ffffff14;padding:9px 0}.lib b{font-size:14.5px}.lib .t{font-size:11.5px;color:var(--gold2);font-weight:700}
+.lib p{margin:4px 0;font-size:12.5px;color:#dfe7f3;line-height:1.4}.lib p i{color:var(--mut);font-style:normal;font-weight:700}
+.statrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}.statrow div{background:#0f2242;border-radius:10px;padding:7px 6px;text-align:center;font-size:11px;color:var(--mut)}.statrow b{display:block;font-size:15px;color:var(--txt)}
+#hungerS,#rform{max-height:82%}
 </style></head>
 <body>
 <div id="app">
 <canvas id="face"></canvas>
+<button id="chBadge" onclick="tab('rout')"></button>
 <button id="who" onclick="openSheet('prof')">48 · M ✎</button>
 <div id="top"><div class="t">YOLO · LIFE CLOCK</div><div class="its">It's</div><div id="nowT">12:00 AM</div><div class="its" style="margin-top:0">in your life</div></div>
-<div id="below"><div id="paceLine"></div><div id="subLine"></div>
+<div id="below"><div id="paceLine"></div><div id="subLine"></div><div id="kitLine" onclick="tab('rout')"></div>
  <div class="pills"><button onclick="openSheet('gap')">✨ Win back time</button><button id="routPill" onclick="tab('rout')">🗓 Routine</button></div></div>
 <div id="note">Population estimates, not a prediction or medical advice. Your goal is a motivator. <a href="#" onclick="openSheet('about');return false">About the numbers</a></div>
 
@@ -151,10 +185,13 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
  <div class="ph"><h1>Routine</h1></div>
  <div class="sub" id="routToday"></div>
  <div id="eatCard"></div>
+ <div id="winCard"></div>
+ <div id="chCard"></div>
  <div class="rcat" style="margin-top:16px">⏰ Reminders</div>
  <div id="routList"></div>
  <button class="big ghost" onclick="editItem(null,{cat:'move'})">+ Add to routine</button>
  <div id="weekCard"></div>
+ <div id="remindCard"></div>
  <div class="disc">Your routine, your choice. Not medical advice. Herbs and supplements can interact with each other and with medications; check with a doctor or qualified herbalist.</div>
 </section>
 
@@ -164,6 +201,7 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
  <div id="remList"></div>
  <div class="card"><div class="lab">Quick add</div><div class="chips" id="quick"></div>
  <button class="big ghost" onclick="editItem(null,{cat:'remedy'})">+ Add your own</button></div>
+ <div id="remLib"></div>
 </section>
 
 <section class="panel" id="p-jar"><iframe id="jarFrame" title="Life Jar" loading="lazy"></iframe></section>
@@ -192,10 +230,11 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
 <div class="sheet" id="gap"><h2>Win back time <button class="mathBtn" onclick="toggleMath('gap')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
  <div class="sub" id="gapSub"></div><div id="gapList"></div></div>
 <div class="sheet tall" id="rform"></div>
-<div class="sheet" id="waitS"><h2>⏳ Wait for full <button onclick="closeSheets()">×</button></h2>
+<div class="sheet tall" id="hungerS"></div>
+<div class="sheet" id="waitS"><h2><span id="waitT">⏳ Wait for full</span> <button onclick="closeSheets()">×</button></h2>
  <div style="display:flex;justify-content:center;margin:8px 0"><div id="waitRing" style="width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:126px;height:126px;border-radius:50%;background:#0d1f3e;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900" id="waitClock">15:00</div></div></div>
  <div class="sub" id="waitMsg" style="text-align:center;font-size:14px;color:#dfe7f3"></div>
- <div class="fr"><button class="big ghost" id="waitGo" onclick="waitDone(true)">Still hungry? Go ahead</button><button class="big" onclick="waitDone(false)">I'm good</button></div>
+ <div class="fr"><button class="big ghost" id="waitGo" onclick="waitDone(true)">Still hungry? Go ahead</button><button class="big" id="waitOk" onclick="waitDone(false)">I'm good</button></div>
  <div class="mini" style="text-align:center">No rules, just a pause. You decide.</div></div>
 
 </div>
@@ -367,7 +406,7 @@ const cv=document.getElementById('face'),ctx=cv.getContext('2d');
 let W,H,DPR,G={cx:0,cy:0,R:100},mode='life';
 let view={now:0,pace:0,best:0},target={now:0,pace:0,best:0},anim=null,sparks=[],t0=performance.now();
 function build(){S.goal=goalOf();DAYS=Math.round(S.goal*365.25);DPR=Math.min(3,window.devicePixelRatio||1);W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;cv.width=W*DPR;cv.height=H*DPR;
- if(typeof curTab!=='undefined'&&curTab==='day'){G.R=Math.max(80,Math.min(W*0.36,(H*0.44-40)/2));G.cx=W/2;G.cy=18+G.R}else{const top=172,bottom=H-140;G.R=Math.max(90,Math.min(W*0.44,(bottom-top-110)/2));G.cx=W/2;G.cy=Math.max(top+G.R,(top+bottom-110)/2)}
+ if(typeof curTab!=='undefined'&&curTab==='day'){G.R=Math.max(80,Math.min(W*0.36,(H*0.44-40)/2));G.cx=W/2;G.cy=18+G.R}else{const top=172,bottom=H-140,rsv=(S.eat&&S.eat.win&&typeof winActive==='function'&&winActive())?146:110;G.R=Math.max(90,Math.min(W*0.44-6,(bottom-top-rsv)/2));G.cx=W/2;G.cy=Math.max(top+G.R,(top+bottom-rsv)/2)}
  const hud=$('below');if(hud)hud.style.top=(G.cy+G.R+14)+'px'}
 const ang=h=>-Math.PI/2+h/24*Math.PI*2;
 // sky colors through the day (decorative; free time is gold in "Where your day goes")
@@ -385,7 +424,7 @@ function draw(ts){
  // bezel + face
  const bz=ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);bz.addColorStop(0,'#f6dc8c');bz.addColorStop(.5,'#9c7524');bz.addColorStop(1,'#f0cf73');
  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fillStyle=bz;ctx.fill();
- const fc=ctx.createRadialGradient(cx,cy-R*0.3,R*0.1,cx,cy,R);fc.addColorStop(0,'#16325e');fc.addColorStop(1,'#0a1830');ctx.beginPath();ctx.arc(cx,cy,R-6,0,7);ctx.fillStyle=fc;ctx.fill();
+ const fc=ctx.createRadialGradient(cx,cy-R*0.3,R*0.1,cx,cy,R);fc.addColorStop(0,'#16325e');fc.addColorStop(1,'#0a1830');ctx.beginPath();ctx.arc(cx,cy,R-6,0,7);ctx.fillStyle=fc;ctx.fill();drawToday();
  const rr=R-24,w=20;
  // track
  arc(rr,0,24,w,'#ffffff10');
@@ -441,7 +480,7 @@ function render(animate=true){
  $('who').textContent=S.age+' · '+(S.sex==='f'?'F':'M')+' ✎';
  const fd=freeDays(Math.min(GO,proj));$('clockFree').innerHTML='🟡 <b>'+fmt(fd)+' free days</b> to spend your way: trips, family, freedom. That\'s <b>'+dur(fd/DAYS*24)+'</b> of gold on your clock.';
  $('scaleNote').textContent='On this clock 1 hour = '+f1(GO/24)+' years, 1 minute ≈ '+fmt(GO*365.25/1440)+' days.';
- renderGap(M);renderDays(M);if(curTab==='life')renderLife(M);renderRoutine();if(curTab==='rout')renderEat();save()}
+ renderGap(M);renderDays(M);if(curTab==='life')renderLife(M);renderRoutine();if(curTab==='rout')renderEat();renderKitchen();save()}
 function toast(beforeProj){const M=model();const g=M.cur.proj-beforeProj;if(g<0.05)return;const t=$('toast');t.innerHTML='+'+dur(toH(g))+' back on your clock<div style="font-size:13px;color:var(--txt);margin-top:4px">'+(M.cur.proj>=S.goal?'Your pace now runs past midnight':'Pace now ends at '+clockTime(toH(M.cur.proj)))+'</div>';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
 function applyGain(k){const b=model().cur.proj;if(k==='smoke'){S.smoke=bestSmoke()}else{const x=HABITS.find(h=>h.id===k);S.hab[k]=bestVal(x);if(x.tv)S.hours.tv=S.hab.tv;if(k==='exercise')S.life.activity='very';if(k==='alcohol'&&+S.life.drinksWk>7)S.life.drinksWk=7}render();toast(b)}
 function allGood(){const b=model().cur.proj;S.hab=bestHab();S.hours.tv=S.hab.tv;S.smoke=bestSmoke();S.life.activity='very';if(+S.life.drinksWk>7)S.life.drinksWk=7;render();closeSheets();toast(b)}
@@ -454,11 +493,11 @@ let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(build,150)}
 let curTab='clock';
 function tab(t){curTab=t;closeSheets();document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));
- const clockUI=t==='clock';['top','below','note','who'].forEach(id=>$(id).style.display=clockUI?'':'none');
+ const clockUI=t==='clock';['top','below','note','who','chBadge'].forEach(id=>$(id).style.display=clockUI?'':'none');
  cv.style.display=(t==='clock'||t==='day')?'block':'none';
  if(t==='jar'){const f=$('jarFrame');if(!f.src)f.src='jar.html?embed=1';else try{f.contentWindow.location.reload()}catch(e){f.src='jar.html?embed=1'}}
  if(t!=='jar'&&lastTab==='jar'){try{S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'));ensure()}catch(e){}render(false)}
- lastTab=t;build();if(t==='life')renderLife(model());if(t==='rout'||t==='rem')renderRoutine();if(t==='rout')renderEat();
+ lastTab=t;build();if(t==='life')renderLife(model());if(t==='rout'||t==='rem')renderRoutine();if(t==='rout')renderEat();if(t==='rem'){loadRemLib();renderRemLib()}renderKitchen();
  $('app').scrollTop=0;document.querySelectorAll('.panel.on').forEach(p=>p.scrollTop=0)}
 let lastTab='clock';
 
@@ -474,7 +513,7 @@ const daysSince=s=>s?Math.max(0,Math.floor((midnight()-parseD(s))/864e5)):0;
 function t12(hm){const[h,m]=String(hm||'00:00').split(':').map(Number);return(h%12===0?12:h%12)+':'+String(m).padStart(2,'0')+' '+(h<12?'AM':'PM')}
 function ensure(){S.life=Object.assign({name:'',heightIn:'',weightLb:'',goalLb:'',heaviestLb:'',activity:'sedentary',cigs:20,smokeQuitDate:'',vapeStatus:'never',vapeAmt:'',vapeYears:'',vapeQuit:'',alcStatus:'current',drinksWk:'',alcYears:'',alcQuit:'',drugStatus:'',drugAmt:'',drugYears:'',drugQuit:'',ffStatus:'never',ffWk:'',ffYears:'',ffQuit:'',sleepH:'',sunMin:'',garden:'no'},S.life||{});
  if(!Array.isArray(S.routine))S.routine=[];if(!Array.isArray(S.weights))S.weights=[];
- S.eat=Object.assign({log:{},sugarLimit:1,since:dkey(),wait:null},S.eat||{})}
+ S.eat=Object.assign({log:{},sugarLimit:1,since:dkey(),wait:null},S.eat||{});ensureMore()}
 
 /* ============================ My Life ============================ */
 /* Brings over the original YOLO Clock profile (lifeClock.v1) fields and wires them into the shared engine. */
@@ -614,11 +653,11 @@ const peekE=k=>S.eat.log[k]||{meals:[],sugar:{sweet:0,drink:0,dessert:0}};
 const sugarN=k=>{const s=peekE(k).sugar;return(s.sweet||0)+(s.drink||0)+(s.dessert||0)};
 let platePick=null; // 'new' | 'more'
 function ate(size){const d=dayE();if(platePick==='more'&&d.meals.length){d.meals.at(-1).plates.push(size)}else d.meals.push({t:Date.now(),plates:[size]});platePick=null;S.eat.wait=null;save();renderEat()}
-function seconds(){S.eat.wait={until:Date.now()+15*60*1000};save();renderEat();openSheet('waitS');tickWait()}
-function waitDone(goAhead){S.eat.wait=null;save();closeSheets();if(goAhead){platePick='more';renderEat();toastMsg('Enjoy it. Listening to your body is the win 👍')}else{renderEat();toastMsg('Nice, one plate and done 💪')}}
-let waitTimer=null;function tickWait(){clearTimeout(waitTimer);const w=S.eat.wait;const el=$('waitClock');if(!w||!el)return;const ms=Math.max(0,w.until-Date.now());const m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60;
- el.textContent=m+':'+String(s).padStart(2,'0');$('waitGo').textContent=ms>0?'Still hungry? Go ahead':'Still hungry? Go ahead 👍';$('waitMsg').innerHTML=ms>0?'Give it a few minutes. It can take a little while for your body to notice it\'s full. Sip some water, chat, take a breath.':'Time\'s up. Check in with yourself: still hungry, or good?';
- const r=$('waitRing');if(r){const p=1-ms/(15*60000);r.style.background=`conic-gradient(var(--grn) ${p*360}deg,#ffffff18 0)`}if(ms>0)waitTimer=setTimeout(tickWait,1000)}
+function seconds(){S.eat.wait={until:Date.now()+15*60*1000,dur:15*60000,kind:'full'};save();renderEat();openSheet('waitS');tickWait()}
+function waitDone(goAhead){const wk=S.eat.wait&&S.eat.wait.kind;if(wk==='pause'){const w=S.eat.wait;S.eat.wait=null;save();closeSheets();if(goAhead){hS={h:w.h||5,r:w.r||'',ok:true};setTimeout(()=>openHunger(true),30)}else{const d=dayE();(d.skips=d.skips||[]).push({t:Date.now(),hunger:w.h,reason:w.r||null});save();renderEat();toastMsg('Nice check-in 💧')}return}S.eat.wait=null;save();closeSheets();if(goAhead){platePick='more';renderEat();toastMsg('Enjoy it. Listening to your body is the win 👍')}else{renderEat();toastMsg('Nice, one plate and done 💪')}}
+let waitTimer=null;function tickWait(){clearTimeout(waitTimer);const w=S.eat.wait;const el=$('waitClock');if(!w||!el)return;const D_=w.dur||15*60000,P_=w.kind==='pause';$('waitT').textContent=P_?'💧 Water or tea pause':'⏳ Wait for full';$('waitOk').textContent=P_?"I'm good, skip it":"I'm good";const ms=Math.max(0,w.until-Date.now());const m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60;
+ el.textContent=m+':'+String(s).padStart(2,'0');$('waitGo').textContent=P_?'Still eat':ms>0?'Still hungry? Go ahead':'Still hungry? Go ahead 👍';$('waitMsg').innerHTML=P_?(ms>0?'Sip some water or tea. In a few minutes, check in again: hungry, or was it something else? Either answer is fine.':'Time\'s up. Still want to eat? Go for it. Or skip it, your call.'):ms>0?'Give it a few minutes. It can take a little while for your body to notice it\'s full. Sip some water, chat, take a breath.':'Time\'s up. Check in with yourself: still hungry, or good?';
+ const r=$('waitRing');if(r){const p=1-ms/D_;r.style.background=`conic-gradient(var(--grn) ${p*360}deg,#ffffff18 0)`}if(ms>0)waitTimer=setTimeout(tickWait,1000)}
 function onePlate(k){const m=peekE(k).meals;return{meals:m.length,one:m.filter(x=>x.plates.length===1).length}}
 function streak(test,startKey){let n=0,d=midnight();const st=parseD(startKey||S.eat.since);if(!test(dkey(d)))d=addDays(d,-1); // today can still count later
  while(d>=st&&test(dkey(d))){n++;d=addDays(d,-1)}return n}
@@ -631,9 +670,10 @@ function renderEat(){const k=dkey(),d=peekE(k),op=onePlate(k),cur=d.meals.at(-1)
  const L=S.eat.sugarLimit,n=sugarN(k);
  $('eatCard').innerHTML=`<div class="card"><h3>🍽 Plate check <span class="ns">${op.meals?`${op.one} of ${op.meals} one-plate meals today`:'one plate, then check in'}</span></h3>
   ${platePick?`<div class="lab">${platePick==='more'?'Another plate, what size?':'What size plate?'}</div><div class="chips">${Object.entries(PLATE).map(([a,b])=>`<button onclick="ate('${a}')">${b}</button>`).join('')}<button onclick="platePick=null;renderEat()">Cancel</button></div>`:
-  `<div class="fr"><button class="big" style="margin:0" onclick="platePick='new';renderEat()">I ate</button><button class="big ghost" style="margin:0" ${recent?'':'disabled'} onclick="seconds()">Going for seconds</button></div>`}
+  `<div class="fr"><button class="big" style="margin:0" onclick="openHunger()">I ate</button><button class="big ghost" style="margin:0" ${recent?'':'disabled'} onclick="seconds()">Going for seconds</button></div>`}
   ${recent&&!platePick?`<div class="mini">This meal: ${cur.plates.length} plate${cur.plates.length>1?'s':''} (${cur.plates.map(p=>PLATE[p].toLowerCase()).join(', ')})</div>`:''}
-  ${S.eat.wait?`<div class="mini"><a href="#" style="color:#9fd8ff" onclick="openSheet('waitS');tickWait();return false">⏳ Wait-for-full timer running, open</a></div>`:''}
+  ${S.eat.wait?`<div class="mini"><a href="#" style="color:#9fd8ff" onclick="openSheet('waitS');tickWait();return false">${S.eat.wait.kind==='pause'?'💧 Water/tea pause running, open':'⏳ Wait-for-full timer running, open'}</a></div>`:''}
+  ${recent&&!platePick&&cur.full==null?`<div class="lab" style="margin-top:8px">How full now? <span class="ns">optional</span></div><div class="chips">${FULL.map(([l,v])=>`<button onclick="setFull(${v})">${l}</button>`).join('')}</div>`:recent&&cur.full!=null?`<div class="mini">Fullness after: ${(FULL.find(f=>f[1]===cur.full)||['?'])[0]}</div>`:''}
   <div class="mini">One-plate streak: <b style="color:var(--grn)">${plateStreak} day${plateStreak===1?'':'s'}</b></div></div>
  <div class="card"><h3>🍬 Sugar <span class="ns">${n} of ${L} today</span></h3>
   <div class="chips">${SWEETS.map(s=>`<button onclick="sugarTap('${s[0]}')">${s[1]} ${s[2]}${d.sugar[s[0]]?' · '+d.sugar[s[0]]:''}</button>`).join('')}${n?`<button onclick="sugarUndo()">↶ Undo</button>`:''}</div>
@@ -643,10 +683,219 @@ function renderEat(){const k=dkey(),d=peekE(k),op=onePlate(k),cur=d.meals.at(-1)
   <div class="lab" style="margin-top:4px">Sugar (dashed line = your limit)</div>${bars(D.map(([x])=>sugarN(x)),D.map(x=>x[1]),L,v=>v<=L?'#5fe08a':'#ffb86b')}
   <div class="lab" style="margin-top:10px">One-plate meals</div>${bars(D.map(([x])=>onePlate(x).one),D.map(x=>x[1]),0,()=>'#f0cf73')}
   ${S.routine.length?`<div class="lab" style="margin-top:10px">Routine check-offs</div>${bars(rt,D.map(x=>x[1]),0,()=>'#7fb5ff')}`:''}
-  <div class="lab" style="margin-top:10px">Weight <span class="ns">optional</span></div>${weightHtml()}</div>`}
+  ${(()=>{const E=weekEatStats();return E.n||E.skips?`<div class="lab" style="margin-top:10px">Eating check-ins</div><div class="statrow"><div><b>${E.top?E.top[1]+' '+E.top[2]:'—'}</b>most common reason</div><div><b>${E.out}</b>time${E.out===1?'':'s'} outside window</div><div><b>${E.avg!==null?f1(E.avg)+'/10':'—'}</b>avg hunger</div></div>${E.skips?`<div class="mini">💧 ${E.skips} pause${E.skips===1?'':'s'} where you checked in and skipped. Nice.</div>`:''}`:''})()}
+  <div class="lab" style="margin-top:10px">Weight <span class="ns">optional</span></div>${weightHtml()}</div>`;renderWinCard();renderCh();renderRemind()}
 function toastMsg(m){const t=$('toast');t.innerHTML=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2000)}
 
-window.LJ={get state(){return S},model,allGood,render,setGoal,clockTime,toH,get DAYS(){return DAYS}};
+/*V3*/
+/* ============================ v3: Eating window ============================ */
+/* Time-restricted eating as a user-set routine. No health claims; safety note shown with it. */
+const PRESETS=[['12:12',12],['14:10',10],['16:8',8],['18:6',6]];
+const p2=n=>String(n).padStart(2,'0');
+const hm2m=s=>{const[h,m]=String(s||'0:0').split(':').map(Number);return(h||0)*60+(m||0)};
+const m2hm=m=>{m=((Math.round(m)%1440)+1440)%1440;return p2(Math.floor(m/60))+':'+p2(m%60)};
+const fmtT=ms=>{const d=new Date(ms);return t12(p2(d.getHours())+':'+p2(d.getMinutes()))};
+const hms=ms=>{const s=Math.max(0,Math.round(ms/1000));const h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return(h?h+':'+p2(m):m)+':'+p2(x)};
+const hmin=ms=>{const m=Math.max(0,Math.round(ms/6e4));const h=Math.floor(m/60);return(h?h+'h ':'')+p2(m%60)+'m'};
+function ensureMore(){S.eat.win=Object.assign({on:false,start:'12:00',end:'19:00',wk:false,wkStart:'10:00',wkEnd:'20:00'},S.eat.win||{});
+ S.notif=Object.assign({on:false},S.notif||{});if(S.ch&&!S.ch.id)S.ch=null;if(!Array.isArray(S.chHist))S.chHist=[]}
+const CH={
+ daniel:{n:21,icon:'🌱',name:'Daniel Fast',len:'21 days',win:false,
+  desc:'Inspired by the prophet Daniel in the Bible, who chose simple plant food and water. For 21 days: vegetables, fruit, whole grains, beans, nuts, seeds and water. No sweets, meat, dairy or alcohol. Many people pair it with prayer.'},
+ dawn:{n:30,icon:'🌅',name:'Dawn-to-dusk',len:'30 days',win:true,
+  desc:'No food in daylight. Eat after sunset and before sunrise, using your own local times. Your eating window follows them automatically.'},
+ step:{n:30,icon:'📶',name:'Step-up month',len:'30 days',win:true,
+  desc:'Ease in a week at a time. Week 1: 16:8. Week 2: 18:6. Week 3: 20:4. Week 4: one meal a day, with up to two optional 24-hour fasts. Your window closes at your usual time.'}};
+const SAFETY='Safety first: no extended water-only fasts without medical supervision. Check with a doctor first if you have diabetes, heart or kidney issues, take medications, are pregnant, or have a history of eating disorders. If you feel faint or unwell, eat and rest.';
+const WIN_NOTE='Check with a doctor before fasting if you have diabetes, take medications, or are pregnant.';
+function chN(){return S.ch&&CH[S.ch.id]?CH[S.ch.id].n:0}
+function chDay(d=new Date()){if(!S.ch)return 0;return Math.round((midnight(d)-parseD(S.ch.start))/864e5)+1}
+function chLive(d){const n=chDay(d);return!!(S.ch&&!S.ch.finished&&n>=1&&n<=chN())}
+function baseWin(d){const W=S.eat.win,we=W.wk&&(d.getDay()===0||d.getDay()===6);let s=hm2m(we?W.wkStart:W.start),e=hm2m(we?W.wkEnd:W.end);if(e<=s)e+=1440;return{s,e,src:we?'weekend':'base'}}
+function stepWeek(n){return Math.min(4,Math.ceil(n/7))}
+function winFor(d){const c=S.ch;
+ if(c&&CH[c.id].win&&chLive(d)){
+  if(c.id==='dawn'){const s=hm2m(c.sunset),e=hm2m(c.sunrise)+1440;return{s,e,src:'dawn'}}
+  if(c.id==='step'){if((c.fasts||[]).includes(dkey(d)))return{fast:true,src:'step'};const wk=stepWeek(chDay(d)),eh=[8,6,4,1][wk-1];
+   const e=S.eat.win.on?baseWin(d).e:hm2m('19:00');return{s:e-eh*60,e,src:'step',wk,eh}}}
+ return S.eat.win.on?baseWin(d):null}
+function winActive(t=Date.now()){const d=new Date(t);return!!(winFor(d)||winFor(addDays(midnight(d),-1)))}
+function intervals(now=new Date()){const out=[];for(let i=-1;i<=2;i++){const d=addDays(midnight(now),i);const w=winFor(d);
+ if(w&&!w.fast)out.push({a:+new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,w.s),b:+new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,w.e),w})}return out}
+function inWinAt(t){if(!winActive(t))return null;return intervals(new Date(t)).some(x=>t>=x.a&&t<x.b)}
+function lastMealT(before){let best=0;Object.values(S.eat.log).forEach(d=>(d.meals||[]).forEach(m=>{if(m.t<=before&&m.t>best)best=m.t}));return best}
+function kitchen(now=Date.now()){const iv=intervals(new Date(now));const cur=iv.find(x=>now>=x.a&&now<x.b),next=iv.find(x=>x.a>now),prev=[...iv].reverse().find(x=>x.b<=now);
+ const fastDay=(winFor(new Date(now))||{}).fast;const lm=lastMealT(now);const since=Math.max(prev?prev.b:0,lm);
+ return{active:winActive(now),open:!!cur,cur,next,prev,fastDay,fastMs:since?now-since:0}}
+function renderKitchen(){const el=$('kitLine');if(!el)return;const k=kitchen();
+ if(!k.active){el.className='';el.innerHTML='';}
+ else if(k.open){el.className='on';el.innerHTML=`🍽 <b>Kitchen open</b> · closes ${fmtT(k.cur.b)} · <span class="cd">${hmin(k.cur.b-Date.now())}</span> left<span class="lg">Outer ring = today · green = eating window · dot = now</span>`}
+ else{el.className='on closed';el.innerHTML=`🌙 <b>Kitchen closed</b> · <span style="white-space:nowrap">opens in <span class="cd">${k.next?hms(k.next.a-Date.now()):'—'}</span></span>${k.fastMs?` · <span style="white-space:nowrap">fasting <b>${(k.fastMs/3.6e6).toFixed(1)} h</b></span>`:''}<span class="lg">${k.fastDay?'24-hour fast day (optional, your choice) · ':''}Outer ring = today · green = eating window</span>`}
+ const b=$('chBadge');if(b){if(S.ch&&CH[S.ch.id]){const n=Math.min(chDay(),chN());b.className='on';b.textContent=(S.ch.finished||chDay()>chN()?'🎉 ':'🔥 ')+CH[S.ch.id].name+' · '+(chDay()>chN()||S.ch.finished?'done!':'Day '+Math.max(1,n)+'/'+chN())}else b.className=''}
+ const ks=$('kStat');if(ks)ks.innerHTML=kStatHtml(k)}
+function kStatHtml(k){if(!k.active)return'Eating window is off.';if(k.open)return`🍽 Kitchen open · closes ${fmtT(k.cur.b)} (<span class="cd">${hmin(k.cur.b-Date.now())}</span> left)`;
+ return`🌙 Kitchen closed${k.fastDay?' · 24-hour fast day':''} · opens ${k.next?fmtT(k.next.a)+' (in <span class="cd">'+hms(k.next.a-Date.now())+'</span>)':'later'}${k.fastMs?` · fasting ${(k.fastMs/3.6e6).toFixed(1)} h`:''}`}
+function drawToday(){if(!winActive())return;const{cx,cy,R}=G,r=R+9;const d0=+midnight();const nh=(Date.now()-d0)/3.6e6;
+ arc(r,0,24,5,'#ffffff1e');intervals().forEach(x=>{const a=Math.max(0,(x.a-d0)/3.6e6),b=Math.min(24,(x.b-d0)/3.6e6);if(b>a)arc(r,a,b,5,'#5fe08a')});
+ const an=ang(nh);ctx.beginPath();ctx.arc(cx+Math.cos(an)*r,cy+Math.sin(an)*r,5,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#0b1a33';ctx.stroke()}
+function winStreak(){return streak(x=>{const m=peekE(x).meals;return m.length>0&&m.every(z=>z.inWin===true)})}
+function setWin(k,v){S.eat.win[k]=v;save();renderWinCard();renderKitchen();build()}
+function preset(h){const W=S.eat.win;W.on=true;W.end=m2hm(hm2m(W.start)+h*60);save();renderWinCard();renderKitchen();build()}
+function renderWinCard(){const el=$('winCard');if(!el)return;const W=S.eat.win,k=kitchen();const today=winFor(new Date());
+ const len=((hm2m(W.end)-hm2m(W.start)+1440)%1440||1440)/60;
+ const over=S.ch&&CH[S.ch.id].win&&chLive(new Date())?`<div class="mini" style="color:#cfe1ff">Your ${CH[S.ch.id].name} sets today's window${today&&!today.fast?': '+t12(m2hm(today.s))+' – '+t12(m2hm(today.e)):': 24-hour fast day'}.</div>`:'';
+ el.innerHTML=`<div class="card"><h3><span>⏳ Eating window</span><label class="tog2"><span class="ns">${W.on?'On':'Off'}</span><input type="checkbox" ${W.on?'checked':''} onchange="setWin('on',this.checked)"></label></h3>
+ <div class="mini" style="margin-top:0">Pick the hours you eat; the rest is kitchen-closed time.</div>
+ <div class="chips" style="margin-top:8px">${PRESETS.map(([l,h])=>`<button class="${W.on&&Math.abs(len-h)<0.01?'on':''}" onclick="preset(${h})">${l}</button>`).join('')}</div>
+ <div class="fr"><label><span class="fl">Opens</span><input type="time" value="${W.start}" onchange="setWin('start',this.value||'12:00')"></label><label><span class="fl">Closes</span><input type="time" value="${W.end}" onchange="setWin('end',this.value||'19:00')"></label></div>
+ <div class="mini">${t12(W.start)} – ${t12(W.end)} · ${f1(len)} h eating · ${f1(24-len)} h fasting</div>
+ <div class="tog2" style="margin-top:8px;font-size:13.5px;font-weight:700">Different weekend window (optional)<input type="checkbox" ${W.wk?'checked':''} onchange="setWin('wk',this.checked)"></div>
+ ${W.wk?`<div class="fr"><label><span class="fl">Sat/Sun opens</span><input type="time" value="${W.wkStart}" onchange="setWin('wkStart',this.value||'10:00')"></label><label><span class="fl">Sat/Sun closes</span><input type="time" value="${W.wkEnd}" onchange="setWin('wkEnd',this.value||'20:00')"></label></div>`:''}
+ ${over}<div class="kstat" id="kStat">${kStatHtml(k)}</div>
+ <div class="mini">Window streak (every logged meal inside the window): <b style="color:var(--grn)">${winStreak()} day${winStreak()===1?'':'s'}</b> · reminders at open and 30 min before close</div>
+ <div class="warnnote">⚠️ ${WIN_NOTE}</div></div>`}
+
+/* ============================ v3: Hunger pause ============================ */
+const REASONS=[['hungry','😋','Hungry'],['bored','😐','Bored'],['stressed','😣','Stressed'],['tired','😴','Tired'],['social','🧑‍🤝‍🧑','Social'],['habit','🔁','Habit']];
+const FULL=[['Still hungry',3],['Just right',6],['Full',8],['Too full',10]];
+let hS={h:5,r:'',ok:false};
+function openHunger(keep){if(!keep)hS={h:5,r:'',ok:false};renderHunger();openSheet('hungerS')}
+function renderHunger(){const iw=inWinAt(Date.now()),k=kitchen();
+ $('hungerS').innerHTML=`<h2>🍽 Quick check-in <button onclick="closeSheets()">×</button></h2>
+ <div class="sub">${iw===null?'A two-second pause before you eat. Totally optional.':iw?'✅ You\'re inside your eating window.':'🌙 Outside your eating window'+(k.next?' · kitchen opens '+fmtT(k.next.a):'')+'. Your call, no judgment.'}</div>
+ <div class="lab">How hungry are you? <b id="hV" style="color:var(--gold2)">${hS.h}</b>/10</div>
+ <input type="range" id="hIn" min="1" max="10" step="1" value="${hS.h}" oninput="hS.h=+this.value;hS.ok=false;$('hV').textContent=this.value;hungerLow()">
+ <div class="hscale"><span>1 · not hungry</span><span>10 · starving</span></div>
+ <div class="lab" style="margin-top:10px">What's behind it? <span class="ns">optional</span></div>
+ <div class="chips" id="hR">${REASONS.map(([k,i,l])=>`<button class="${hS.r===k?'on':''}" onclick="hS.r=hS.r==='${k}'?'':'${k}';renderHunger()">${i} ${l}</button>`).join('')}</div>
+ <div id="hLow" style="margin-top:10px"></div>`;hungerLow()}
+function hungerLow(){const el=$('hLow');if(!el)return;const low=hS.h<=4&&!hS.ok;
+ el.innerHTML=low?`<div class="card soft">💧 Hunger's on the low side right now. Maybe a glass of water or a cup of tea first, then check in again in 10 minutes?
+  <div class="fr" style="margin-top:8px"><button class="big" style="margin:0" onclick="pauseStart()">Water/tea + 10 min</button><button class="big ghost" style="margin:0" onclick="hS.ok=true;hungerLow()">Still eat</button></div></div>`
+ :`<div class="lab">Plate size</div><div class="chips plate">${Object.entries(PLATE).map(([a,b])=>`<button onclick="logMeal('${a}')">${b}</button>`).join('')}</div><div class="mini">Tap a size to log it.</div>`}
+function logMeal(size){const now=Date.now(),d=dayE();d.meals.push({t:now,plates:[size],hunger:hS.h,reason:hS.r||null,inWin:inWinAt(now)});platePick=null;S.eat.wait=null;save();closeSheets();renderEat();renderKitchen();toastMsg('Logged 🍽 Enjoy it')}
+function setFull(v){const d=dayE(),m=d.meals.at(-1);if(m){m.full=v;save();renderEat()}}
+function pauseStart(){S.eat.wait={until:Date.now()+10*60000,dur:10*60000,kind:'pause',h:hS.h,r:hS.r};save();closeSheets();renderEat();setTimeout(()=>{openSheet('waitS');tickWait()},30)}
+function weekEatStats(){const D=last7(),ms=[],sk=[];D.forEach(([x])=>{const e=peekE(x);ms.push(...(e.meals||[]));sk.push(...(e.skips||[]))});
+ const cnt={};ms.forEach(m=>{if(m.reason)cnt[m.reason]=(cnt[m.reason]||0)+1});const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+ const hs=ms.filter(m=>m.hunger);return{top:top?REASONS.find(r=>r[0]===top[0]):null,topN:top?top[1]:0,out:ms.filter(m=>m.inWin===false).length,avg:hs.length?hs.reduce((a,m)=>a+m.hunger,0)/hs.length:null,skips:sk.length,n:ms.length}}
+
+/* ============================ v3: Fasting month challenge ============================ */
+let chOpen=false;
+function chStart(id){const c={id,start:dkey(),checks:{},fasts:[],restarts:0};if(id==='dawn'){c.sunrise=($('chRise')||{}).value||'06:45';c.sunset=($('chSet')||{}).value||'18:30'}S.ch=c;chOpen=false;save();renderCh();renderWinCard();renderKitchen();build();toastMsg(CH[id].icon+' Day 1. You\'ve got this')}
+function chCheck(s){const k=dkey();S.ch.checks[k]=Object.assign(S.ch.checks[k]||{},{s});save();renderCh();
+ if(chDay()===chN()&&!S.ch.celebrated){S.ch.celebrated=true;save();toastMsg('🎉 '+CH[S.ch.id].name+' complete!')}else toastMsg(s==='did'?'Nice work 💪':s==='part'?'Partly still counts 👍':'Tomorrow\'s a fresh start 🌱')}
+function chNote(v){const k=dkey();S.ch.checks[k]=Object.assign(S.ch.checks[k]||{},{note:String(v).slice(0,200)});save()}
+function chStreak(){const c=S.ch;let n=0,d=midnight();const ok=x=>{const s=(c.checks[x]||{}).s;return s==='did'||s==='part'};if(!ok(dkey(d)))d=addDays(d,-1);while(d>=parseD(c.start)&&ok(dkey(d))){n++;d=addDays(d,-1)}return n}
+function chRestart(){const c=S.ch;S.ch={id:c.id,start:dkey(),checks:{},fasts:[],restarts:(c.restarts||0)+1,sunrise:c.sunrise,sunset:c.sunset};save();renderCh();renderWinCard();renderKitchen();toastMsg('Fresh start: day 1 🌱')}
+function chKeep(){S.ch.ack=dkey();save();renderCh()}
+function chEnd(){if(S.ch){S.chHist.push(Object.assign({},S.ch,{ended:dkey()}));S.ch=null}save();renderCh();renderWinCard();renderKitchen();build()}
+function chFast(){const c=S.ch,k=dkey();c.fasts=c.fasts||[];if(c.fasts.includes(k))c.fasts=c.fasts.filter(x=>x!==k);else if(c.fasts.length<2)c.fasts.push(k);save();renderCh();renderWinCard();renderKitchen()}
+function setCh(k,v){S.ch[k]=v;save();renderWinCard();renderKitchen();build()}
+function ringSvg(p,big,small){const r=34,C=2*Math.PI*r;return`<svg width="88" height="88" viewBox="0 0 88 88" style="flex:none"><circle cx="44" cy="44" r="${r}" fill="none" stroke="#ffffff1c" stroke-width="8"/><circle cx="44" cy="44" r="${r}" fill="none" stroke="#5fe08a" stroke-width="8" stroke-linecap="round" stroke-dasharray="${(C*p).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 44 44)"/><text x="44" y="42" text-anchor="middle" fill="#eef2f8" font-size="17" font-weight="900" font-family="system-ui">${big}</text><text x="44" y="58" text-anchor="middle" fill="#9fb0c9" font-size="11" font-weight="700" font-family="system-ui">${small}</text></svg>`}
+function chRule(c,n){if(c.id==='daniel')return'Today: plant foods and water. No sweets, meat, dairy or alcohol.';
+ const w=winFor(new Date());if(c.id==='dawn')return`Eat after sunset (${t12(c.sunset)}) and before sunrise (${t12(c.sunrise)}).`;
+ const wk=stepWeek(n);return w&&w.fast?`Week 4 · today is your optional 24-hour fast.`:`Week ${wk} · ${['16:8','18:6','20:4','one meal a day'][wk-1]} · eat ${t12(m2hm(w.s))} – ${t12(m2hm(w.e))}`}
+function renderCh(){const el=$('chCard');if(!el)return;const c=S.ch;
+ if(!c){el.innerHTML=`<div class="card"><h3>🔥 Fasting month challenge <span class="ns">optional</span></h3>
+  ${chOpen?Object.entries(CH).map(([id,x])=>`<div class="chpick"><h4>${x.icon} ${x.name} <span>${x.len}</span></h4><p>${x.desc}</p>
+   ${id==='dawn'?`<div class="fr" style="margin-bottom:6px"><label><span class="fl">Your sunrise</span><input type="time" id="chRise" value="06:45"></label><label><span class="fl">Your sunset</span><input type="time" id="chSet" value="18:30"></label></div>`:''}
+   <button class="big" onclick="chStart('${id}')">Start ${x.name}</button></div>`).join('')+`<button class="big ghost" onclick="chOpen=false;renderCh()">Not now</button>`
+  :`<div class="mini" style="margin-top:0">Daniel Fast (21 days), Dawn-to-dusk (30 days) or a Step-up month (30 days). Daily check-in, streak, and a gentle restart if you slip.</div><button class="big ghost" onclick="chOpen=true;renderCh()">Choose a challenge</button>`}
+  <div class="warnnote">⚠️ ${SAFETY}</div></div>`;return}
+ const X=CH[c.id],N=X.n,n=chDay(),k=dkey(),today=c.checks[k]||{};
+ const tally={did:0,part:0,miss:0};Object.values(c.checks).forEach(v=>{if(tally[v.s]!==undefined)tally[v.s]++});
+ if(n>N||c.finished||(n===N&&today.s)){el.innerHTML=`<div class="card celebrate"><div class="bigE">🎉</div><b style="font-size:18px;color:var(--gold2)">You finished the ${X.name}!</b><br>${N} days. ${tally.did} did it · ${tally.part} partly · ${tally.miss} missed.<br>Every one of those days counts, Pirate.
+  <div class="fr" style="margin-top:10px"><button class="big" style="margin:0" onclick="chEnd()">Finish & save</button><button class="big ghost" style="margin:0" onclick="S.ch.finished=false;chRestart()">Go again</button></div></div>`;return}
+ const yk=dkey(addDays(midnight(),-1)),ys=(c.checks[yk]||{}).s;const slip=(today.s==='miss'||(n>1&&(ys==='miss'||!ys)))&&c.ack!==k;
+ const wk=c.id==='step'?stepWeek(n):0;
+ el.innerHTML=`<div class="card"><h3>${X.icon} ${X.name} <button class="redit" onclick="if(confirm('End this challenge?'))chEnd()">End</button></h3>
+ <div class="chtop">${ringSvg(Math.min(1,n/N),'Day '+n,'of '+N)}<div style="flex:1;font-size:13.5px;line-height:1.4">${chRule(c,n)}<div class="mini">Streak: <b style="color:var(--grn)">${chStreak()} day${chStreak()===1?'':'s'}</b>${c.restarts?` · restarts: ${c.restarts}`:''}</div></div></div>
+ ${c.id==='dawn'?`<div class="fr"><label><span class="fl">Sunrise</span><input type="time" value="${c.sunrise}" onchange="setCh('sunrise',this.value||'06:45')"></label><label><span class="fl">Sunset</span><input type="time" value="${c.sunset}" onchange="setCh('sunset',this.value||'18:30')"></label></div>`:''}
+ <div class="lab" style="margin-top:10px">Today's check-in</div>
+ <div class="chk3">${[['did','✅ Did it'],['part','🌗 Partly'],['miss','⏭ Missed']].map(([s,l])=>`<button class="${s} ${today.s===s?'on':''}" onclick="chCheck('${s}')">${l}</button>`).join('')}</div>
+ <input type="text" maxlength="200" placeholder="Note (optional)" value="${esc(today.note||'')}" onchange="chNote(this.value)" style="margin-top:8px">
+ ${wk===4?`<div class="tog2" style="margin-top:8px;font-size:13px;font-weight:700">Make today an optional 24-hour fast (${(c.fasts||[]).length} of 2 used)<input type="checkbox" ${(c.fasts||[]).includes(k)?'checked':''} ${(c.fasts||[]).length>=2&&!(c.fasts||[]).includes(k)?'disabled':''} onchange="chFast()"></div>`:''}
+ ${slip?`<div class="card soft">🌱 Missed a day? It happens. One day doesn't erase the others. Keep going from here, or restart at day 1 for a clean run.<div class="fr" style="margin-top:8px"><button class="big" style="margin:0" onclick="chKeep()">Keep going</button><button class="big ghost" style="margin:0" onclick="chRestart()">Restart</button></div></div>`:''}
+ <div class="chdots">${Array.from({length:N},(_,i)=>{const dk=dkey(addDays(parseD(c.start),i));return`<i class="${(c.checks[dk]||{}).s||''} ${dk===k?'today':''}" title="Day ${i+1}"></i>`}).join('')}</div>
+ <div class="warnnote">⚠️ ${SAFETY}</div></div>`}
+
+/* ============================ v3: Reminders (in-app alerts + calendar export) ============================ */
+const firedSet=new Set((()=>{try{return JSON.parse(sessionStorage.getItem('ljFired')||'[]')}catch(e){return[]}})());
+function alarmsFor(now){const t=new Date(now),k=dkey(t),out=[];
+ S.routine.forEach(i=>{if(!rstatus(i).active)return;const at=+new Date(t.getFullYear(),t.getMonth(),t.getDate(),0,hm2m(i.time));out.push({key:'r:'+i.id+'@'+k,at,title:(i.cat==='remedy'?'🌿 ':'⏰ ')+i.name,body:'Routine reminder · '+t12(i.time)})});
+ intervals(t).forEach(x=>{out.push({key:'open@'+x.a,at:x.a,title:'🍽 Kitchen is open',body:'Eating window open until '+fmtT(x.b)+'.'});out.push({key:'close@'+x.b,at:x.b-30*6e4,title:'🍽 Kitchen closes in 30 min',body:'Window closes at '+fmtT(x.b)+'.'})});return out}
+function checkAlarms(now=Date.now()){alarmsFor(now).forEach(a=>{if(now>=a.at&&now<a.at+3*6e4&&!firedSet.has(a.key)){firedSet.add(a.key);try{sessionStorage.setItem('ljFired',JSON.stringify([...firedSet].slice(-200)))}catch(e){}fireAlarm(a)}})}
+function fireAlarm(a){toastMsg(esc(a.title)+'<div style="font-size:13px;color:var(--txt);margin-top:4px">'+esc(a.body)+'</div>');
+ if(!(S.notif.on&&'Notification' in window&&Notification.permission==='granted'))return;const opt={body:a.body,icon:'icon-192.png',tag:a.key};
+ const plain=()=>{try{new Notification(a.title,opt)}catch(e){}};
+ if(navigator.serviceWorker&&location.protocol.startsWith('http'))navigator.serviceWorker.getRegistration().then(r=>r?r.showNotification(a.title,opt):plain()).catch(plain);else plain()}
+function notifState(){if(!('Notification' in window))return'unsupported';return Notification.permission}
+function enableNotif(){if(!('Notification' in window)){toastMsg('This browser doesn\'t support alerts');return}
+ Notification.requestPermission().then(p=>{S.notif.on=p==='granted';save();renderRemind();if(p==='granted')fireAlarm({key:'t'+Date.now(),title:'🔔 Alerts are on',body:'You\'ll get nudges while the app is open.'})}).catch(()=>renderRemind())}
+function renderRemind(){const el=$('remindCard');if(!el)return;const st=notifState();
+ el.innerHTML=`<div class="card"><h3>🔔 Alerts & calendar</h3>
+ ${st==='granted'&&S.notif.on?`<div class="mini" style="margin-top:0;color:var(--grn)">Alerts are on for routine items, kitchen open, and 30 min before close.</div><button class="big ghost" onclick="S.notif.on=false;save();renderRemind()">Turn alerts off</button>`
+  :st==='denied'?`<div class="mini" style="margin-top:0">Alerts are blocked in your browser settings. You'll still see in-app pop-ups while the app is open.</div>`
+  :st==='unsupported'?`<div class="mini" style="margin-top:0">This browser can't show alerts. You'll still see in-app pop-ups while the app is open.</div>`
+  :`<button class="big" onclick="enableNotif()">🔔 Turn on alerts</button>`}
+ <button class="big ghost" onclick="downloadICS()">📅 Add to my phone calendar</button>
+ <div class="mini">Honest note: this is a web draft, so alerts only fire while the app is open (in a tab or from your home screen). For reminders when it's closed, use <b>Add to my phone calendar</b>: it saves your routine and eating window as repeating events with alarms. On iPhone, alerts need the app added to your Home Screen first (Share → Add to Home Screen).</div></div>`}
+/* --- .ics (RFC 5545). Floating local times so events follow the phone's time zone. --- */
+const BYDAY=['SU','MO','TU','WE','TH','FR','SA'];
+const icsEsc=s=>String(s??'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+function icsFold(l){const enc=new TextEncoder();const out=[];let cur='',b=0;for(const ch of l){const n=enc.encode(ch).length;if(b+n>(out.length?74:75)){out.push(cur);cur='';b=0}cur+=ch;b+=n}out.push(cur);return out.join('\r\n ')}
+const icsD=d=>d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate());
+const icsDT=(d,min)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,min);return icsD(x)+'T'+p2(x.getHours())+p2(x.getMinutes())+'00'};
+function vevent(o){const now=new Date();const st=now.toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+ const L=['BEGIN:VEVENT','UID:'+o.uid+'@yolo-clock.storageauctionpirate','DTSTAMP:'+st,'DTSTART:'+icsDT(o.day,o.min),'DURATION:PT'+o.dur+'M','SUMMARY:'+icsEsc(o.sum)];
+ if(o.desc)L.push('DESCRIPTION:'+icsEsc(o.desc));if(o.rrule)L.push('RRULE:'+o.rrule);
+ L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(o.alarm||o.sum),'TRIGGER:-PT0M','END:VALARM','END:VEVENT');return L}
+function firstOn(day,days){let d=day;for(let i=0;i<7&&days&&!days.includes(d.getDay());i++)d=addDays(d,1);return d}
+function icsRoutine(i){const today=midnight(),days=i.days&&i.days.length&&i.days.length<7?i.days:null,p=i.pattern;
+ const fr=days?'FREQ=WEEKLY;BYDAY='+days.map(x=>BYDAY[x]).join(','):'FREQ=DAILY';
+ const desc=(i.recipe?i.recipe+'\n\n':'')+'From your YOLO Life Clock routine. Not medical advice.';
+ const ev=(uid,s,until)=>{const d=firstOn(s,days);if(until&&d>until)return[];return vevent({uid,day:d,min:hm2m(i.time),dur:15,sum:(i.cat==='remedy'?'🌿 ':'⏰ ')+i.name,desc,rrule:fr+(until?';UNTIL='+icsD(until)+'T235959':''),alarm:i.name})};
+ if(!p)return ev(i.id,today);
+ if(p.type==='until'){const e=parseD(p.end);return e<today?[]:ev(i.id,today,e)}
+ const on=Math.max(1,+p.on||1),off=Math.max(1,+p.off||1),st=parseD(p.start||dkey());const out=[];const horizon=addDays(today,182);
+ for(let kk=0;kk<400;kk++){const bs=addDays(st,kk*(on+off)),be=addDays(bs,on-1);if(bs>horizon)break;if(be<today)continue;out.push(...ev(i.id+'-'+kk,bs<today?today:bs,be))}return out}
+function icsWindowPair(uid,day,w,rrule){const dur=w.e-w.s;return[...vevent({uid:uid+'-open',day,min:w.s,dur:15,sum:'🍽 Kitchen open',desc:'Eating window '+t12(m2hm(w.s))+' – '+t12(m2hm(w.e))+'. '+WIN_NOTE,rrule,alarm:'Kitchen is open'}),
+ ...vevent({uid:uid+'-close',day,min:w.e-30,dur:30,sum:'🍽 Kitchen closes in 30 min',desc:'Window closes at '+t12(m2hm(w.e))+'.',rrule,alarm:'Kitchen closes in 30 min'})].concat(dur<=30?[]:[])}
+function icsWindows(){const out=[];const today=midnight();let from=today;
+ if(S.ch&&CH[S.ch.id].win&&chLive(today)){const end=addDays(parseD(S.ch.start),chN()-1);let blk=null;const flush=()=>{if(blk){out.push(...icsWindowPair('ch-'+icsD(blk.d0),blk.d0,blk.w,'FREQ=DAILY;UNTIL='+icsD(blk.d1)+'T235959'));blk=null}};
+  for(let d=today;d<=end;d=addDays(d,1)){const w=winFor(d);if(!w||w.fast){flush();continue}if(blk&&blk.w.s===w.s&&blk.w.e===w.e)blk.d1=d;else{flush();blk={d0:d,d1:d,w}}}flush();from=addDays(end,1)}
+ if(S.eat.win.on){const W=S.eat.win,mk=(a,b)=>{let s=hm2m(a),e=hm2m(b);if(e<=s)e+=1440;return{s,e}};
+  if(W.wk){out.push(...icsWindowPair('win-wd',firstOn(from,[1,2,3,4,5]),mk(W.start,W.end),'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'));out.push(...icsWindowPair('win-we',firstOn(from,[0,6]),mk(W.wkStart,W.wkEnd),'FREQ=WEEKLY;BYDAY=SA,SU'))}
+  else out.push(...icsWindowPair('win',from,mk(W.start,W.end),'FREQ=DAILY'))}return out}
+function buildICS(){const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//YOLO Life Clock//web draft//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:YOLO Life Clock'];
+ S.routine.forEach(i=>L.push(...icsRoutine(i)));L.push(...icsWindows());L.push('END:VCALENDAR');return L.map(icsFold).join('\r\n')+'\r\n'}
+function downloadICS(){const s=buildICS();if(s.split('BEGIN:VEVENT').length<2){toastMsg('Add a routine item or eating window first');return}
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/calendar;charset=utf-8'}));a.download='yolo-life-clock-reminders.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toastMsg('📅 Calendar file ready. Open it to add the events')}
+
+/* ============================ v3: Remedy library hook ============================ */
+/* Loads remedies.json published next to this page (copied from
+   /workspace/pirate-apps/life-clock-research/remedies/remedies.json by sync-remedies.sh when it exists).
+   Accepts an array or {items:[...]}/{remedies:[...]}; empty or missing → "Library coming soon". */
+const REMEDY_LIB_URL='remedies.json';let remLib=null,remQ='';
+const pick=(o,ks)=>{for(const k of ks){const v=o[k];if(v!==undefined&&v!==null&&v!=='')return Array.isArray(v)?v.join('; '):typeof v==='object'?Object.values(v).join('; '):String(v)}return''};
+function loadRemLib(){if(remLib!==null)return;remLib='loading';renderRemLib();if(!location.protocol.startsWith('http')){remLib=false;renderRemLib();return}
+ fetch(REMEDY_LIB_URL,{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{const a=Array.isArray(j)?j:j&&(j.items||j.remedies);remLib=Array.isArray(a)&&a.length?a:false;renderRemLib()}).catch(()=>{remLib=false;renderRemLib()})}
+function renderRemLib(){const el=$('remLib');if(!el)return;
+ if(remLib==='loading'||remLib===null){el.innerHTML='<div class="card"><h3>📚 Remedy library</h3><div class="mini">Loading…</div></div>';return}
+ if(!remLib){el.innerHTML='<div class="card"><h3>📚 Remedy library</h3><div class="mini" style="margin-top:0">Library coming soon: traditional uses, what studies say, and cautions for common natural remedies.</div></div>';return}
+ const q=remQ.toLowerCase(),list=remLib.filter(r=>!q||JSON.stringify(r).toLowerCase().includes(q));
+ el.innerHTML=`<div class="card"><h3>📚 Remedy library <span class="ns">${remLib.length} entries</span></h3><input type="text" placeholder="Search" value="${esc(remQ)}" oninput="remQ=this.value;clearTimeout(window._rq);window._rq=setTimeout(()=>{renderRemLib();const i=$('remLib').querySelector('input');i.focus();i.setSelectionRange(i.value.length,i.value.length)},250)">
+ ${list.slice(0,60).map(r=>{const nm=pick(r,['name','title','remedy']);const tr=pick(r,['tradition','origin','culture','category']);const use=pick(r,['traditional_use','traditionalUse','use','uses','tradition_use']);
+  const ev=pick(r,['evidence','evidence_summary','evidenceSummary','what_studies_say','research']);const sf=pick(r,['safety','cautions','caution','warnings','interactions']);
+  return`<div class="lib"><div class="t">${esc(tr)}</div><b>${esc(nm)}</b>${use?`<p><i>Traditional use:</i> ${esc(use)}</p>`:''}${ev?`<p><i>What studies say:</i> ${esc(ev)}</p>`:''}${sf?`<p><i>Cautions:</i> ${esc(sf)}</p>`:''}<button class="redit" onclick="editItem(null,{name:${esc(JSON.stringify(nm.slice(0,60)))},cat:'remedy'})">+ Add reminder</button></div>`}).join('')}${list.length>60?`<div class="mini">Showing 60 of ${list.length}. Search to narrow.</div>`:''}</div>`}
+
+/* ============================ v3: PWA ============================ */
+if('serviceWorker' in navigator&&(location.protocol==='https:'||['localhost','127.0.0.1'].includes(location.hostname)))navigator.serviceWorker.register('sw.js').catch(()=>{});
+setInterval(()=>{renderKitchen();checkAlarms();if(curTab==='rout'){const ks=$('kStat');if(ks)ks.innerHTML=kStatHtml(kitchen())}},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderKitchen();checkAlarms()}});
+
+window.LJ={buildICS,checkAlarms,kitchen,winFor,intervals,alarmsFor,get state(){return S},model,allGood,render,setGoal,clockTime,toH,get DAYS(){return DAYS}};
 ensure();importOld();tab('clock');view.now=0;view.pace=0;view.best=0;render(true);if(!S.accepted)$('consent').classList.add('on');else if(!S.seen)openSheet('prof');requestAnimationFrame(loop);
 
 </script>
