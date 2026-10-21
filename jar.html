@@ -5,7 +5,7 @@
 <title>YOLO · Life Jar</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🫙%3C/text%3E%3C/svg%3E">
 <style>
-:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--grn:#5fe08a;--gray:#9aa0aa}
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a;--gray:#9aa0aa}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
 #jar{position:fixed;inset:0;width:100vw;height:100vh;display:block}
@@ -15,8 +15,18 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family
 #pct small{font-size:24px;font-weight:800}
 #left{font-size:21px;font-weight:800;text-shadow:0 2px 10px #000c}
 #left span{color:var(--gold2)}
-#pace{margin:8px auto 0;display:inline-block;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:6px 12px;font-size:14px;font-weight:700;backdrop-filter:blur(4px)}
-#pace b{color:var(--gold2)} #pace .gap{color:var(--red)}
+#pace{margin:8px auto 0;display:inline-block;background:#0b1a33cc;border:1px solid #ffffff22;border-radius:14px;padding:6px 10px;font-size:13px;font-weight:700;backdrop-filter:blur(4px);white-space:nowrap;max-width:96vw}
+#pace{pointer-events:auto;overflow:hidden;text-overflow:ellipsis}#pace b{color:var(--gold2)} #pace .gap{color:var(--amber)} #goalBtn{background:none;border:0;border-bottom:1.5px dashed var(--gold2);color:var(--txt);font:inherit;font-weight:700;padding:0;cursor:pointer} #pace .ahead{color:var(--grn)}
+#goalPop{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 250px);transform:translateX(-50%);width:min(92vw,360px);background:#0d1f3ef7;border:1px solid var(--gold);border-radius:16px;padding:12px 14px;z-index:7;display:none;box-shadow:0 10px 30px #000b}
+#goalPop.on{display:block}
+.gctl{display:flex;align-items:center;gap:8px}.gctl button{width:38px;height:38px;border-radius:10px;border:1px solid #ffffff30;background:#13284d;color:var(--txt);font-size:20px;font-weight:800}.gctl input{flex:1;accent-color:var(--gold)}.gctl b{min-width:40px;text-align:center;font-size:20px;color:var(--gold2)}
+.gnote{font-size:11px;color:var(--mut);margin-top:6px} 
+#freeLine{margin-top:6px;font-size:14px;font-weight:700;color:#ffe27a;text-shadow:0 1px 8px #000}
+#consent{position:fixed;inset:0;background:#050d1ce6;z-index:20;display:none;align-items:center;justify-content:center;padding:20px}#consent.on{display:flex}
+#consent .box{background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:20px 18px;max-width:360px;font-size:14.5px;line-height:1.45}
+#consent h3{margin:0 0 8px;color:var(--gold2);font-size:19px}
+#note a{color:var(--gold2);pointer-events:auto}
+#about p{font-size:12.5px;line-height:1.45;color:#d5dceb;margin:6px 0}
 #grayNote{margin-top:6px;font-size:12.5px;color:#d7dbe2;text-shadow:0 1px 6px #000}
 #grayNote i{display:inline-block;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#d9dce1,#6d727b);vertical-align:-1px;margin-right:4px}
 #who{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:12px;background:#13284dcc;border:1px solid #ffffff2a;color:var(--txt);border-radius:16px;padding:6px 11px;font-size:13px;font-weight:700}
@@ -32,7 +42,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family
 .sub{color:var(--mut);font-size:12.5px;margin-bottom:10px}
 .row{padding:10px 0;border-top:1px solid #ffffff14}
 .row .lab{display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-bottom:6px}
-.eff{font-weight:800}.pos{color:var(--grn)}.neg{color:var(--red)}.zero{color:var(--mut)}
+.eff{font-weight:800}.pos{color:var(--grn)}.neg{color:var(--amber)}.zero{color:var(--mut)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{border:1px solid #ffffff2e;background:#13284d;color:var(--txt);border-radius:12px;padding:6px 10px;font-size:12.5px;font-weight:600}
 .chips button.on{background:var(--gold);color:#1b1400;border-color:var(--gold2)}
@@ -66,16 +76,21 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
   <div id="pct">52<small>% full</small></div>
   <div id="left"><span>18,993</span> days left in the jar</div>
   <div id="pace"></div>
+  <div id="freeLine"></div>
   <div id="grayNote"></div>
 </div>
-<div id="note">Estimates from population studies, not a promise or medical advice. 100 is a goal, not a forecast.</div>
+<div id="note">Population estimates, not a prediction or medical advice. Your goal is a motivator. <a href="#" onclick="openSheet('about');return false">About the numbers</a></div>
+<div id="consent"><div class="box"><h3>Before you open the jar 🫙</h3><p>These numbers are <b>estimates from large population studies</b>. They are not a prediction, a guarantee, or medical advice, and they can't know your genes, health history, or luck.</p><p>Please <b>talk with your doctor</b> before making big changes to your health habits.</p><p>Your goal age is a <b>motivator, not a forecast</b>. Every good day counts.</p><button class="big" onclick="acceptConsent()">Got it, show my jar</button><div class="gnote" style="text-align:center"><a href="#" style="color:var(--gold2)" onclick="acceptConsent();openSheet('about');return false">About the numbers</a></div></div></div>
+<div class="sheet" id="about"><h2>About the numbers <button onclick="closeSheets()">×</button></h2><p><b>Starting point:</b> US Social Security period life table 2023 (2026 Trustees Report): remaining life expectancy for your age and sex. ssa.gov/oact/STATS/table4c6.html</p><p><b>Habit effects:</b> verified rows from published studies: Doll 2004 &amp; Jha 2013 (smoking, quitting), Zhuang 2026 (steps), Moore 2012 (exercise), Qian 2023 (sleep), Wood 2018 (alcohol), Veerman 2012 (TV), Prospective Studies Collaboration 2009 (BMI), Fadnes 2022 &amp; Bellavia 2013 (diet). Capped by Nguyen (Million Veteran Program: 8 healthy habits ≈ +24 y men / +20.5 y women).</p><p><b>Where days go:</b> BLS American Time Use Survey 2025; commute from Census ACS 2024 (27.2 min each way).</p><p><b>Limits:</b> these are averages from observational studies; effects overlap and are shrunk for older ages. They describe groups of people, not you. Not medical advice.</p><p><b>Goal range:</b> up to 122, the age reached by Jeanne Calment, the oldest verified human.</p></div>
+<div id="goalPop"><div style="display:flex;justify-content:space-between;align-items:center;font-weight:800">Jar goal age <button onclick="$('goalPop').classList.remove('on')" style="background:none;border:0;color:var(--mut);font-size:22px">×</button></div><div class="gctl" style="margin-top:6px"><button onclick="stepGoal(-1)" aria-label="minus">−</button><input type="range" class="goalIn" min="70" max="122" step="1" oninput="setGoal(this.value)"><button onclick="stepGoal(1)" aria-label="plus">+</button><b class="goalTxt">100</b></div><div class="gnote" title="Jeanne Calment of France (1875–1997) lived 122 years, 164 days, the oldest verified human on record.">Range 70–122. ⓘ 122 = Jeanne Calment, the oldest verified human on record. The jar holds goal × 365.25 marbles.</div></div>
 <div id="bar"><button class="alt" onclick="openSheet('hab')">My habits</button><button onclick="openSheet('gap')">What closes the gap</button><button class="alt" onclick="openSheet('days')">Where days go</button></div>
 <div id="tip"></div><div id="toast"></div>
 
 <div class="sheet" id="prof"><h2>About you <button onclick="closeSheets()">×</button></h2>
- <div class="sub">One marble = one day. A full jar = 100 years = 36,525 marbles.</div>
+ <div class="sub">One marble = one day. A full jar = <span class="goalTxt">100</span> years = <span id="capTxt">36,525</span> marbles.</div>
  <div class="grid2"><div><label class="f">Age</label><input type="number" id="inAge" min="1" max="99" inputmode="numeric"></div>
  <div><label class="f">Sex (life tables differ)</label><select id="inSex"><option value="m">Male</option><option value="f">Female</option></select></div></div>
+ <label class="f" style="margin-top:12px">Jar goal age (70–122)</label><div class="gctl"><button onclick="stepGoal(-1)">−</button><input type="range" class="goalIn" min="70" max="122" step="1" oninput="setGoal(this.value)"><button onclick="stepGoal(1)">+</button><b class="goalTxt">100</b></div><div class="gnote" title="Jeanne Calment (1875–1997), 122 years: oldest verified human.">ⓘ 122 = Jeanne Calment, oldest verified human.</div>
  <button class="big" style="margin-top:14px" onclick="saveProfile()">Show my jar</button>
 </div>
 <div class="sheet" id="hab"><h2>My habits <button onclick="closeSheets()">×</button></h2>
@@ -162,18 +177,19 @@ const CATS=[
  {id:'grooming',label:'Grooming & self-care',col:'#e48bc2',m:0.67,f:0.86},
  {id:'caring',label:'Caring for others',col:'#63c463',m:0.24,f:0.19}
 ];
-const FREE={id:'free',label:'Free time',col:'#ffd84a'};
+const FREE={id:'free',label:'Free time: trips, family, freedom',col:'#ffd84a'};
 const GRAY='#9aa0aa';
 
 /* ----------------------------- state ----------------------------- */
 const KEY='yolojar_v1';
 function defaults(sex){const h={};CATS.forEach(c=>h[c.id]=c[sex||'m']);const hb={};HABITS.forEach(x=>hb[x.id]=x.def);hb.tv=h.tv;
- return{age:48,sex:'m',retire:67,hours:h,hab:hb,smoke:{status:'never',packs:1,years:25,quit:43},seen:false}}
+ return{age:48,sex:'m',goal:100,retire:67,hours:h,hab:hb,smoke:{status:'never',packs:1,years:25,quit:43},seen:false}}
 let S;try{S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=defaults()}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 /* ----------------------------- math ----------------------------- */
-const DAYS=36525;
+let DAYS=36525; // = round(goal × 365.25); set in build()
+const goalOf=()=>Math.max(70,Math.min(122,Math.round(+S.goal||100)));
 function scale(ref){return Math.min(1,ex(S.age,S.sex)/ex(ref,S.sex))}
 function optVal(v){return typeof v==='object'?v[S.sex]:v}
 function habitYears(h,val){ // val = selected option value (or tv hours)
@@ -196,7 +212,7 @@ function bestSmoke(){const sm=Object.assign({},S.smoke);if(sm.status==='current'
 function model(){
  const cur=calc(S.hab,S.smoke),best=calc(bestHab(),bestSmoke());
  const permanent=-smokeYears(bestSmoke(),S.age); // past smoking that can't be undone
- const lived=Math.round(S.age*365.25),left=DAYS-lived;
+ const lived=Math.min(DAYS,Math.round(S.age*365.25)),left=DAYS-lived;
  let grayYrs=Math.max(0,best.proj-cur.proj)+permanent;
  const grayDays=Math.min(left,Math.round(grayYrs*365.25));
  return{cur,best,permanent,lived,left,grayYrs,grayDays}}
@@ -222,7 +238,7 @@ function layout(sp){ // hex packing from the bottom up; returns positions sorted
   for(const x of rowPts)out.push(x,y);
  }return out}
 function build(){
- DPR=Math.min(3,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;J=jarShape();
+ S.goal=goalOf();DAYS=Math.round(S.goal*365.25);DPR=Math.min(3,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;J=jarShape();
  let lo=1,hi=8;for(let i=0;i<30;i++){const m=(lo+hi)/2;(layout(m).length/2>=DAYS)?lo=m:hi=m}
  s=lo;const p=layout(s);POS=new Float32Array(p.slice(0,DAYS*2));
  RAND=new Float32Array(DAYS);let seed=1234567;for(let i=0;i<DAYS;i++){seed=(seed*1103515245+12345)&0x7fffffff;RAND[i]=seed/0x7fffffff}
@@ -264,8 +280,8 @@ function draw(){
  const half=Math.ceil(s*0.94*DPR)/2+1;
  for(let i=0;i<left;i++){const sp=i>=grayFrom?SPR.gray:SPR[COLOR[i]];ctx.drawImage(sp,POS[i*2]*DPR-half,POS[i*2+1]*DPR-half)}
  // at-risk shimmer over gray layer
- if(view.gray>1&&left>0){const a=0.10+0.08*Math.sin(pulse);const yTop=POS[(left-1)*2+1],yBot=POS[Math.max(0,grayFrom)*2+1];
-  ctx.save();ctx.scale(DPR,DPR);ctx.globalAlpha=a;ctx.fillStyle='#ff6b6b';ctx.fillRect(J.L,yTop-s,J.R-J.L,yBot-yTop+2*s);ctx.restore();
+ if(view.gray>1&&left>0){const a=0.06+0.05*Math.sin(pulse);const yTop=POS[(left-1)*2+1],yBot=POS[Math.max(0,grayFrom)*2+1];
+  ctx.save();ctx.scale(DPR,DPR);ctx.globalAlpha=a;ctx.fillStyle='#ffd27a';ctx.fillRect(J.L,yTop-s,J.R-J.L,yBot-yTop+2*s);ctx.restore();
   ctx.save();ctx.scale(DPR,DPR);ctx.setLineDash([4,4]);ctx.strokeStyle='#ffffff55';ctx.beginPath();ctx.moveTo(J.L+8,yBot+s);ctx.lineTo(J.R-8,yBot+s);ctx.stroke();ctx.restore()}
  // surface line
  if(left>0&&left<DAYS){const y=POS[(left-1)*2+1]-s*0.6;ctx.save();ctx.scale(DPR,DPR);ctx.strokeStyle='#ffffff40';ctx.beginPath();ctx.moveTo(J.L+6,y);ctx.lineTo(J.R-6,y);ctx.stroke();ctx.restore()}
@@ -289,15 +305,18 @@ const easeOut=x=>1-Math.pow(1-x,3);
 const $=id=>document.getElementById(id);const fmt=n=>Math.round(n).toLocaleString('en-US');const f1=n=>(Math.round(n*10)/10).toFixed(1);
 function sgn(y){const r=Math.round(y*10)/10;return(r>0?'+':r<0?'−':'±')+Math.abs(r).toFixed(1)+' y'}
 function cls(y){return Math.abs(y)<0.05?'zero':y>0?'pos':'neg'}
+function freeDays(end){const now=S.age,ret=Math.max(now,S.retire),pw=props(true),pr=props(false);const w=Math.max(0,Math.min(end,ret)-now),r=Math.max(0,end-Math.max(now,ret));return(w*pw.free+r*pr.free)*365.25}
 function render(animate=true){
  const M=model();target.lived=M.lived;target.gray=M.grayDays;
  if(animate){anim={p:0,dur:Math.abs(target.gray-view.gray)>200||Math.abs(target.lived-view.lived)>200?1500:500,from:{lived:view.lived,gray:view.gray}}}else{view.lived=target.lived;view.gray=target.gray}
  const pct=M.left/DAYS*100;$('pct').innerHTML=Math.round(pct)+'<small>% full</small>';
  $('left').innerHTML='<span>'+fmt(M.left)+'</span> days left in the jar';
- const proj=M.cur.proj,gap=100-proj;
- $('pace').innerHTML='On pace for <b>'+f1(proj)+'</b> · Jar goal: <b>100</b> · '+(gap>0?'Gap: <span class="gap">'+f1(gap)+' yrs</span>':'<b style="color:var(--grn)">Goal reached 🎯</b>');
+ const proj=M.cur.proj,G=S.goal,gap=G-proj;
+ $('pace').innerHTML='On pace for <b>'+f1(proj)+'</b> · <button id="goalBtn" onclick="openGoal()" title="Tap to change your goal age">Jar goal: <b>'+G+'</b> ✎</button> · '+(gap>0.05?'Gap: <span class="gap">'+f1(gap)+' yrs</span>':gap<-0.05?'<span class="ahead">Ahead by '+f1(-gap)+' yrs 🎯</span>':'<span class="ahead">Right on goal 🎯</span>');
+ document.querySelectorAll('.goalTxt').forEach(e=>e.textContent=G);document.querySelectorAll('.goalIn').forEach(e=>e.value=G);$('capTxt').textContent=fmt(DAYS);
  const rec=Math.max(0,M.best.proj-M.cur.proj);
- $('grayNote').innerHTML=M.grayDays>0?'<i></i>'+fmt(M.grayDays)+' cracked marbles ('+f1(M.grayYrs)+' yrs) at the surface'+(rec>0.05?' · '+f1(rec)+' yrs you can win back':' · past habits, already banked'):'';
+ $('grayNote').innerHTML=M.grayDays>0?'<i></i>'+fmt(M.grayDays)+' cracked marbles at the top'+(rec>0.05?' · <b style="color:var(--grn)">Win back up to '+f1(rec)+' yrs</b>':' · from past habits. You\'ve already won back the rest 💪'):'<span style="color:var(--grn)">No cracked marbles. Every habit is working for you 💪</span>';
+ $('freeLine').innerHTML='🟡 '+fmt(freeDays(Math.min(S.goal,proj)))+' free days to spend your way'+(rec>0.05?' <span style="color:var(--mut);font-weight:600">(+'+fmt(freeDays(Math.min(S.goal,M.best.proj))-freeDays(Math.min(S.goal,proj)))+' with good habits)</span>':'');
  $('who').textContent=S.age+' · '+(S.sex==='f'?'F':'M')+' ✎';
  renderHabits(M);renderGap(M);renderDays(M);save()}
 function chips(id,opts,cur,fn){return'<div class="chips">'+opts.map((o,k)=>`<button class="${(o[1]===cur||(typeof o[1]==='object'&&JSON.stringify(o[1])===JSON.stringify(cur)))?'on':''}" onclick="${fn}('${id}',${k})">${o[0]}</button>`).join('')+'</div>'}
@@ -316,8 +335,8 @@ function gains(M){const out=[];const base=calc(S.hab,S.smoke).proj;
  if(S.smoke.status==='current'){const g=calc(S.hab,bestSmoke()).proj-base;out.push({k:'smoke',label:'Quit smoking today',g,src:'Doll 2004 / Jha 2013 quit-age rows'})}
  HABITS.forEach(x=>{const b=bestVal(x);const h2=Object.assign({},S.hab,{[x.id]:b});const g=calc(h2,S.smoke).proj-base;if(g>0.05){const o=x.opts.find(o=>o[1]===b);out.push({k:x.id,label:x.label+' → '+o[0],g,src:x.src.split(/[:(]/)[0]})}});
  return out.sort((a,b)=>b.g-a.g)}
-function renderGap(M){const G=gains(M);const gap=100-M.cur.proj;
- $('gapSub').innerHTML=`On pace for <b>${f1(M.cur.proj)}</b>. With every good habit below: <b>${f1(M.best.proj)}</b>. ${M.best.proj<100?'Gap still left after that: '+f1(100-M.best.proj)+' yrs (genes, luck, medicine, and stuff studies can\'t measure yet).':'That reaches the jar goal.'} Gains overlap, so they don\'t simply add.`;
+function renderGap(M){const G=gains(M);const GO=S.goal;
+ $('gapSub').innerHTML=`On pace for <b>${f1(M.cur.proj)}</b>. With every good habit below: <b>${f1(M.best.proj)}</b>. ${M.best.proj<GO?'Gap to your goal of '+GO+' still left after that: '+f1(GO-M.best.proj)+' yrs (genes, luck, and medicine studies can\'t measure yet).':'That reaches your jar goal of '+GO+' (ahead by '+f1(M.best.proj-GO)+' yrs).'} Gains overlap, so they don\'t simply add.`;
  $('gapList').innerHTML=G.length?G.map(x=>`<div class="gapitem"><div class="g">+${f1(x.g)}y</div><div class="d">${x.label}<div class="src">${x.src}</div></div><button onclick="applyGain('${x.k}')">Switch on</button></div>`).join('')+`<button class="big" onclick="allGood()">✨ Switch on all of them</button>`:'<div class="sub">Every habit in this draft is already switched on. Nice work, Pirate. 🏴‍☠️</div>'}
 function applyGain(k){if(k==='smoke'){S.smoke=bestSmoke()}else{const x=HABITS.find(h=>h.id===k);S.hab[k]=bestVal(x);if(x.tv)S.hours.tv=S.hab.tv}assignColors();const before=model().grayDays;render();toast(before)}
 function allGood(){const before=model().grayDays;S.hab=bestHab();S.hours.tv=S.hab.tv;S.smoke=bestSmoke();assignColors();render();closeSheets();toast(before)}
@@ -326,19 +345,23 @@ function renderDays(M){
  let h='';CATS.forEach(c=>{h+=`<div class="sl"><i style="background:${c.col}"></i><label>${c.label}<input type="range" min="0" max="${c.id==='sleep'?12:c.id==='work'?14:8}" step="0.25" value="${S.hours[c.id]}" oninput="setHour('${c.id}',this.value)"></label><b id="hv_${c.id}">${(+S.hours[c.id]).toFixed(2)}h</b></div>`});
  if(!$('sliders').dataset.built){$('sliders').innerHTML=h;$('sliders').dataset.built=1}else{CATS.forEach(c=>{const el=$('hv_'+c.id);el.textContent=(+S.hours[c.id]).toFixed(2)+'h';el.previousElementSibling.querySelector('input').value=S.hours[c.id]})}
  $('retire').value=S.retire;$('retireV').textContent=S.retire;
- // split remaining days (to on-pace age, and to 100) by category
- const now=S.age,end=Math.min(100,M.cur.proj),ret=Math.max(now,S.retire);
+ // split remaining days (to on-pace age, and to goal age) by category
+ const GO=S.goal,now=S.age,end=Math.min(122,M.cur.proj),ret=Math.max(now,S.retire);
  const pw=props(true),pr=props(false);
  const yrsW=e=>Math.max(0,Math.min(e,ret)-now),yrsR=e=>Math.max(0,e-Math.max(now,ret));
  const row=(id,e)=>(yrsW(e)*pw[id]+yrsR(e)*pr[id])*365.25;
- const rows=[...CATS,FREE].map(c=>({c,a:row(c.id,end),b:row(c.id,100)}));
+ const rows=[...CATS,FREE].map(c=>({c,a:row(c.id,end),b:row(c.id,GO)}));
  const freeW=pw.free*24,freeR=pr.free*24,over=24-CATS.reduce((a,c)=>a+ +S.hours[c.id],0);
  $('dayTable').innerHTML=(over<0?`<div class="sub" style="color:var(--red)">Your hours add up to more than 24. Free time is set to 0.</div>`:'')+
- `<div class="sub" style="margin-top:8px">Free time: <b style="color:#ffe27a">${freeW.toFixed(1)} h/day</b> while working → <b style="color:#ffe27a">${freeR.toFixed(1)} h/day</b> after ${S.retire}.</div>
- <table><tr><td><b>Days left by activity</b><div class="src">(24-hour days' worth)</div></td><td>to ${f1(end)}</td><td>to 100</td></tr>${rows.map(r=>`<tr class="${r.c.id==='free'?'free':''}"><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${r.c.col};margin-right:6px"></span>${r.c.label}</td><td>${fmt(r.a)}</td><td>${fmt(r.b)}</td></tr>`).join('')}</table>
- <div class="sub" style="margin-top:8px">🟡 <b style="color:#ffe27a">${fmt(rows.at(-1).a)} free days left</b> on your current pace, <b style="color:#ffe27a">${fmt(rows.at(-1).b)}</b> if you make it to 100. Reaching 100 adds ${fmt(rows.at(-1).b-rows.at(-1).a)} free days, ${fmt(rows[1].b-rows[1].a)} work days.</div>`}
+ `<div class="sub" style="margin-top:8px">Your free time: <b style="color:#ffe27a">${freeW.toFixed(1)} h/day</b> while working → <b style="color:#ffe27a">${freeR.toFixed(1)} h/day</b> after ${S.retire}.</div>
+ <table><tr><td><b>Days left by activity</b><div class="src">(24-hour days' worth)</div></td><td>to ${f1(end)}</td><td>to ${GO}</td></tr>${rows.map(r=>`<tr class="${r.c.id==='free'?'free':''}"><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${r.c.col};margin-right:6px"></span>${r.c.label}</td><td>${fmt(r.a)}</td><td>${fmt(r.b)}</td></tr>`).join('')}</table>
+ <div class="sub" style="margin-top:8px">🟡 <b style="color:#ffe27a">${fmt(rows.at(-1).a)} free days to spend your way</b> (trips, family, freedom, less work) on your current pace, <b style="color:#ffe27a">${fmt(rows.at(-1).b)}</b> if you make it to ${GO}. ${GO>=end?`Reaching ${GO} adds ${fmt(rows.at(-1).b-rows.at(-1).a)} free days, ${fmt(rows[1].b-rows[1].a)} work days.`:`You're on pace to pass ${GO}: ${fmt(rows.at(-1).a-rows.at(-1).b)} bonus free days beyond it.`}</div>`}
 function setHour(id,v){S.hours[id]=+v;if(id==='tv')S.hab.tv=+v;assignColors();render(false)}
 $('retire').oninput=e=>{S.retire=+e.target.value;assignColors();render(false)};
+function acceptConsent(){S.accepted=true;save();$('consent').classList.remove('on');if(!S.seen)openSheet('prof')}
+function openGoal(){$('goalPop').classList.toggle('on')}
+let gT;function setGoal(v){const g=Math.max(70,Math.min(122,Math.round(+v)));if(g===S.goal)return;S.goal=g;document.querySelectorAll('.goalTxt').forEach(e=>e.textContent=g);clearTimeout(gT);gT=setTimeout(()=>{const ratio=view.lived;build();view.lived=Math.min(DAYS,ratio);render(true)},60)}
+function stepGoal(d){setGoal(S.goal+d)}
 function openSheet(id){closeSheets();if(id==='prof'){$('inAge').value=S.age;$('inSex').value=S.sex}$(id).classList.add('on')}
 function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'))}
 function saveProfile(){const a=Math.max(1,Math.min(99,Math.round(+$('inAge').value||S.age)));const sexChanged=$('inSex').value!==S.sex;S.age=a;S.sex=$('inSex').value;S.seen=true;
@@ -351,7 +374,7 @@ cv.addEventListener('click',e=>{const x=e.clientX,y=e.clientY;let bi=-1,bd=1e9;c
  tip.textContent='Day '+fmt(d+1)+' · age '+Math.floor(age)+' · '+what;tip.style.display='block';tip.style.left=Math.min(W-200,Math.max(6,x-90))+'px';tip.style.top=(y-34)+'px';clearTimeout(tip._t);tip._t=setTimeout(()=>tip.style.display='none',2200)});
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{build();},150)});
 // test hook
-window.LJ={get state(){return S},model,allGood,render};
-build();view.lived=0;view.gray=0;render(true);if(!S.seen)openSheet('prof');raf=requestAnimationFrame(loop);
+window.LJ={get state(){return S},model,allGood,render,setGoal,get DAYS(){return DAYS}};
+build();view.lived=0;view.gray=0;render(true);if(!S.accepted)$('consent').classList.add('on');else if(!S.seen)openSheet('prof');raf=requestAnimationFrame(loop);
 </script>
 </body></html>
