@@ -79,21 +79,108 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
 #tip{position:fixed;padding:5px 9px;border-radius:9px;background:#000c;font-size:12px;pointer-events:none;display:none;z-index:4;white-space:nowrap}
 #toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.8);opacity:0;transition:all .35s;background:#0b1a33ee;border:1px solid var(--gold);border-radius:16px;padding:12px 18px;font-weight:900;font-size:18px;color:var(--gold2);pointer-events:none;z-index:6;text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#tabs{position:absolute;left:0;right:0;bottom:0;height:calc(58px + env(safe-area-inset-bottom));display:flex;background:#0a1730f2;border-top:1px solid #ffffff1f;z-index:8;padding-bottom:env(safe-area-inset-bottom)}
+#tabs button{flex:1;background:none;border:0;color:var(--mut);font-size:10.5px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0}
+#tabs button i{font-style:normal;font-size:19px;filter:grayscale(.6);opacity:.8}
+#tabs button.on{color:var(--gold2)}#tabs button.on i{filter:none;opacity:1}
+#note{bottom:calc(env(safe-area-inset-bottom) + 66px)!important}
+.pills{margin-top:12px;display:flex;gap:8px;justify-content:center;pointer-events:auto}
+.pills button{background:#13284dcc;border:1px solid #ffffff2e;color:var(--txt);border-radius:14px;padding:7px 12px;font-weight:700;font-size:13px}
+.pills button:first-child{border-color:#5fe08a77;color:#c9f5d6}
+.panel{position:absolute;left:0;right:0;top:0;bottom:calc(58px + env(safe-area-inset-bottom));overflow:auto;background:var(--bg);padding:calc(env(safe-area-inset-top) + 18px) 16px 24px;display:none;z-index:3}
+.panel.on{display:block}
+.panel.half{top:44%;background:#0d1f3ef7;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding-top:12px;box-shadow:0 -10px 30px #000a}
+.ph{display:flex;align-items:center;gap:8px;margin-bottom:6px}.ph h1{font-size:22px;margin:0;flex:1}
+.panel .src{display:none}.panel.math .src{display:block}
+.card{background:#13284d99;border:1px solid #ffffff1a;border-radius:16px;padding:12px 13px;margin:10px 0}
+.card h3{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.card .ns{font-size:11px;color:var(--mut);font-weight:600}
+.sum{font-size:14px;line-height:1.5}.sum b{color:var(--gold2)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.fr.three{grid-template-columns:1fr 1fr 1fr}
+.fl{font-size:11.5px;color:var(--mut);display:block;margin-bottom:2px}
+.panel input[type=number],.panel input[type=text],.panel input[type=date],.panel select,#rform input,#rform select,#rform textarea{background:#0f2242;color:var(--txt);border:1px solid #ffffff30;border-radius:10px;padding:8px;font-size:15px;width:100%;font-family:inherit;color-scheme:dark}
+.mini{font-size:12px;color:var(--mut);margin-top:6px}
+.since{display:inline-block;background:#5fe08a22;border:1px solid #5fe08a66;color:#c9f5d6;border-radius:10px;padding:3px 8px;font-size:12px;font-weight:700;margin-top:6px}
+.wl{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid #ffffff12}
+.big.ghost{background:#13284d;color:var(--txt);border:1px solid #ffffff30}
+.disc{font-size:12px;color:#d5dceb;background:#13284d99;border:1px solid #ffffff1f;border-radius:12px;padding:9px 11px;margin-top:14px}.disc.top{margin:4px 0 8px}
+.rcat{margin:14px 0 4px;font-weight:800;color:var(--gold2);font-size:13px}
+.ritem{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid #ffffff14}
+.ritem.paused{opacity:.55}
+.rchk{width:30px;height:30px;border-radius:50%;border:2px solid var(--grn);background:none;color:#062b12;font-weight:900;flex:none;font-size:15px}
+.rchk.on{background:var(--grn)}.rchk:disabled{border-color:#ffffff40}
+.rmain{flex:1;min-width:0}.rtop{font-size:14.5px}.rtop b{color:var(--gold2);margin-right:5px}
+.rst{font-size:12px;color:var(--mut);margin-top:2px}
+.rlink{background:none;border:0;color:#9fd8ff;font-size:12.5px;padding:4px 0 0;font-weight:700}
+.rrec{font-size:13px;background:#0f2242;border:1px solid #ffffff1a;border-radius:10px;padding:8px 10px;margin-top:5px;color:#dfe7f3}
+.redit{background:none;border:1px solid #ffffff30;color:var(--mut);border-radius:9px;padding:5px 10px;font-size:12px}
+.dchips{display:flex;gap:4px;margin-top:6px}.dchips button{flex:1;padding:6px 0;border-radius:9px;border:1px solid #ffffff2e;background:#13284d;color:var(--txt);font-size:12px;font-weight:700}.dchips button.on{background:var(--gold);color:#1b1400}
+.more{background:none;border:0;color:#9fd8ff;font-weight:700;font-size:13px;padding:10px 0 4px}
+.tog{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;margin-top:4px}
+.tog input{width:44px;height:24px;accent-color:var(--grn)}
+#app .sheet{z-index:10}
+#jarFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+#p-jar{padding:0}
+
 </style></head>
 <body>
 <div id="app">
 <canvas id="face"></canvas>
-<a id="back" href="./">← Clock app</a>
 <button id="who" onclick="openSheet('prof')">48 · M ✎</button>
 <div id="top"><div class="t">YOLO · LIFE CLOCK</div><div class="its">It's</div><div id="nowT">12:00 AM</div><div class="its" style="margin-top:0">in your life</div></div>
-<div id="below"><div id="paceLine"></div><div id="subLine"></div></div>
-<div id="tip"></div><div id="toast"></div>
+<div id="below"><div id="paceLine"></div><div id="subLine"></div>
+ <div class="pills"><button onclick="openSheet('gap')">✨ Win back time</button><button id="routPill" onclick="tab('rout')">🗓 Routine</button></div></div>
 <div id="note">Population estimates, not a prediction or medical advice. Your goal is a motivator. <a href="#" onclick="openSheet('about');return false">About the numbers</a></div>
+
+<section class="panel" id="p-life">
+ <div class="ph"><h1>My Life</h1><button class="mathBtn" onclick="toggleMath('p-life')">ⓘ math</button></div>
+ <div id="lifeSum" class="card sum"></div>
+ <div id="lifeForm"></div>
+</section>
+
+<section class="panel half" id="p-day">
+ <div class="ph"><h1>My Day</h1><button class="mathBtn" onclick="toggleMath('p-day')">ⓘ math</button></div>
+ <div id="clockFree"></div>
+ <div class="sub">The colored arcs show the rest of your life-day. Hours per day during working years (defaults: US averages, BLS American Time Use Survey 2025). After retirement, work and commute time turn into free time.</div>
+ <div id="sliders"></div>
+ <div class="sl" style="grid-template-columns:18px 1fr 52px"><i style="background:transparent"></i><label>Retire at age<input type="range" id="retire" min="45" max="85" step="1"></label><b id="retireV"></b></div>
+ <div id="dayTable"></div>
+</section>
+
+<section class="panel" id="p-rout">
+ <div class="ph"><h1>Routine</h1></div>
+ <div class="sub" id="routToday"></div>
+ <div id="eatCard"></div>
+ <div class="rcat" style="margin-top:16px">⏰ Reminders</div>
+ <div id="routList"></div>
+ <button class="big ghost" onclick="editItem(null,{cat:'move'})">+ Add to routine</button>
+ <div id="weekCard"></div>
+ <div class="disc">Your routine, your choice. Not medical advice. Herbs and supplements can interact with each other and with medications; check with a doctor or qualified herbalist.</div>
+</section>
+
+<section class="panel" id="p-rem">
+ <div class="ph"><h1>🌿 Natural remedies</h1></div>
+ <div class="disc top">Your routine, your choice. Not medical advice. Herbs and supplements can interact with each other and with medications; check with a doctor or qualified herbalist.</div>
+ <div id="remList"></div>
+ <div class="card"><div class="lab">Quick add</div><div class="chips" id="quick"></div>
+ <button class="big ghost" onclick="editItem(null,{cat:'remedy'})">+ Add your own</button></div>
+</section>
+
+<section class="panel" id="p-jar"><iframe id="jarFrame" title="Life Jar" loading="lazy"></iframe></section>
+
+<nav id="tabs">
+ <button data-t="clock" onclick="tab('clock')"><i>⏱</i>Clock</button>
+ <button data-t="life" onclick="tab('life')"><i>👤</i>My Life</button>
+ <button data-t="day" onclick="tab('day')"><i>🌗</i>My Day</button>
+ <button data-t="rout" onclick="tab('rout')"><i>🗓</i>Routine</button>
+ <button data-t="rem" onclick="tab('rem')"><i>🌿</i>Remedies</button>
+ <button data-t="jar" onclick="tab('jar')"><i>🫙</i>Jar</button>
+</nav>
+<div id="tip"></div><div id="toast"></div>
 <div id="consent"><div class="box"><h3>Before you start the clock ⏱</h3><p>These numbers are <b>estimates from large population studies</b>. They are not a prediction, a guarantee, or medical advice, and they can't know your genes, health history, or luck.</p><p>Please <b>talk with your doctor</b> before making big changes to your health habits.</p><p>Your goal age is a <b>motivator, not a forecast</b>. Every good day counts.</p><button class="big" onclick="acceptConsent()">Got it, show my clock</button><div class="gnote" style="text-align:center"><a href="#" style="color:var(--gold2)" onclick="acceptConsent();openSheet('about');return false">About the numbers</a></div></div></div>
 <div class="sheet" id="about"><h2>About the numbers <button onclick="closeSheets()">×</button></h2><p><b>Starting point:</b> US Social Security period life table 2023 (2026 Trustees Report): remaining life expectancy for your age and sex. ssa.gov/oact/STATS/table4c6.html</p><p><b>Habit effects:</b> verified rows from published studies: Doll 2004 &amp; Jha 2013 (smoking, quitting), Zhuang 2026 (steps), Moore 2012 (exercise), Qian 2023 (sleep), Wood 2018 (alcohol), Veerman 2012 (TV), Prospective Studies Collaboration 2009 (BMI), Fadnes 2022 &amp; Bellavia 2013 (diet). Capped by Nguyen (Million Veteran Program: 8 healthy habits ≈ +24 y men / +20.5 y women).</p><p><b>Where days go:</b> BLS American Time Use Survey 2025; commute from Census ACS 2024 (27.2 min each way).</p><p><b>Limits:</b> these are averages from observational studies; effects overlap and are shrunk for older ages. They describe groups of people, not you. Not medical advice.</p><p><b>The clock:</b> your life from birth to your goal age is drawn as one day, midnight to midnight. <span id="scaleNote"></span> The hour hand sits at your age, the gold marker where your current pace ends; the gray slice after it is time habits can win back.</p>
   <p><b>Goal range:</b> up to 122, the age reached by Jeanne Calment, the oldest verified human.</p></div>
 <div id="goalPop"><div style="display:flex;justify-content:space-between;align-items:center;font-weight:800">Jar goal age <button onclick="$('goalPop').classList.remove('on')" style="background:none;border:0;color:var(--mut);font-size:22px">×</button></div><div class="gctl" style="margin-top:6px"><button onclick="stepGoal(-1)" aria-label="minus">−</button><input type="range" class="goalIn" min="70" max="122" step="1" oninput="setGoal(this.value)"><button onclick="stepGoal(1)" aria-label="plus">+</button><b class="goalTxt">100</b></div><div class="gnote" title="Jeanne Calment of France (1875–1997) lived 122 years, 164 days, the oldest verified human on record.">Range 70–122. ⓘ 122 = Jeanne Calment, the oldest verified human on record. Your goal age is midnight on the clock.</div></div>
-<div id="bar"><button class="alt" onclick="openSheet('hab')">My habits</button><button onclick="openSheet('gap')">Win back time</button><button class="alt" onclick="openSheet('days')">My day</button></div>
 
 <div class="sheet" id="prof"><h2>About you <button onclick="closeSheets()">×</button></h2>
  <div class="sub">Your life to your goal age = one 24-hour day. Goal <span class="goalTxt">100</span> = midnight = <span id="capTxt">36,525</span> days.</div>
@@ -102,18 +189,14 @@ td{padding:5px 2px;border-top:1px solid #ffffff12} td:nth-child(n+2){text-align:
  <label class="f" style="margin-top:12px">Jar goal age (70–122)</label><div class="gctl"><button onclick="stepGoal(-1)">−</button><input type="range" class="goalIn" min="70" max="122" step="1" oninput="setGoal(this.value)"><button onclick="stepGoal(1)">+</button><b class="goalTxt">100</b></div><div class="gnote" title="Jeanne Calment (1875–1997), 122 years: oldest verified human.">ⓘ 122 = Jeanne Calment, oldest verified human.</div>
  <button class="big" style="margin-top:14px" onclick="saveProfile()">Show my clock</button>
 </div>
-<div class="sheet" id="hab"><h2>My habits <button class="mathBtn" onclick="toggleMath('hab')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
- <div class="sub">Pick what's true today. The gray slice after your pace marker is time you can win back.</div>
- <button class="big" onclick="allGood()">✨ Switch on all good habits</button>
- <div id="habList"></div></div>
 <div class="sheet" id="gap"><h2>Win back time <button class="mathBtn" onclick="toggleMath('gap')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
  <div class="sub" id="gapSub"></div><div id="gapList"></div></div>
-<div class="sheet" id="days"><h2>Where your day goes <button class="mathBtn" onclick="toggleMath('days')">ⓘ math</button><button onclick="closeSheets()">×</button></h2>
- <div id="clockFree"></div>
- <div class="sub">The colored arcs on the clock show the rest of your day. Hours per day during working years (defaults: US averages, BLS American Time Use Survey 2025). After retirement, work and commute time turn into free time.</div>
- <div id="sliders"></div>
- <div class="sl" style="grid-template-columns:18px 1fr 52px"><i style="background:transparent"></i><label>Retire at age<input type="range" id="retire" min="45" max="85" step="1"></label><b id="retireV"></b></div>
- <div id="dayTable"></div></div>
+<div class="sheet tall" id="rform"></div>
+<div class="sheet" id="waitS"><h2>⏳ Wait for full <button onclick="closeSheets()">×</button></h2>
+ <div style="display:flex;justify-content:center;margin:8px 0"><div id="waitRing" style="width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:126px;height:126px;border-radius:50%;background:#0d1f3e;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900" id="waitClock">15:00</div></div></div>
+ <div class="sub" id="waitMsg" style="text-align:center;font-size:14px;color:#dfe7f3"></div>
+ <div class="fr"><button class="big ghost" id="waitGo" onclick="waitDone(true)">Still hungry? Go ahead</button><button class="big" onclick="waitDone(false)">I'm good</button></div>
+ <div class="mini" style="text-align:center">No rules, just a pause. You decide.</div></div>
 
 </div>
 <script>
@@ -235,15 +318,7 @@ function cls(y){return Math.abs(y)<0.05?'zero':y>0?'pos':'neg'}
 function freeDays(end){const now=S.age,ret=Math.max(now,S.retire),pw=props(true),pr=props(false);const w=Math.max(0,Math.min(end,ret)-now),r=Math.max(0,end-Math.max(now,ret));return(w*pw.free+r*pr.free)*365.25}
 
 function chips(id,opts,cur,fn){return'<div class="chips">'+opts.map((o,k)=>`<button class="${(o[1]===cur||(typeof o[1]==='object'&&JSON.stringify(o[1])===JSON.stringify(cur)))?'on':''}" onclick="${fn}('${id}',${k})">${o[0]}</button>`).join('')+'</div>'}
-function renderHabits(M){
- const sm=S.smoke,sy=M.cur.smk;let h=`<div class="row"><div class="lab">Smoking <span class="eff ${cls(sy)}">${sgn(sy)}</span></div>
- ${chips('smk',[['Never',0],['Quit',1],['Smoke now',2]],{never:0,former:1,current:2}[sm.status],'setSmoke')}
- ${sm.status!=='never'?`<div class="grid2" style="margin-top:8px"><div><label class="f">Packs/day</label><input type="number" step="0.5" min="0" max="5" value="${sm.packs}" onchange="S.smoke.packs=+this.value;render()"></div><div><label class="f">Years smoked</label><input type="number" min="0" max="80" value="${sm.years}" onchange="S.smoke.years=+this.value;if(S.smoke.status==='former'){S.smoke.quit=Math.min(S.age,18+S.smoke.years)};render()"></div>${sm.status==='former'?`<div><label class="f">Quit at age</label><input type="number" min="10" max="${S.age}" value="${sm.quit}" onchange="S.smoke.quit=+this.value;render()"></div>`:''}</div>`:''}
- <div class="src">Persistent smoking −10 y vs never (Doll 2004 BMJ; Jha 2013 NEJM). Quitting at ~30/40/50/60 wins back ~10/9/6/3 y (Doll 2004). Pack size isn't modeled yet.</div></div>`;
- HABITS.forEach(x=>{const v=S.hab[x.id];const y=M.cur.parts[x.id];const counted=x.g!=='move'||Math.abs(y-M.cur.move)<1e-9;
-  let sel=v;if(x.tv){let k=0,bd=1e9;x.opts.forEach((o,i)=>{const d=Math.abs(o[1]-v);if(d<bd){bd=d;k=i}});sel=x.opts[k][1]}
-  h+=`<div class="row"><div class="lab">${x.label}${x.tv?' · '+f1(v)+' h':''} <span class="eff ${cls(y)}" style="${counted?'':'opacity:.45'}">${sgn(y)}${counted?'':' (overlaps)'}</span></div>${chips(x.id,x.opts,sel,'setHab')}<div class="src">${x.src}</div></div>`});
- $('habList').innerHTML=h}
+
 function setHab(id,k){const x=HABITS.find(h=>h.id===id);S.hab[id]=x.opts[k][1];if(x.tv)S.hours.tv=x.opts[k][1];assignColors();render()}
 function setSmoke(_,k){const st=['never','former','current'][k];if(st==='former'&&S.smoke.status==='current')S.smoke.quit=S.age;S.smoke.status=st;render()}
 function gains(M){const out=[];const base=calc(S.hab,S.smoke).proj;
@@ -292,7 +367,7 @@ const cv=document.getElementById('face'),ctx=cv.getContext('2d');
 let W,H,DPR,G={cx:0,cy:0,R:100},mode='life';
 let view={now:0,pace:0,best:0},target={now:0,pace:0,best:0},anim=null,sparks=[],t0=performance.now();
 function build(){S.goal=goalOf();DAYS=Math.round(S.goal*365.25);DPR=Math.min(3,window.devicePixelRatio||1);W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;cv.width=W*DPR;cv.height=H*DPR;
- const top=172,bottom=H-170;G.R=Math.max(90,Math.min(W*0.44,(bottom-top-70)/2));G.cx=W/2;G.cy=Math.max(top+G.R,(top+bottom-70)/2);
+ if(typeof curTab!=='undefined'&&curTab==='day'){G.R=Math.max(80,Math.min(W*0.36,(H*0.44-40)/2));G.cx=W/2;G.cy=18+G.R}else{const top=172,bottom=H-140;G.R=Math.max(90,Math.min(W*0.44,(bottom-top-110)/2));G.cx=W/2;G.cy=Math.max(top+G.R,(top+bottom-110)/2)}
  const hud=$('below');if(hud)hud.style.top=(G.cy+G.R+14)+'px'}
 const ang=h=>-Math.PI/2+h/24*Math.PI*2;
 // sky colors through the day (decorative; free time is gold in "Where your day goes")
@@ -332,7 +407,7 @@ function draw(ts){
  ctx.save();ctx.translate(cx,cy);for(let i=0;i<96;i++){const h=i/4,a=ang(h),maj=i%12===0,mid=i%4===0;const r1=rr-w/2-(maj?14:mid?9:5),r2=rr-w/2-3;ctx.beginPath();ctx.moveTo(Math.cos(a)*r1,Math.sin(a)*r1);ctx.lineTo(Math.cos(a)*r2,Math.sin(a)*r2);ctx.strokeStyle=maj?'#f0cf73':mid?'#ffffff88':'#ffffff30';ctx.lineWidth=maj?2.4:mid?1.4:1;ctx.stroke()}
  ctx.fillStyle='#dfe7f3';ctx.textAlign='center';ctx.textBaseline='middle';
  [[0,'12 AM'],[3,'3'],[6,'6 AM'],[9,'9'],[12,'12 PM'],[15,'3'],[18,'6 PM'],[21,'9']].forEach(([h,l])=>{const a=ang(h),r=rr-w/2-30;ctx.font=(h%6===0?'700 13px':'600 12px')+' system-ui,sans-serif';ctx.fillText(l,Math.cos(a)*r,Math.sin(a)*r)});
- ctx.font='600 10.5px system-ui,sans-serif';ctx.fillStyle='#9fb0c9';ctx.fillText('midnight = age '+S.goal,0,-(rr-w/2-50));ctx.fillStyle='#f0cf73aa';ctx.fillText(mode==='days'?'tap to close':'tap for your day',0,-(rr-w/2-66));
+ if(R>150){ctx.font='600 10.5px system-ui,sans-serif';ctx.fillStyle='#9fb0c9';ctx.fillText('midnight = age '+S.goal,0,-(rr-w/2-50));ctx.fillStyle='#f0cf73aa';ctx.fillText(mode==='days'?'tap to close':'tap for your day',0,-(rr-w/2-66))}else{ctx.font='600 10.5px system-ui,sans-serif';ctx.fillStyle='#f0cf73aa';ctx.fillText('tap to close',0,rr*0.42)}
  ctx.restore();
  // pace marker
  if(view.pace<24.0001){const a=ang(view.pace);const px=cx+Math.cos(a)*rr,py=cy+Math.sin(a)*rr;ctx.beginPath();ctx.arc(px,py,w/2+3,0,7);ctx.fillStyle='#0b1a33';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#ffe27a';ctx.stroke();ctx.beginPath();ctx.arc(px,py,3.5,0,7);ctx.fillStyle='#ffe27a';ctx.fill()}
@@ -346,7 +421,7 @@ function draw(ts){
  for(const p of sparks){ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r*(0.5+p.l),0,7);ctx.fill()}ctx.globalAlpha=1}
 let lastM=null,last=0;
 function loop(ts){const dt=Math.min(50,ts-(last||ts));last=ts;
- mode=$('days').classList.contains('on')?'days':'life';
+ mode=curTab==='day'?'days':'life';if(cv.style.display==='none'){requestAnimationFrame(loop);return}
  if(anim){anim.p=Math.min(1,anim.p+dt/anim.dur);const e=1-Math.pow(1-anim.p,3);const prev=view.pace;['now','pace','best'].forEach(k=>view[k]=anim.from[k]+(target[k]-anim.from[k])*e);
   if(view.pace>prev+1e-4&&anim.from.now===target.now){const a=ang(Math.min(24,view.pace)),rr=G.R-24;for(let k=0;k<4;k++)sparks.push({x:G.cx+Math.cos(a)*rr,y:G.cy+Math.sin(a)*rr,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,l:1,r:1.5+Math.random()*2.4,c:Math.random()<.6?'#ffe27a':'#fff'})}
   if(anim.p>=1)anim=null}
@@ -366,16 +441,213 @@ function render(animate=true){
  $('who').textContent=S.age+' · '+(S.sex==='f'?'F':'M')+' ✎';
  const fd=freeDays(Math.min(GO,proj));$('clockFree').innerHTML='🟡 <b>'+fmt(fd)+' free days</b> to spend your way: trips, family, freedom. That\'s <b>'+dur(fd/DAYS*24)+'</b> of gold on your clock.';
  $('scaleNote').textContent='On this clock 1 hour = '+f1(GO/24)+' years, 1 minute ≈ '+fmt(GO*365.25/1440)+' days.';
- renderHabits(M);renderGap(M);renderDays(M);save()}
+ renderGap(M);renderDays(M);if(curTab==='life')renderLife(M);renderRoutine();if(curTab==='rout')renderEat();save()}
 function toast(beforeProj){const M=model();const g=M.cur.proj-beforeProj;if(g<0.05)return;const t=$('toast');t.innerHTML='+'+dur(toH(g))+' back on your clock<div style="font-size:13px;color:var(--txt);margin-top:4px">'+(M.cur.proj>=S.goal?'Your pace now runs past midnight':'Pace now ends at '+clockTime(toH(M.cur.proj)))+'</div>';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
-function applyGain(k){const b=model().cur.proj;if(k==='smoke'){S.smoke=bestSmoke()}else{const x=HABITS.find(h=>h.id===k);S.hab[k]=bestVal(x);if(x.tv)S.hours.tv=S.hab.tv}render();toast(b)}
-function allGood(){const b=model().cur.proj;S.hab=bestHab();S.hours.tv=S.hab.tv;S.smoke=bestSmoke();render();closeSheets();toast(b)}
+function applyGain(k){const b=model().cur.proj;if(k==='smoke'){S.smoke=bestSmoke()}else{const x=HABITS.find(h=>h.id===k);S.hab[k]=bestVal(x);if(x.tv)S.hours.tv=S.hab.tv;if(k==='exercise')S.life.activity='very';if(k==='alcohol'&&+S.life.drinksWk>7)S.life.drinksWk=7}render();toast(b)}
+function allGood(){const b=model().cur.proj;S.hab=bestHab();S.hours.tv=S.hab.tv;S.smoke=bestSmoke();S.life.activity='very';if(+S.life.drinksWk>7)S.life.drinksWk=7;render();closeSheets();toast(b)}
 let gT;function setGoal(v){const g=Math.max(70,Math.min(122,Math.round(+v)));if(g===S.goal)return;S.goal=g;document.querySelectorAll('.goalTxt').forEach(e=>e.textContent=g);clearTimeout(gT);gT=setTimeout(()=>{build();render(true)},60)}
 function toggleMath(id){$(id).classList.toggle('math')}
-cv.addEventListener('click',e=>{const rc=cv.getBoundingClientRect(),x=e.clientX-rc.left-G.cx,y=e.clientY-rc.top-G.cy;if(x*x+y*y<=G.R*G.R){if($('days').classList.contains('on'))closeSheets();else openSheet('days')}});
+cv.addEventListener('click',e=>{const rc=cv.getBoundingClientRect(),x=e.clientX-rc.left-G.cx,y=e.clientY-rc.top-G.cy;if(x*x+y*y<=G.R*G.R){tab(curTab==='day'?'clock':'day')}});
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(build,150)});
+/*APP*/
+/* ============================ tabs ============================ */
+let curTab='clock';
+function tab(t){curTab=t;closeSheets();document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));
+ const clockUI=t==='clock';['top','below','note','who'].forEach(id=>$(id).style.display=clockUI?'':'none');
+ cv.style.display=(t==='clock'||t==='day')?'block':'none';
+ if(t==='jar'){const f=$('jarFrame');if(!f.src)f.src='jar.html?embed=1';else try{f.contentWindow.location.reload()}catch(e){f.src='jar.html?embed=1'}}
+ if(t!=='jar'&&lastTab==='jar'){try{S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'));ensure()}catch(e){}render(false)}
+ lastTab=t;build();if(t==='life')renderLife(model());if(t==='rout'||t==='rem')renderRoutine();if(t==='rout')renderEat();
+ $('app').scrollTop=0;document.querySelectorAll('.panel.on').forEach(p=>p.scrollTop=0)}
+let lastTab='clock';
+
+/* ============================ helpers ============================ */
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dkey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parseD=s=>{const[a,b,c]=String(s).split('-').map(Number);return new Date(a,(b||1)-1,c||1)};
+const midnight=(d=new Date())=>{const x=new Date(d);x.setHours(0,0,0,0);return x};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const niceD=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const yrsSince=s=>s?Math.max(0,(Date.now()-parseD(s).getTime())/31557600000):0;
+const daysSince=s=>s?Math.max(0,Math.floor((midnight()-parseD(s))/864e5)):0;
+function t12(hm){const[h,m]=String(hm||'00:00').split(':').map(Number);return(h%12===0?12:h%12)+':'+String(m).padStart(2,'0')+' '+(h<12?'AM':'PM')}
+function ensure(){S.life=Object.assign({name:'',heightIn:'',weightLb:'',goalLb:'',heaviestLb:'',activity:'sedentary',cigs:20,smokeQuitDate:'',vapeStatus:'never',vapeAmt:'',vapeYears:'',vapeQuit:'',alcStatus:'current',drinksWk:'',alcYears:'',alcQuit:'',drugStatus:'',drugAmt:'',drugYears:'',drugQuit:'',ffStatus:'never',ffWk:'',ffYears:'',ffQuit:'',sleepH:'',sunMin:'',garden:'no'},S.life||{});
+ if(!Array.isArray(S.routine))S.routine=[];if(!Array.isArray(S.weights))S.weights=[];
+ S.eat=Object.assign({log:{},sugarLimit:1,since:dkey(),wait:null},S.eat||{})}
+
+/* ============================ My Life ============================ */
+/* Brings over the original YOLO Clock profile (lifeClock.v1) fields and wires them into the shared engine. */
+const ACT={sedentary:['Mostly sitting',0],light:['Light (walks, on feet some)',1.8],moderate:['Moderate (exercise 3–5×/wk)',3.4],active:['Active (hard exercise most days)',4.2],very:['Very active (physical job + training)',4.5]};
+function bmiOf(){const w=+S.life.weightLb,h=+S.life.heightIn;return w&&h?703*w/(h*h):0}
+function syncFromLife(k){const L=S.life;
+ if(k==='heightIn'||k==='weightLb'){const b=bmiOf();if(b)S.hab.bmi=b<30?0:b<40?-3:-9}
+ if(k==='activity')S.hab.exercise=ACT[L.activity][1];
+ if(k==='drinksWk'||k==='alcStatus'){const d=+L.drinksWk||0;S.hab.alcohol=L.alcStatus!=='current'?0:d<=7?0:d<=14?-0.5:d<=25?-1.5:-4.5}
+ if(k==='cigs')S.smoke.packs=Math.round((+L.cigs||0)/20*100)/100;
+ if(k==='smokeQuitDate'&&L.smokeQuitDate){S.smoke.quit=Math.max(1,Math.round(S.age-yrsSince(L.smokeQuitDate)))}
+ if(k==='sleepH'&&+L.sleepH){S.hours.sleep=+L.sleepH}}
+function setL(k,v,num){S.life[k]=num?(v===''?'':+v):v;syncFromLife(k);render(false)}
+function importOld(){ // one-time: prefill from the original YOLO Clock profile on this device (same origin)
+ if(S.imported)return;S.imported=true;try{const o=JSON.parse(localStorage.getItem('lifeClock.v1')||'null');const p=o&&o.profile;if(!p)return;
+  const L=S.life;['name','heightIn','weightLb','goalLb','heaviestLb','vapeStatus','vapeAmt','vapeYears','vapeQuit','alcStatus','drinksWk','alcYears','alcQuit','drugStatus','drugAmt','drugYears','drugQuit','ffStatus','ffWk','ffYears','ffQuit','sleepH','sunMin','garden'].forEach(k=>{if(p[k]!==undefined&&p[k]!=='')L[k]=p[k]});
+  if(p.activity&&ACT[p.activity])L.activity=p.activity;if(+p.age)S.age=+p.age;if(p.sex)S.sex=String(p.sex).toLowerCase()==='f'?'f':'m';
+  if(p.smokeStatus)S.smoke.status=p.smokeStatus;if(+p.cigs)L.cigs=+p.cigs;if(+p.smokeYears)S.smoke.years=+p.smokeYears;if(p.smokeQuit)L.smokeQuitDate=p.smokeQuit;
+  ['heightIn','activity','drinksWk','cigs','smokeQuitDate','sleepH'].forEach(syncFromLife);
+  if(Array.isArray(o.weights))o.weights.forEach(w=>{if(w&&w.d&&+w.lb&&!S.weights.some(x=>x.d===w.d))S.weights.push({d:w.d,lb:+w.lb})});
+  S.importNote='Brought over from your YOLO Clock profile on this device.'}catch(e){}}
+const num=(k,label,ph)=>`<label><span class="fl">${label}</span><input type="number" inputmode="decimal" step="any" value="${esc(S.life[k])}" placeholder="${ph||''}" onchange="setL('${k}',this.value,1)"></label>`;
+const txt=(k,label,ph)=>`<label><span class="fl">${label}</span><input type="text" maxlength="40" value="${esc(S.life[k])}" placeholder="${ph||''}" onchange="setL('${k}',this.value)"></label>`;
+const dat=(k,label)=>`<label><span class="fl">${label}</span><input type="date" value="${esc(S.life[k])}" onchange="setL('${k}',this.value)"></label>`;
+const sel=(k,label,opts)=>`<label><span class="fl">${label}</span><select onchange="setL('${k}',this.value)">${Object.entries(opts).map(([a,b])=>`<option value="${a}" ${String(S.life[k])===a?'selected':''}>${b}</option>`).join('')}</select></label>`;
+const STAT={never:'Never',current:'Current',former:'Former (quit)'};
+function effTag(y){return`<span class="eff ${cls(y)}">${sgn(y)}</span>`}
+function habRow(id){const x=HABITS.find(h=>h.id===id),M=lastM,v=S.hab[id],y=M.cur.parts[id];let sel=v;if(x.tv){let k=0,bd=1e9;x.opts.forEach((o,i)=>{const d=Math.abs(o[1]-v);if(d<bd){bd=d;k=i}});sel=x.opts[k][1]}
+ return`<div class="row"><div class="lab">${x.label}${x.tv?' · '+f1(v)+' h':''} ${effTag(y)}</div>${chips(id,x.opts,sel,'setHab')}<div class="src">${x.src}</div></div>`}
+function since(label,date){return date?`<span class="since">${label} ${fmt(daysSince(date))} days 💪</span>`:''}
+function renderLife(M){M=M||model();const L=S.life,sm=S.smoke,b=bmiOf(),gb=+L.goalLb&&+L.heightIn?703*L.goalLb/(L.heightIn*L.heightIn):0;
+ const gap=S.goal-M.cur.proj,rec=Math.max(0,M.best.proj-M.cur.proj);
+ $('lifeSum').innerHTML=`${L.name?'Hi '+esc(L.name)+'! ':''}On pace for <b>${f1(M.cur.proj)}</b> · goal <b>${S.goal}</b> · ${gap>0.05?'gap '+f1(gap)+' yrs':'ahead by '+f1(-gap)+' yrs'}${rec>0.05?`<br><span style="color:var(--grn);font-weight:700">Win back up to ${f1(rec)} yrs</span>`:''}
+  <div class="fr" style="margin-top:8px"><button class="big" style="margin:0" onclick="allGood()">✨ All good habits</button><button class="big ghost" style="margin:0" onclick="openSheet('gap')">What helps most</button></div>${S.importNote?`<div class="mini">${S.importNote}</div>`:''}`;
+ const moveY=M.cur.move;const ws=[...S.weights].sort((a,b)=>a.d<b.d?-1:1);
+ $('lifeForm').innerHTML=`
+ <div class="card"><h3>You</h3>
+  <div class="fr">${txt('name','Name (optional)','Pirate')}<label><span class="fl">Age</span><input type="number" min="1" max="99" value="${S.age}" onchange="S.age=Math.max(1,Math.min(99,Math.round(+this.value||S.age)));if(S.smoke.quit>S.age)S.smoke.quit=S.age;render()"></label>
+  <label><span class="fl">Sex (life tables differ)</span><select onchange="S.sex=this.value;render()"><option value="m" ${S.sex==='m'?'selected':''}>Male</option><option value="f" ${S.sex==='f'?'selected':''}>Female</option></select></label>
+  <label><span class="fl">Goal age (70–122)</span><div class="gctl"><button onclick="stepGoal(-1)">−</button><b class="goalTxt">${S.goal}</b><button onclick="stepGoal(1)">+</button></div></label></div>
+  <div class="mini" title="Jeanne Calment (1875–1997), oldest verified human">ⓘ 122 = Jeanne Calment, oldest verified human.</div></div>
+ <div class="card"><h3>Body ${effTag(M.cur.parts.bmi)}</h3>
+  <div class="fr">${num('heightIn','Height (inches, 70 = 5′10″)')}${num('weightLb','Weight (lb)')}${num('goalLb','Goal weight (lb)')}${num('heaviestLb','Heaviest ever (lb, optional)')}</div>
+  <div class="mini">${b?`BMI <b>${b.toFixed(1)}</b>${gb?` → <b>${gb.toFixed(1)}</b> at your goal weight`:''}`:'Add height and weight to see your BMI.'}</div>
+  <div class="src">BMI 30–35 ≈ −2 to −4 y, 40–45 ≈ −8 to −10 y vs 22.5–25 (Prospective Studies Collaboration 2009). We use −3 for 30–39 and −9 for 40+.</div>
+  <div class="lab" style="margin-top:10px">⚖️ Weight log</div>
+  <div class="fr"><input type="date" id="wD" value="${dkey()}"><div style="display:flex;gap:6px"><input type="number" id="wLb" step="any" placeholder="lb"><button class="big" style="margin:0;width:auto;padding:8px 14px" onclick="logWeight()">Log</button></div></div>
+  <div id="wTrend"></div></div>
+ <div class="card"><h3>Move ${effTag(moveY)}</h3>${habRow('steps')}
+  <div class="row"><div class="lab">Activity level ${effTag(M.cur.parts.exercise)}</div>${sel('activity','',Object.fromEntries(Object.entries(ACT).map(([k,v])=>[k,v[0]])))}<div class="src">${HABITS.find(h=>h.id==='exercise').src} Mapping: light ≈ up to 75 min/wk, moderate ≈ 150, active ≈ 300, very active ≈ 450+.</div></div></div>
+ <div class="card"><h3>Sleep ${effTag(M.cur.parts.sleep)}</h3><div class="fr">${num('sleepH','Usual sleep (hours)','7.5')}</div>${habRow('sleep')}</div>
+ <div class="card"><h3>Smoking ${effTag(M.cur.smk)}</h3>${chips('smk',[['Never',0],['Quit',1],['Smoke now',2]],{never:0,former:1,current:2}[sm.status],'setSmoke')}
+  ${sm.status!=='never'?`<div class="fr">${num('cigs','Cigarettes per day (when smoking)')}<label><span class="fl">Years smoked</span><input type="number" value="${sm.years}" onchange="S.smoke.years=+this.value;if(S.smoke.status==='former'&&!S.life.smokeQuitDate){S.smoke.quit=Math.min(S.age,18+S.smoke.years)};render()"></label>
+  ${sm.status==='former'?`<label><span class="fl">Quit at age</span><input type="number" min="10" max="${S.age}" value="${sm.quit}" onchange="S.smoke.quit=+this.value;render()"></label>${dat('smokeQuitDate','Quit date (optional)')}`:''}</div>`:''}
+  ${sm.status==='former'?since('🚭 Smoke-free',S.life.smokeQuitDate):''}
+  <div class="src">Persistent smoking −10 y vs never (Doll 2004; Jha 2013). Quitting at ~30/40/50/60 wins back ~10/9/6/3 y (Doll 2004). Cigarettes per day aren't modeled yet.</div></div>
+ <div class="card"><h3>Alcohol ${effTag(M.cur.parts.alcohol)}</h3><div class="fr">${sel('alcStatus','Status',STAT)}${num('drinksWk','Drinks per week (when drinking)')}${num('alcYears','Years drinking')}${L.alcStatus==='former'?dat('alcQuit','Quit date'):''}</div>${L.alcStatus==='former'?since('🍺 Alcohol-free',L.alcQuit):''}
+  <div class="src">${HABITS.find(h=>h.id==='alcohol').src}</div></div>
+ <div class="card"><h3>Food ${effTag(['fv','nuts','legumes','grains','redmeat','procmeat'].reduce((a,k)=>a+M.cur.parts[k],0))}</h3>${['fv','nuts','legumes','grains','redmeat','procmeat'].map(habRow).join('')}
+  <div class="row"><div class="lab">Fast food <span class="ns">not scored</span></div><div class="fr">${sel('ffStatus','Status',{never:'Rarely / never',current:'Regular',former:'Cut way back'})}${num('ffWk','Meals per week')}${num('ffYears','Years eating it regularly')}${L.ffStatus==='former'?dat('ffQuit','Date you cut back'):''}</div>${L.ffStatus==='former'?since('🍔 Off fast food',L.ffQuit):''}</div>
+  <div class="row"><div class="lab">Food from your own garden <span class="ns">not scored</span></div>${sel('garden','',{no:'No',yes:'Yes'})}</div>
+  <div class="src">Fast food, garden and sun had app-estimate values in the original clock; no verified study row yet, so they're tracked but not scored.</div></div>
+ <div class="card"><h3>Screens ${effTag(M.cur.parts.tv)}</h3>${habRow('tv')}</div>
+ <div class="card"><h3>Everyday <span class="ns">not scored</span></h3><div class="fr">${num('sunMin','Usual daily sun (minutes)')}</div></div>
+ <div class="card"><h3>Vaping <span class="ns">not scored</span></h3><div class="fr">${sel('vapeStatus','Status',STAT)}${txt('vapeAmt','Amount (e.g. pods/week)')}${num('vapeYears','Years vaped')}${L.vapeStatus==='former'?dat('vapeQuit','Quit date'):''}</div>${L.vapeStatus==='former'?since('💨 Vape-free',L.vapeQuit):''}</div>
+ <div class="card"><h3>Private <span class="ns">optional · not scored · stays on this phone</span></h3><div class="fr">${sel('drugStatus','Recreational drugs',{'':'Prefer not to say',never:'Never',current:'Current',former:'Former (quit)'})}${txt('drugAmt','Amount (optional)')}${num('drugYears','Years')}${L.drugStatus==='former'?dat('drugQuit','Quit date'):''}</div>${L.drugStatus==='former'?since('💪 Drug-free',L.drugQuit):''}</div>`;
+ renderWeight()}
+function logWeight(){const lb=+$('wLb').value,d=$('wD').value||dkey();if(!lb)return;S.weights=S.weights.filter(w=>w.d!==d);S.weights.push({d,lb});S.weights.sort((a,b)=>a.d<b.d?-1:1);
+ if(d>=(S.weights.at(-1)||{}).d){S.life.weightLb=lb;syncFromLife('weightLb')}render(false);toastMsg('Weight logged ⚖️')}
+function weightInfo(){const ws=[...S.weights].sort((a,b)=>a.d<b.d?-1:1);if(!ws.length)return null;const now=midnight();
+ const inDays=n=>ws.filter(w=>(now-parseD(w.d))/864e5<n);const last7=inDays(7),last30=inDays(30);
+ const avg7=last7.length?last7.reduce((a,w)=>a+w.lb,0)/last7.length:null,low=last30.length?Math.min(...last30.map(w=>w.lb)):null;
+ return{ws,avg7,low,heads:avg7!==null&&low!==null&&avg7-low>=3}}
+function sparkW(ws,w,h){if(ws.length<2)return'';const xs=ws.slice(-30),lo=Math.min(...xs.map(x=>x.lb)),hi=Math.max(...xs.map(x=>x.lb)),sp=Math.max(1,hi-lo);
+ const pts=xs.map((x,i)=>[(i/(xs.length-1))*(w-8)+4,h-4-((x.lb-lo)/sp)*(h-8)]);
+ return`<svg width="100%" viewBox="0 0 ${w} ${h}" style="display:block;margin-top:6px"><polyline fill="none" stroke="#7fb5ff" stroke-width="2.5" stroke-linejoin="round" points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}"/>${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="#cfe1ff"/>`).join('')}</svg>`}
+function weightHtml(){const I=weightInfo();if(!I)return'<div class="mini">No weigh-ins yet. Optional, log whenever you like.</div>';
+ return`${sparkW(I.ws,320,70)}<div class="mini">Latest <b>${I.ws.at(-1).lb} lb</b> (${niceD(parseD(I.ws.at(-1).d))})${I.avg7!==null?` · 7-day avg <b>${f1(I.avg7)}</b>`:''}${I.low!==null?` · 30-day low <b>${f1(I.low)}</b>`:''}</div>
+ ${I.heads?`<div class="mini" style="color:#ffe27a">Heads-up: your 7-day average is a few pounds above your recent low. Bounces are normal. Maybe a good week for one-plate meals and extra water. You've got this.</div>`:''}`}
+function renderWeight(){const e=$('wTrend');if(e)e.innerHTML=weightHtml()}
+
+/* ============================ Routine & Remedies ============================ */
+/* User-built reminders. No effect on the life math, no health claims, no dosages. */
+const RCATS=[['remedy','🌿','Natural remedies'],['move','🏃','Move'],['food','🥗','Food'],['sleep','😴','Sleep'],['mind','🧘','Mind'],['other','⭐','Other']];
+const QUICK=['Sea salt','Sea moss','Herbal tea','Homemade tonic','Herbal cleanse'];
+const DOW=['S','M','T','W','T','F','S'];
+function rstatus(it){const t=midnight(),pat=it.pattern;
+ if(it.days&&it.days.length&&it.days.length<7&&!it.days.includes(t.getDay()))return{active:false,txt:'Not today · '+it.days.map(d=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', '),soft:true};
+ const base=it.days&&it.days.length&&it.days.length<7?it.days.map(d=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', '):'Daily';
+ if(pat&&pat.type==='cycle'){const on=Math.max(1,+pat.on||1),off=Math.max(1,+pat.off||1),st=parseD(pat.start||dkey());const n=Math.floor((t-st)/864e5);
+  if(n<0)return{active:false,txt:'Pattern starts '+niceD(st)};const k=n%(on+off);
+  if(k<on)return{active:true,txt:`${base} · pattern ${on} on / ${off} off · day ${k+1} of ${on}`};return{active:false,txt:`Pattern break · resumes ${niceD(addDays(t,on+off-k))}`}}
+ if(pat&&pat.type==='until'){const e=parseD(pat.end);return t<=e?{active:true,txt:`${base} · until ${niceD(e)}`}:{active:false,txt:`Stopped ${niceD(e)} · paused`}}
+ return{active:true,txt:base}}
+let openRecipe={};
+function itemHtml(i){const st=rstatus(i),done=i.done&&i.done[dkey()];
+ return`<div class="ritem ${st.active?'':'paused'}"><button class="rchk ${done?'on':''}" ${st.active?'':'disabled'} onclick="tick('${i.id}')" aria-label="done today">${done?'✓':''}</button>
+ <div class="rmain"><div class="rtop"><b>${t12(i.time)}</b>${esc(i.name)}</div><div class="rst">${st.active?'':'⏸ '}${esc(st.txt)}</div>
+ ${i.recipe?`<button class="rlink" onclick="openRecipe['${i.id}']=!openRecipe['${i.id}'];renderRoutine()">📝 My recipe ${openRecipe[i.id]?'▴':'▾'}</button>${openRecipe[i.id]?`<div class="rrec">${esc(i.recipe).replace(/\n/g,'<br>')}</div>`:''}`:''}</div>
+ <button class="redit" onclick="editItem('${i.id}')">Edit</button></div>`}
+function renderRoutine(){const R=[...S.routine].sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+ $('routList').innerHTML=R.length?RCATS.filter(c=>R.some(i=>i.cat===c[0])).map(c=>`<div class="rcat">${c[1]} ${c[2]}</div>`+R.filter(i=>i.cat===c[0]).map(itemHtml).join('')).join(''):'<div class="sub">Nothing here yet. Add the things you want a nudge for.</div>';
+ const rem=R.filter(i=>i.cat==='remedy');$('remList').innerHTML=rem.length?rem.map(itemHtml).join(''):'<div class="sub">No remedies yet. Use quick add below or add your own.</div>';
+ $('quick').innerHTML=QUICK.map((q,k)=>`<button onclick="editItem(null,{name:'${q}',cat:'remedy'})">🌿 ${q}</button>`).join('');
+ const act=R.filter(i=>rstatus(i).active),dn=act.filter(i=>i.done&&i.done[dkey()]).length;
+ $('routToday').innerHTML=act.length?`Today: <b style="color:var(--grn)">${dn} of ${act.length}</b> done`:'';$('routPill').textContent='🗓 Routine'+(act.length?` ${dn}/${act.length}`:'')}
+function tick(id){const it=S.routine.find(i=>i.id===id);if(!it)return;const k=dkey();it.done=it.done||{};it.done[k]=!it.done[k];
+ Object.keys(it.done).forEach(d=>{if((midnight()-parseD(d))/864e5>70)delete it.done[d]});save();renderRoutine();if(curTab==='rout')renderEat()}
+let editId=null,rDays=[],rPat=false,rPatType='cycle';
+function editItem(id,pre){editId=id||null;const it=id?S.routine.find(i=>i.id===id):Object.assign({name:'',cat:'remedy',time:'07:00',days:null,pattern:null,recipe:''},pre||{});
+ rDays=it.days&&it.days.length?[...it.days]:[];rPat=!!it.pattern;rPatType=it.pattern?it.pattern.type:'cycle';
+ const p=it.pattern||{};const t=midnight();
+ $('rform').innerHTML=`<h2>${id?'Edit reminder':'New reminder'} <button onclick="closeSheets()">×</button></h2>
+ <label><span class="fl">Name</span><input id="rfName" maxlength="60" value="${esc(it.name)}" placeholder="e.g. Morning tonic"></label>
+ <div class="fr"><label><span class="fl">Category</span><select id="rfCat">${RCATS.map(c=>`<option value="${c[0]}" ${c[0]===it.cat?'selected':''}>${c[1]} ${c[2]}</option>`).join('')}</select></label><label><span class="fl">Reminder time</span><input id="rfTime" type="time" value="${esc(it.time)}"></label></div>
+ <span class="fl" style="margin-top:8px">Days (none picked = every day)</span><div class="dchips" id="rfDays">${DOW.map((d,k)=>`<button class="${rDays.includes(k)?'on':''}" onclick="rDays.includes(${k})?rDays.splice(rDays.indexOf(${k}),1):rDays.push(${k});this.classList.toggle('on')">${d}</button>`).join('')}</div>
+ <label style="margin-top:10px;display:block"><span class="fl">My recipe / notes (optional, your own words)</span><textarea id="rfRecipe" rows="3" maxlength="600" placeholder="Write your own recipe or notes">${esc(it.recipe)}</textarea></label>
+ <button class="more" onclick="$('rfMore').style.display=$('rfMore').style.display==='none'?'block':'none'">More options ▾</button>
+ <div id="rfMore" style="display:${rPat?'block':'none'}"><div class="tog">Repeat pattern (optional)<input type="checkbox" id="rfPat" ${rPat?'checked':''} onchange="rPat=this.checked;$('rfPatBox').style.display=rPat?'block':'none'"></div>
+  <div id="rfPatBox" style="display:${rPat?'block':'none'}"><div class="chips" style="margin-top:6px"><button id="ptC" class="${rPatType==='cycle'?'on':''}" onclick="rPatType='cycle';this.classList.add('on');$('ptU').classList.remove('on');$('pC').style.display='grid';$('pU').style.display='none'">Days on / days off</button><button id="ptU" class="${rPatType==='until'?'on':''}" onclick="rPatType='until';this.classList.add('on');$('ptC').classList.remove('on');$('pC').style.display='none';$('pU').style.display='block'">Stop on a date</button></div>
+  <div class="fr three" id="pC" style="display:${rPatType==='cycle'?'grid':'none'}"><label><span class="fl">Days on</span><input id="rfOn" type="number" min="1" value="${p.on||14}"></label><label><span class="fl">Days off</span><input id="rfOff" type="number" min="1" value="${p.off||14}"></label><label><span class="fl">Starting</span><input id="rfStart" type="date" value="${p.start||dkey(t)}"></label></div>
+  <div id="pU" style="display:${rPatType==='until'?'block':'none'};margin-top:6px"><label><span class="fl">Stop reminding after</span><input id="rfEnd" type="date" value="${p.end||dkey(addDays(t,13))}"></label></div>
+  <div class="mini">Reminders pause on break days and pick back up automatically.</div></div></div>
+ <div class="fr" style="margin-top:12px"><button class="big" onclick="saveItem()">Save</button>${id?`<button class="big" style="background:#3a2230;color:#ffb3b3" onclick="delItem()">Delete</button>`:`<button class="big ghost" onclick="closeSheets()">Cancel</button>`}</div>`;
+ openSheet('rform')}
+function saveItem(){const name=$('rfName').value.trim();if(!name){$('rfName').focus();return}
+ let pattern=null;if(rPat){pattern=rPatType==='cycle'?{type:'cycle',on:Math.max(1,+$('rfOn').value||1),off:Math.max(1,+$('rfOff').value||1),start:$('rfStart').value||dkey()}:{type:'until',end:$('rfEnd').value||dkey()}}
+ const data={name,cat:$('rfCat').value,time:$('rfTime').value||'07:00',days:rDays.length&&rDays.length<7?[...rDays].sort():null,pattern,recipe:$('rfRecipe').value.trim().slice(0,600)};
+ if(editId)Object.assign(S.routine.find(i=>i.id===editId),data);else S.routine.push(Object.assign({id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),done:{}},data));
+ closeSheets();save();renderRoutine()}
+function delItem(){S.routine=S.routine.filter(i=>i.id!==editId);closeSheets();save();renderRoutine()}
+
+/* ============================ Eating: plate check + sugar ============================ */
+const PLATE={small:'Small',normal:'Normal',big:'Big'};const SWEETS=[['sweet','🍬','Sweet'],['drink','🥤','Sugary drink'],['dessert','🍰','Dessert']];
+const dayE=(k=dkey())=>S.eat.log[k]||(S.eat.log[k]={meals:[],sugar:{sweet:0,drink:0,dessert:0}});
+const peekE=k=>S.eat.log[k]||{meals:[],sugar:{sweet:0,drink:0,dessert:0}};
+const sugarN=k=>{const s=peekE(k).sugar;return(s.sweet||0)+(s.drink||0)+(s.dessert||0)};
+let platePick=null; // 'new' | 'more'
+function ate(size){const d=dayE();if(platePick==='more'&&d.meals.length){d.meals.at(-1).plates.push(size)}else d.meals.push({t:Date.now(),plates:[size]});platePick=null;S.eat.wait=null;save();renderEat()}
+function seconds(){S.eat.wait={until:Date.now()+15*60*1000};save();renderEat();openSheet('waitS');tickWait()}
+function waitDone(goAhead){S.eat.wait=null;save();closeSheets();if(goAhead){platePick='more';renderEat();toastMsg('Enjoy it. Listening to your body is the win 👍')}else{renderEat();toastMsg('Nice, one plate and done 💪')}}
+let waitTimer=null;function tickWait(){clearTimeout(waitTimer);const w=S.eat.wait;const el=$('waitClock');if(!w||!el)return;const ms=Math.max(0,w.until-Date.now());const m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60;
+ el.textContent=m+':'+String(s).padStart(2,'0');$('waitGo').textContent=ms>0?'Still hungry? Go ahead':'Still hungry? Go ahead 👍';$('waitMsg').innerHTML=ms>0?'Give it a few minutes. It can take a little while for your body to notice it\'s full. Sip some water, chat, take a breath.':'Time\'s up. Check in with yourself: still hungry, or good?';
+ const r=$('waitRing');if(r){const p=1-ms/(15*60000);r.style.background=`conic-gradient(var(--grn) ${p*360}deg,#ffffff18 0)`}if(ms>0)waitTimer=setTimeout(tickWait,1000)}
+function onePlate(k){const m=peekE(k).meals;return{meals:m.length,one:m.filter(x=>x.plates.length===1).length}}
+function streak(test,startKey){let n=0,d=midnight();const st=parseD(startKey||S.eat.since);if(!test(dkey(d)))d=addDays(d,-1); // today can still count later
+ while(d>=st&&test(dkey(d))){n++;d=addDays(d,-1)}return n}
+function sugarTap(k){const d=dayE();d.sugar[k]=(d.sugar[k]||0)+1;save();renderEat();const n=sugarN(dkey()),L=S.eat.sugarLimit;toastMsg(n<=L?`Logged. ${n} of ${L} today, all good 👍`:`Logged. ${n} today. Tomorrow's a fresh start 🌱`)}
+function sugarUndo(){const d=dayE();for(const k of ['dessert','drink','sweet'])if(d.sugar[k]>0){d.sugar[k]--;break}save();renderEat()}
+function bars(vals,labels,limit,colFn){const mx=Math.max(1,limit||0,...vals);return`<div style="display:flex;gap:6px;align-items:flex-end;height:74px;margin-top:8px;position:relative">${limit?`<div style="position:absolute;left:0;right:0;bottom:${(limit/mx)*60+14}px;border-top:1.5px dashed #ffe27a88"></div>`:''}${vals.map((v,i)=>`<div style="flex:1;text-align:center;font-size:10.5px;color:var(--mut)"><div style="font-size:10.5px;color:var(--txt)">${v||''}</div><div style="height:${Math.max(3,(v/mx)*60)}px;border-radius:5px;background:${colFn(v,i)}"></div>${labels[i]}</div>`).join('')}</div>`}
+function last7(){const out=[];for(let i=6;i>=0;i--){const d=addDays(midnight(),-i);out.push([dkey(d),'SMTWTFS'[d.getDay()]])}return out}
+function renderEat(){const k=dkey(),d=peekE(k),op=onePlate(k),cur=d.meals.at(-1),recent=cur&&Date.now()-cur.t<2*3600e3;
+ const plateStreak=streak(x=>{const o=onePlate(x);return o.meals>0&&o.one===o.meals});const sugarStreak=streak(x=>sugarN(x)===0&&x>=S.eat.since);
+ const L=S.eat.sugarLimit,n=sugarN(k);
+ $('eatCard').innerHTML=`<div class="card"><h3>🍽 Plate check <span class="ns">${op.meals?`${op.one} of ${op.meals} one-plate meals today`:'one plate, then check in'}</span></h3>
+  ${platePick?`<div class="lab">${platePick==='more'?'Another plate, what size?':'What size plate?'}</div><div class="chips">${Object.entries(PLATE).map(([a,b])=>`<button onclick="ate('${a}')">${b}</button>`).join('')}<button onclick="platePick=null;renderEat()">Cancel</button></div>`:
+  `<div class="fr"><button class="big" style="margin:0" onclick="platePick='new';renderEat()">I ate</button><button class="big ghost" style="margin:0" ${recent?'':'disabled'} onclick="seconds()">Going for seconds</button></div>`}
+  ${recent&&!platePick?`<div class="mini">This meal: ${cur.plates.length} plate${cur.plates.length>1?'s':''} (${cur.plates.map(p=>PLATE[p].toLowerCase()).join(', ')})</div>`:''}
+  ${S.eat.wait?`<div class="mini"><a href="#" style="color:#9fd8ff" onclick="openSheet('waitS');tickWait();return false">⏳ Wait-for-full timer running, open</a></div>`:''}
+  <div class="mini">One-plate streak: <b style="color:var(--grn)">${plateStreak} day${plateStreak===1?'':'s'}</b></div></div>
+ <div class="card"><h3>🍬 Sugar <span class="ns">${n} of ${L} today</span></h3>
+  <div class="chips">${SWEETS.map(s=>`<button onclick="sugarTap('${s[0]}')">${s[1]} ${s[2]}${d.sugar[s[0]]?' · '+d.sugar[s[0]]:''}</button>`).join('')}${n?`<button onclick="sugarUndo()">↶ Undo</button>`:''}</div>
+  <div class="mini">Daily limit <button class="redit" onclick="S.eat.sugarLimit=Math.max(0,S.eat.sugarLimit-1);save();renderEat()">−</button> <b>${L}</b> <button class="redit" onclick="S.eat.sugarLimit=Math.min(10,S.eat.sugarLimit+1);save();renderEat()">+</button> · Sugar-free streak: <b style="color:var(--grn)">${sugarStreak} day${sugarStreak===1?'':'s'}</b></div></div>`;
+ const D=last7();const rt=D.map(([x])=>{const act=S.routine.length;if(!act)return 0;return S.routine.filter(i=>i.done&&i.done[x]).length});
+ $('weekCard').innerHTML=`<div class="card"><h3>📅 This week</h3>
+  <div class="lab" style="margin-top:4px">Sugar (dashed line = your limit)</div>${bars(D.map(([x])=>sugarN(x)),D.map(x=>x[1]),L,v=>v<=L?'#5fe08a':'#ffb86b')}
+  <div class="lab" style="margin-top:10px">One-plate meals</div>${bars(D.map(([x])=>onePlate(x).one),D.map(x=>x[1]),0,()=>'#f0cf73')}
+  ${S.routine.length?`<div class="lab" style="margin-top:10px">Routine check-offs</div>${bars(rt,D.map(x=>x[1]),0,()=>'#7fb5ff')}`:''}
+  <div class="lab" style="margin-top:10px">Weight <span class="ns">optional</span></div>${weightHtml()}</div>`}
+function toastMsg(m){const t=$('toast');t.innerHTML=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2000)}
+
 window.LJ={get state(){return S},model,allGood,render,setGoal,clockTime,toH,get DAYS(){return DAYS}};
-build();view.now=0;view.pace=0;view.best=0;render(true);if(!S.accepted)$('consent').classList.add('on');else if(!S.seen)openSheet('prof');requestAnimationFrame(loop);
+ensure();importOld();tab('clock');view.now=0;view.pace=0;view.best=0;render(true);if(!S.accepted)$('consent').classList.add('on');else if(!S.seen)openSheet('prof');requestAnimationFrame(loop);
 
 </script>
 </body></html>
