@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOLO · Muscle fuel (draft)</title>
+<meta name="theme-color" content="#0b1a33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⏱%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1a33;--card:#13284d;--gold:#d4a73a;--gold2:#f0cf73;--txt:#eef2f8;--mut:#9fb0c9;--red:#ff6b6b;--amber:#ffb86b;--grn:#5fe08a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+@media (min-width:600px){body{background:radial-gradient(circle at 50% 30%,#13284d,#040a16 70%);min-height:100vh}}
+#app{max-width:430px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 24px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.pill{color:var(--mut);font-size:13px;text-decoration:none;background:#13284dcc;border:1px solid #ffffff2a;border-radius:16px;padding:6px 11px;white-space:nowrap}
+.draft{font-size:10.5px;color:#1b1400;background:var(--gold2);border-radius:8px;padding:2px 7px;font-weight:800;letter-spacing:1px}
+h1{font-size:12px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase;margin:12px 0 2px;text-align:center}
+h2{font-size:11px;letter-spacing:3px;color:var(--gold2);font-weight:800;text-transform:uppercase;margin:0 0 8px}
+.lead{text-align:center;color:var(--mut);font-size:13px;margin:0 0 6px}
+.card{background:#13284d99;border:1px solid #ffffff1a;border-radius:16px;padding:12px 13px;margin:10px 0}
+.mut{color:var(--mut)}.sm{font-size:12px}.g{color:var(--grn)}.a{color:var(--amber)}.r{color:var(--red)}
+.hero{text-align:center}
+.big{font-size:44px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:18px;color:var(--mut);font-weight:600}
+.bar{height:12px;background:#ffffff14;border-radius:8px;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .4s}
+.bar.hero{height:20px;border-radius:12px}.bar.hero i{border-radius:12px}
+.bar i.ok{background:linear-gradient(90deg,#3fbf6a,var(--grn))}.bar i.over{background:linear-gradient(90deg,#e0903f,var(--amber))}
+.row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;gap:8px}
+.streak{display:inline-block;margin-top:8px;font-size:13px;background:#0b1a33;border:1px solid #ffffff22;border-radius:12px;padding:4px 10px}
+button,.btn{font:inherit;cursor:pointer}
+.go{background:linear-gradient(var(--gold2),var(--gold));color:#1b1400;border:0;border-radius:12px;padding:10px 14px;font-weight:800;width:100%;font-size:15px}
+.ghost{background:#0b1a33;color:var(--txt);border:1px solid #ffffff2a;border-radius:10px;padding:7px 10px;font-size:13px}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+input,select{font:inherit;font-size:16px;width:100%;background:#0b1a33;color:var(--txt);border:1px solid #ffffff2a;border-radius:10px;padding:9px 10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.seg{display:flex;background:#0b1a33;border:1px solid #ffffff2a;border-radius:10px;overflow:hidden}
+.seg button{flex:1;background:none;border:0;color:var(--mut);padding:8px 4px;font-size:13px}
+.seg button.on{background:var(--gold2);color:#1b1400;font-weight:800}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.chips button{flex:none;background:#0b1a33;color:var(--mut);border:1px solid #ffffff2a;border-radius:14px;padding:5px 10px;font-size:12.5px}
+.chips button.on{color:#1b1400;background:var(--gold2);border-color:var(--gold2);font-weight:700}
+.foods{max-height:330px;overflow-y:auto;border-top:1px solid #ffffff12}
+.food{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #ffffff12;width:100%;background:none;border-left:0;border-right:0;border-top:0;color:var(--txt);text-align:left}
+.food .nm{flex:1;font-size:14px}.food .nm span{display:block;font-size:11.5px;color:var(--mut)}
+.food .pp{font-size:13px;color:var(--gold2);font-weight:700;white-space:nowrap}
+.food .plus{width:28px;height:28px;border-radius:50%;background:var(--gold2);color:#1b1400;font-weight:900;display:flex;align-items:center;justify-content:center;flex:none}
+.log .it{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff12;font-size:13.5px}
+.log .it .nm{flex:1}.log .it .nm span{color:var(--mut);font-size:11.5px}
+.x{background:none;border:1px solid #ffffff2a;color:var(--mut);border-radius:8px;width:28px;height:28px}
+.micro{padding:6px 0;border-bottom:1px solid #ffffff12;font-size:13px}
+.micro .help{font-size:11.5px;color:var(--mut)}
+.hist{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:6px}
+.hist div{flex:1;text-align:center;font-size:10.5px;color:var(--mut)}
+.hist b{display:block;margin:0 auto 3px;width:70%;border-radius:5px 5px 2px 2px;background:#ffffff22}
+.hist b.ok{background:var(--grn)}
+details summary{cursor:pointer;color:var(--gold2);font-size:13px;font-weight:700;list-style:none}
+details summary::-webkit-details-marker{display:none}
+p{margin:6px 0;font-size:13.5px;line-height:1.45}
+a{color:var(--gold2)}
+footer{font-size:11.5px;color:var(--mut);line-height:1.5;margin-top:14px;text-align:center}
+.note{font-size:12px;color:var(--mut);margin-top:6px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--gold2);color:#1b1400;font-weight:700;border-radius:14px;padding:8px 14px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+</style></head><body><div id="app">
+<header><a class="pill" href="clock.html">← Life Clock</a><span class="draft">DRAFT</span><a class="pill" href="lookup.html">Look it up →</a></header>
+<h1>Muscle fuel</h1>
+<p class="lead">Protein first. Tap what you ate. Resets at midnight.</p>
+
+<section class="card hero" id="heroCard">
+  <div class="mut sm">Protein today</div>
+  <div class="big" id="pNow">0<small> / 0 g</small></div>
+  <div class="bar hero"><i id="pBar" style="width:0"></i></div>
+  <div class="sm mut" id="pLeft"></div>
+  <div class="streak" id="streak">Protein streak: 0 days</div>
+  <div style="margin-top:12px;text-align:left">
+    <div class="row"><span>Calories</span><span id="kTxt" class="mut"></span></div><div class="bar"><i id="kBar"></i></div>
+    <div class="row"><span>Carbs</span><span id="cTxt" class="mut"></span></div><div class="bar"><i id="cBar"></i></div>
+    <div class="row"><span>Fat</span><span id="fTxt" class="mut"></span></div><div class="bar"><i id="fBar"></i></div>
+  </div>
+</section>
+
+<section class="card" id="logCard">
+  <h2>Today's food</h2>
+  <div class="log" id="log"></div>
+  <p class="note" id="mealTip"></p>
+</section>
+
+<section class="card" id="addCard">
+  <h2>Add food</h2>
+  <input id="q" type="text" placeholder="Search foods (e.g. eggs, rice)" autocomplete="off">
+  <div class="chips" id="chips" style="margin-top:8px"></div>
+  <div class="foods" id="foods"></div>
+  <details style="margin-top:10px" id="customBox"><summary>+ Custom food</summary>
+    <label>Name</label><input id="cn" type="text" maxlength="40" placeholder="e.g. Homemade chili, 1 bowl">
+    <div class="three"><div><label>Protein g</label><input id="cp" type="number" inputmode="decimal" min="0"></div><div><label>Carbs g</label><input id="cc" type="number" inputmode="decimal" min="0"></div><div><label>Fat g</label><input id="cf" type="number" inputmode="decimal" min="0"></div></div>
+    <label>Calories (optional — worked out from P/C/F if blank)</label><input id="ck" type="number" inputmode="numeric" min="0">
+    <div style="margin-top:10px"><button class="go" id="cadd">Add custom food</button></div>
+  </details>
+  <p class="note">Food values: USDA FoodData Central (SR Legacy). Tap a food to see its FDC ID.</p>
+</section>
+
+<section class="card" id="microCard">
+  <h2>Micros check</h2>
+  <p class="sm mut" style="margin-top:0">Five nutrients many adults run short on. Amounts from the foods you logged today vs. the daily target for your age and sex.</p>
+  <div id="micros"></div>
+</section>
+
+<section class="card">
+  <h2>Last 7 days</h2>
+  <div class="hist" id="hist"></div>
+  <p class="note">Green = protein target hit.</p>
+</section>
+
+<section class="card" id="setupCard">
+  <h2>Your setup</h2>
+  <div id="fromClock" class="sm mut"></div>
+  <label>Units</label><div class="seg" id="units"><button data-u="lb">lb · ft/in</button><button data-u="kg">kg · cm</button></div>
+  <div class="two"><div><label id="wLab">Weight (lb)</label><input id="w" type="number" inputmode="decimal" min="0"></div>
+  <div id="hImp"><label>Height</label><div class="two"><input id="hft" type="number" inputmode="numeric" placeholder="ft"><input id="hin" type="number" inputmode="numeric" placeholder="in"></div></div>
+  <div id="hMet" style="display:none"><label>Height (cm)</label><input id="hcm" type="number" inputmode="numeric"></div></div>
+  <div class="two"><div><label>Age</label><input id="age" type="number" inputmode="numeric" min="15" max="100"></div>
+  <div><label>Sex</label><div class="seg" id="sex"><button data-s="m">Male</button><button data-s="f">Female</button></div></div></div>
+  <label>Activity</label><select id="act">
+    <option value="1.2">Mostly sitting, little exercise</option>
+    <option value="1.375">Light exercise 1–3 days/week</option>
+    <option value="1.55">Moderate exercise 3–5 days/week</option>
+    <option value="1.725">Hard exercise 6–7 days/week</option>
+    <option value="1.9">Very hard training or physical job</option></select>
+  <label>Goal</label><div class="seg" id="goal"><button data-g="build">Build muscle</button><button data-g="lose">Lose fat, keep muscle</button><button data-g="keep">Maintain</button></div>
+  <div style="margin-top:12px"><button class="go" id="save">Save &amp; set my targets</button></div>
+  <div id="targets" class="sm" style="margin-top:10px"></div>
+</section>
+
+<section class="card">
+  <h2>Strength training 2+ days/week</h2>
+  <p>Protein only builds muscle when muscles are asked to work. US activity guidelines advise muscle-strengthening activity on 2 or more days a week. See what it may add on your <a href="clock.html">Life Clock</a>, or open <a href="lookup.html">Look it up</a> and search “strength”.</p>
+</section>
+
+<section class="card">
+  <details><summary>How the targets are worked out ▾</summary>
+  <p><b>Protein:</b> 1.6 g per kg of body weight a day (about 0.7 g per lb). A 2018 review of 49 trials found extra protein stopped adding muscle gains from strength training at around 1.62 g/kg/day (Morton et al., <i>Br J Sports Med</i> 2018).</p>
+  <p><b>Per meal:</b> about 0.4 g/kg per meal over at least 4 meals reaches that daily amount (Schoenfeld &amp; Aragon, <i>J Int Soc Sports Nutr</i> 2018).</p>
+  <p><b>Calories:</b> resting burn by the Mifflin-St Jeor equation, times your activity level. Build muscle: +250 to +500 kcal. Lose fat: −500 kcal. Maintain: no change.</p>
+  <p><b>Fat:</b> 25–30% of calories. <b>Carbs:</b> the rest.</p>
+  <p class="note">These are estimates, not lab measurements. Your real needs may differ.</p></details>
+</section>
+
+<section class="card">
+  <details><summary>Macros &amp; micros, plainly ▾</summary>
+  <p><b>Protein</b> (4 kcal/g) — the building blocks for muscle repair and growth. Found in meat, fish, eggs, dairy, beans, tofu.</p>
+  <p><b>Carbs</b> (4 kcal/g) — the main fuel for hard training. Found in rice, oats, bread, potatoes, fruit.</p>
+  <p><b>Fat</b> (9 kcal/g) — needed for hormones and to absorb vitamins A, D, E, K. Found in oils, nuts, avocado, fatty fish.</p>
+  <p><b>Micros</b> are vitamins and minerals, needed in small amounts. <b>Vitamin D</b> and <b>calcium</b> support bones; <b>iron</b> carries oxygen in the blood; <b>magnesium</b> helps muscles and nerves work; <b>potassium</b> helps muscles contract and supports healthy blood pressure.</p>
+  <p class="note">Daily micro targets: NIH Office of Dietary Supplements fact sheets (RDA / Adequate Intake for adults).</p></details>
+</section>
+
+<footer>
+  Not medical advice. Estimates for healthy adults only. If you have kidney disease, talk to your doctor before eating more protein. Pregnant, under 18, or managing a health condition? Ask a doctor or dietitian first.<br><br>
+  Sources: Morton RW et al. Br J Sports Med 2018;52:376–384, doi:10.1136/bjsports-2017-097608 · Schoenfeld BJ, Aragon AA. J Int Soc Sports Nutr 2018;15:10, doi:10.1186/s12970-018-0215-1 · Mifflin MD, St Jeor ST et al. Am J Clin Nutr 1990;51:241–247 · USDA FoodData Central, SR Legacy (2018) · NIH Office of Dietary Supplements · Physical Activity Guidelines for Americans, 2nd ed. (HHS 2018).<br><br>
+  Saved only on this device. Nothing is sent anywhere.<br>
+  <a href="clock.html">Life Clock</a> · <a href="lookup.html">Look it up</a>
+</footer>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+const FOODS=[{"g":"Protein","n":"Chicken breast, roasted","id":171477,"s":"4 oz cooked","gr":113,"usda":"Chicken, broilers or fryers, breast, meat only, cooked, roasted","kcal":186,"p":35.1,"c":0.0,"f":4.0,"vd":0.1,"ca":17,"fe":1.2,"mg":33,"k":289},{"g":"Protein","n":"Chicken thigh, roasted","id":172388,"s":"4 oz cooked","gr":113,"usda":"Chicken, broilers or fryers, thigh, meat only, cooked, roasted","kcal":202,"p":28.0,"c":0.0,"f":9.2,"vd":0.2,"ca":10,"fe":1.3,"mg":27,"k":304},{"g":"Protein","n":"Turkey breast, roasted","id":174516,"s":"4 oz cooked","gr":113,"usda":"Turkey, retail parts, breast, meat only, cooked, roasted","kcal":154,"p":33.3,"c":0.0,"f":2.2,"vd":0.2,"ca":16,"fe":1.1,"mg":32,"k":336},{"g":"Protein","n":"Ground turkey 93% lean, cooked","id":172851,"s":"4 oz cooked","gr":113,"usda":"Turkey, ground, 93% lean, 7% fat, pan-broiled crumbles","kcal":241,"p":30.6,"c":0.0,"f":13.1,"vd":0.2,"ca":35,"fe":1.8,"mg":33,"k":344},{"g":"Protein","n":"Ground beef 93% lean, cooked","id":174755,"s":"4 oz cooked","gr":113,"usda":"Beef, ground, 93% lean meat / 7% fat, crumbles, cooked, pan-browned","kcal":236,"p":32.6,"c":0.0,"f":10.7,"vd":0.0,"ca":14,"fe":3.6,"mg":32,"k":507},{"g":"Protein","n":"Ground beef 85% lean, cooked","id":174034,"s":"4 oz cooked","gr":113,"usda":"Beef, ground, 85% lean meat / 15% fat, crumbles, cooked, pan-browned","kcal":289,"p":31.3,"c":0.0,"f":17.3,"vd":0.0,"ca":25,"fe":3.3,"mg":28,"k":460},{"g":"Protein","n":"Sirloin steak, lean, broiled","id":168634,"s":"4 oz cooked","gr":113,"usda":"Beef, top sirloin, steak, separable lean only, trimmed to 0\" fat, all grades, cooked, broiled","kcal":207,"p":34.5,"c":0.0,"f":6.5,"vd":0.1,"ca":23,"fe":2.2,"mg":29,"k":444},{"g":"Protein","n":"Pork tenderloin, roasted","id":168250,"s":"4 oz cooked","gr":113,"usda":"Pork, fresh, loin, tenderloin, separable lean only, cooked, roasted","kcal":162,"p":29.6,"c":0.0,"f":4.0,"vd":0.2,"ca":7,"fe":1.3,"mg":33,"k":476},{"g":"Protein","n":"Salmon, cooked","id":175168,"s":"4 oz cooked","gr":113,"usda":"Fish, salmon, Atlantic, farmed, cooked, dry heat","kcal":233,"p":25.0,"c":0.0,"f":14.0,"vd":14.8,"ca":17,"fe":0.4,"mg":34,"k":434},{"g":"Protein","n":"Tuna, light, canned in water","id":173709,"s":"1 can drained (165 g)","gr":165,"usda":"Fish, tuna, light, canned in water, drained solids (Includes foods for USDA's Food Distribution Program)","kcal":142,"p":32.1,"c":0.0,"f":1.6,"vd":2.0,"ca":28,"fe":2.7,"mg":38,"k":295},{"g":"Protein","n":"Tilapia, cooked","id":175177,"s":"4 oz cooked","gr":113,"usda":"Fish, tilapia, cooked, dry heat","kcal":145,"p":29.5,"c":0.0,"f":3.0,"vd":4.2,"ca":16,"fe":0.8,"mg":38,"k":429},{"g":"Protein","n":"Cod, cooked","id":171956,"s":"4 oz cooked","gr":113,"usda":"Fish, cod, Atlantic, cooked, dry heat","kcal":119,"p":25.8,"c":0.0,"f":1.0,"vd":1.4,"ca":16,"fe":0.6,"mg":47,"k":276},{"g":"Protein","n":"Shrimp, cooked","id":175180,"s":"4 oz cooked","gr":113,"usda":"Crustaceans, shrimp, cooked","kcal":112,"p":27.1,"c":0.2,"f":0.3,"vd":null,"ca":79,"fe":0.6,"mg":44,"k":293},{"g":"Protein","n":"Sardines, canned in oil, with bone","id":175139,"s":"1 can drained (92 g)","gr":92,"usda":"Fish, sardine, Atlantic, canned in oil, drained solids with bone","kcal":191,"p":22.7,"c":0.0,"f":10.5,"vd":4.4,"ca":351,"fe":2.7,"mg":36,"k":365},{"g":"Protein","n":"Beef jerky","id":167536,"s":"1 oz","gr":28,"usda":"Snacks, beef jerky, chopped and formed","kcal":115,"p":9.3,"c":3.1,"f":7.2,"vd":0.1,"ca":6,"fe":1.5,"mg":14,"k":167},{"g":"Eggs & dairy","n":"Egg, whole, hard-boiled","id":173424,"s":"1 large (50 g)","gr":50,"usda":"Egg, whole, cooked, hard-boiled","kcal":78,"p":6.3,"c":0.6,"f":5.3,"vd":1.1,"ca":25,"fe":0.6,"mg":5,"k":63},{"g":"Eggs & dairy","n":"Egg whites","id":172183,"s":"3 large whites (99 g)","gr":99,"usda":"Egg, white, raw, fresh","kcal":51,"p":10.8,"c":0.7,"f":0.2,"vd":0.0,"ca":7,"fe":0.1,"mg":11,"k":161},{"g":"Eggs & dairy","n":"Greek yogurt, plain nonfat","id":170894,"s":"1 cup (227 g)","gr":227,"usda":"Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)","kcal":134,"p":23.1,"c":8.2,"f":0.9,"vd":0.0,"ca":250,"fe":0.2,"mg":25,"k":320},{"g":"Eggs & dairy","n":"Greek yogurt, plain whole milk","id":171304,"s":"1 cup (227 g)","gr":227,"usda":"Yogurt, Greek, plain, whole milk","kcal":220,"p":20.4,"c":9.0,"f":11.3,"vd":0.0,"ca":227,"fe":0.0,"mg":25,"k":320},{"g":"Eggs & dairy","n":"Cottage cheese 2%","id":172182,"s":"1 cup (226 g)","gr":226,"usda":"Cheese, cottage, lowfat, 2% milkfat","kcal":183,"p":23.6,"c":10.8,"f":5.1,"vd":0.0,"ca":251,"fe":0.3,"mg":20,"k":282},{"g":"Eggs & dairy","n":"Milk 2%","id":171267,"s":"1 cup (244 g)","gr":244,"usda":"Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D","kcal":122,"p":8.1,"c":11.7,"f":4.8,"vd":2.9,"ca":293,"fe":0.0,"mg":27,"k":342},{"g":"Eggs & dairy","n":"Milk 1%","id":170872,"s":"1 cup (244 g)","gr":244,"usda":"Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D","kcal":102,"p":8.2,"c":12.2,"f":2.4,"vd":2.9,"ca":305,"fe":0.1,"mg":27,"k":366},{"g":"Eggs & dairy","n":"Chocolate milk, reduced fat","id":170880,"s":"1 cup (250 g)","gr":250,"usda":"Milk, chocolate, fluid, commercial, reduced fat, with added vitamin A and vitamin D","kcal":190,"p":7.5,"c":30.3,"f":4.8,"vd":3.0,"ca":272,"fe":0.6,"mg":35,"k":422},{"g":"Eggs & dairy","n":"Cheddar cheese","id":173414,"s":"1 oz (28 g)","gr":28,"usda":"Cheese, cheddar (Includes foods for USDA's Food Distribution Program)","kcal":113,"p":6.4,"c":0.9,"f":9.3,"vd":0.2,"ca":199,"fe":0.0,"mg":8,"k":21},{"g":"Eggs & dairy","n":"Mozzarella, part skim","id":170847,"s":"1 oz (28 g)","gr":28,"usda":"Cheese, mozzarella, part skim milk","kcal":71,"p":6.8,"c":0.8,"f":4.5,"vd":0.1,"ca":219,"fe":0.1,"mg":6,"k":24},{"g":"Eggs & dairy","n":"Whey protein powder","id":173180,"s":"1 scoop (30 g)","gr":30,"usda":"Beverages, Protein powder whey based","kcal":106,"p":23.4,"c":1.9,"f":0.5,"vd":0.0,"ca":141,"fe":0.3,"mg":58,"k":150},{"g":"Eggs & dairy","n":"Soy milk, calcium-added","id":172456,"s":"1 cup (243 g)","gr":243,"usda":"Soymilk, original and vanilla, with added calcium, vitamins A and D","kcal":104,"p":6.3,"c":12.0,"f":3.6,"vd":2.7,"ca":299,"fe":1.0,"mg":36,"k":296},{"g":"Plant protein","n":"Tofu, firm (calcium-set)","id":172475,"s":"1/2 cup (126 g)","gr":126,"usda":"Tofu, raw, firm, prepared with calcium sulfate","kcal":181,"p":21.8,"c":3.5,"f":11.0,"vd":0.0,"ca":861,"fe":3.4,"mg":73,"k":299},{"g":"Plant protein","n":"Edamame, prepared","id":168411,"s":"1 cup (155 g)","gr":155,"usda":"Edamame, frozen, prepared","kcal":188,"p":18.5,"c":13.8,"f":8.1,"vd":0.0,"ca":98,"fe":3.5,"mg":99,"k":676},{"g":"Plant protein","n":"Lentils, cooked","id":172421,"s":"1 cup (198 g)","gr":198,"usda":"Lentils, mature seeds, cooked, boiled, without salt","kcal":230,"p":17.9,"c":39.9,"f":0.8,"vd":0.0,"ca":38,"fe":6.6,"mg":71,"k":731},{"g":"Plant protein","n":"Black beans, cooked","id":173735,"s":"1 cup (172 g)","gr":172,"usda":"Beans, black, mature seeds, cooked, boiled, without salt","kcal":227,"p":15.2,"c":40.8,"f":0.9,"vd":0.0,"ca":46,"fe":3.6,"mg":120,"k":611},{"g":"Plant protein","n":"Kidney beans, cooked","id":173740,"s":"1 cup (177 g)","gr":177,"usda":"Beans, kidney, all types, mature seeds, cooked, boiled, without salt","kcal":225,"p":15.3,"c":40.4,"f":0.9,"vd":0.0,"ca":62,"fe":3.9,"mg":74,"k":717},{"g":"Plant protein","n":"Chickpeas, cooked","id":173757,"s":"1 cup (164 g)","gr":164,"usda":"Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt","kcal":269,"p":14.5,"c":45.0,"f":4.2,"vd":0.0,"ca":80,"fe":4.7,"mg":79,"k":477},{"g":"Plant protein","n":"Hummus","id":174289,"s":"2 tbsp (30 g)","gr":30,"usda":"Hummus, commercial","kcal":71,"p":2.3,"c":4.5,"f":5.3,"vd":0.0,"ca":14,"fe":0.8,"mg":22,"k":94},{"g":"Plant protein","n":"Peanut butter","id":172470,"s":"2 tbsp (32 g)","gr":32,"usda":"Peanut butter, smooth style, without salt","kcal":191,"p":7.1,"c":7.1,"f":16.4,"vd":0.0,"ca":16,"fe":0.6,"mg":54,"k":179},{"g":"Plant protein","n":"Almonds","id":170567,"s":"1 oz (28 g)","gr":28,"usda":"Nuts, almonds","kcal":162,"p":5.9,"c":6.0,"f":14.0,"vd":0.0,"ca":75,"fe":1.0,"mg":76,"k":205},{"g":"Plant protein","n":"Walnuts","id":170187,"s":"1 oz (28 g)","gr":28,"usda":"Nuts, walnuts, english","kcal":183,"p":4.3,"c":3.8,"f":18.3,"vd":0.0,"ca":27,"fe":0.8,"mg":44,"k":123},{"g":"Plant protein","n":"Pumpkin seeds, roasted","id":170557,"s":"1 oz (28 g)","gr":28,"usda":"Seeds, pumpkin and squash seed kernels, roasted, without salt","kcal":161,"p":8.4,"c":4.1,"f":13.7,"vd":0.0,"ca":15,"fe":2.3,"mg":154,"k":221},{"g":"Plant protein","n":"Chia seeds","id":170554,"s":"2 tbsp (24 g)","gr":24,"usda":"Seeds, chia seeds, dried","kcal":117,"p":4.0,"c":10.1,"f":7.4,"vd":null,"ca":151,"fe":1.9,"mg":80,"k":98},{"g":"Grains & starch","n":"White rice, cooked","id":168878,"s":"1 cup (158 g)","gr":158,"usda":"Rice, white, long-grain, regular, enriched, cooked","kcal":205,"p":4.3,"c":44.5,"f":0.4,"vd":0.0,"ca":16,"fe":1.9,"mg":19,"k":55},{"g":"Grains & starch","n":"Brown rice, cooked","id":169704,"s":"1 cup (195 g)","gr":195,"usda":"Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)","kcal":240,"p":5.3,"c":49.9,"f":1.9,"vd":0.0,"ca":6,"fe":1.1,"mg":76,"k":168},{"g":"Grains & starch","n":"Oats, dry","id":173904,"s":"1/2 cup dry (40 g)","gr":40,"usda":"Cereals, oats, regular and quick, not fortified, dry","kcal":152,"p":5.3,"c":27.1,"f":2.6,"vd":0.0,"ca":21,"fe":1.7,"mg":55,"k":145},{"g":"Grains & starch","n":"Quinoa, cooked","id":168917,"s":"1 cup (185 g)","gr":185,"usda":"Quinoa, cooked","kcal":222,"p":8.1,"c":39.4,"f":3.6,"vd":0.0,"ca":31,"fe":2.8,"mg":118,"k":318},{"g":"Grains & starch","n":"Pasta, cooked","id":169737,"s":"1 cup (140 g)","gr":140,"usda":"Pasta, cooked, enriched, without added salt","kcal":221,"p":8.1,"c":43.2,"f":1.3,"vd":0.0,"ca":10,"fe":1.8,"mg":25,"k":62},{"g":"Grains & starch","n":"Whole-wheat bread","id":172688,"s":"1 slice (32 g)","gr":32,"usda":"Bread, whole-wheat, commercially prepared","kcal":81,"p":4.0,"c":13.7,"f":1.1,"vd":0.0,"ca":52,"fe":0.8,"mg":24,"k":81},{"g":"Grains & starch","n":"White bread","id":174924,"s":"1 slice (25 g)","gr":25,"usda":"Bread, white, commercially prepared (includes soft bread crumbs)","kcal":66,"p":2.2,"c":12.4,"f":0.8,"vd":0.0,"ca":36,"fe":0.9,"mg":6,"k":32},{"g":"Grains & starch","n":"Bagel, plain","id":175049,"s":"1 medium (105 g)","gr":105,"usda":"Bagels, plain, enriched, without calcium propionate (includes onion, poppy, sesame)","kcal":289,"p":11.0,"c":56.1,"f":1.7,"vd":null,"ca":19,"fe":3.7,"mg":30,"k":106},{"g":"Grains & starch","n":"Flour tortilla","id":175037,"s":"1 medium (45 g)","gr":45,"usda":"Tortillas, ready-to-bake or -fry, flour, refrigerated","kcal":138,"p":3.7,"c":22.2,"f":3.6,"vd":0.0,"ca":66,"fe":1.6,"mg":10,"k":56},{"g":"Grains & starch","n":"Potato, baked with skin","id":170093,"s":"1 medium (173 g)","gr":173,"usda":"Potatoes, baked, flesh and skin, without salt","kcal":161,"p":4.3,"c":36.6,"f":0.2,"vd":0.0,"ca":26,"fe":1.9,"mg":48,"k":926},{"g":"Grains & starch","n":"Sweet potato, baked","id":168483,"s":"1 medium (114 g)","gr":114,"usda":"Sweet potato, cooked, baked in skin, flesh, without salt","kcal":103,"p":2.3,"c":23.6,"f":0.2,"vd":0.0,"ca":43,"fe":0.8,"mg":31,"k":542},{"g":"Grains & starch","n":"Granola","id":171646,"s":"1/2 cup (61 g)","gr":61,"usda":"Cereals ready-to-eat, granola, homemade","kcal":298,"p":8.3,"c":32.9,"f":14.8,"vd":0.0,"ca":46,"fe":2.4,"mg":102,"k":329},{"g":"Grains & starch","n":"Popcorn, air-popped","id":167959,"s":"3 cups (24 g)","gr":24,"usda":"Snacks, popcorn, air-popped","kcal":93,"p":3.1,"c":18.7,"f":1.1,"vd":0.0,"ca":2,"fe":0.8,"mg":35,"k":79},{"g":"Fruit & veg","n":"Banana","id":173944,"s":"1 medium (118 g)","gr":118,"usda":"Bananas, raw","kcal":105,"p":1.3,"c":27.0,"f":0.4,"vd":0.0,"ca":6,"fe":0.3,"mg":32,"k":422},{"g":"Fruit & veg","n":"Apple","id":171688,"s":"1 medium (182 g)","gr":182,"usda":"Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)","kcal":95,"p":0.5,"c":25.1,"f":0.3,"vd":0.0,"ca":11,"fe":0.2,"mg":9,"k":195},{"g":"Fruit & veg","n":"Orange","id":169097,"s":"1 medium (131 g)","gr":131,"usda":"Oranges, raw, all commercial varieties","kcal":62,"p":1.2,"c":15.4,"f":0.2,"vd":0.0,"ca":52,"fe":0.1,"mg":13,"k":237},{"g":"Fruit & veg","n":"Blueberries","id":171711,"s":"1 cup (148 g)","gr":148,"usda":"Blueberries, raw","kcal":84,"p":1.1,"c":21.4,"f":0.5,"vd":0.0,"ca":9,"fe":0.4,"mg":9,"k":114},{"g":"Fruit & veg","n":"Strawberries","id":167762,"s":"1 cup (152 g)","gr":152,"usda":"Strawberries, raw","kcal":49,"p":1.0,"c":11.7,"f":0.5,"vd":0.0,"ca":24,"fe":0.6,"mg":20,"k":233},{"g":"Fruit & veg","n":"Grapes","id":174683,"s":"1 cup (151 g)","gr":151,"usda":"Grapes, red or green (European type, such as Thompson seedless), raw","kcal":104,"p":1.1,"c":27.3,"f":0.2,"vd":0.0,"ca":15,"fe":0.5,"mg":11,"k":288},{"g":"Fruit & veg","n":"Raisins","id":168165,"s":"1/4 cup (41 g)","gr":41,"usda":"Raisins, dark, seedless (Includes foods for USDA's Food Distribution Program)","kcal":123,"p":1.4,"c":32.5,"f":0.1,"vd":0.0,"ca":25,"fe":0.7,"mg":15,"k":305},{"g":"Fruit & veg","n":"Orange juice","id":169098,"s":"1 cup (248 g)","gr":248,"usda":"Orange juice, raw (Includes foods for USDA's Food Distribution Program)","kcal":112,"p":1.7,"c":25.8,"f":0.5,"vd":0.0,"ca":27,"fe":0.5,"mg":27,"k":496},{"g":"Fruit & veg","n":"Avocado","id":171705,"s":"1/2 fruit (100 g)","gr":100,"usda":"Avocados, raw, all commercial varieties","kcal":160,"p":2.0,"c":8.5,"f":14.7,"vd":0.0,"ca":12,"fe":0.6,"mg":29,"k":485},{"g":"Fruit & veg","n":"Broccoli, cooked","id":169967,"s":"1 cup (156 g)","gr":156,"usda":"Broccoli, cooked, boiled, drained, without salt","kcal":55,"p":3.7,"c":11.2,"f":0.6,"vd":0.0,"ca":62,"fe":1.0,"mg":33,"k":457},{"g":"Fruit & veg","n":"Spinach, raw","id":168462,"s":"2 cups (60 g)","gr":60,"usda":"Spinach, raw","kcal":14,"p":1.7,"c":2.2,"f":0.2,"vd":0.0,"ca":59,"fe":1.6,"mg":47,"k":335},{"g":"Fruit & veg","n":"Carrots, raw","id":170393,"s":"1 medium (61 g)","gr":61,"usda":"Carrots, raw","kcal":25,"p":0.6,"c":5.8,"f":0.1,"vd":0.0,"ca":20,"fe":0.2,"mg":7,"k":195},{"g":"Fruit & veg","n":"Green peas, cooked","id":170420,"s":"1 cup (160 g)","gr":160,"usda":"Peas, green, cooked, boiled, drained, without salt","kcal":134,"p":8.6,"c":25.0,"f":0.4,"vd":0.0,"ca":43,"fe":2.5,"mg":62,"k":434},{"g":"Fruit & veg","n":"Sweet corn, cooked","id":169999,"s":"1 cup (164 g)","gr":164,"usda":"Corn, sweet, yellow, cooked, boiled, drained, without salt","kcal":157,"p":5.6,"c":34.4,"f":2.5,"vd":0.0,"ca":5,"fe":0.7,"mg":43,"k":358},{"g":"Fruit & veg","n":"White mushrooms, raw","id":169251,"s":"1 cup (70 g)","gr":70,"usda":"Mushrooms, white, raw","kcal":15,"p":2.2,"c":2.3,"f":0.2,"vd":0.1,"ca":2,"fe":0.3,"mg":6,"k":223},{"g":"Fruit & veg","n":"Tomato","id":170457,"s":"1 medium (123 g)","gr":123,"usda":"Tomatoes, red, ripe, raw, year round average","kcal":22,"p":1.1,"c":4.8,"f":0.2,"vd":0.0,"ca":12,"fe":0.3,"mg":14,"k":292},{"g":"Fats","n":"Olive oil","id":171413,"s":"1 tbsp (13.5 g)","gr":13.5,"usda":"Oil, olive, salad or cooking","kcal":119,"p":0.0,"c":0.0,"f":13.5,"vd":0.0,"ca":0,"fe":0.1,"mg":0,"k":0},{"g":"Fats","n":"Butter","id":173410,"s":"1 tbsp (14 g)","gr":14,"usda":"Butter, salted","kcal":100,"p":0.1,"c":0.0,"f":11.4,"vd":0.0,"ca":3,"fe":0.0,"mg":0,"k":3}];
+const KEY='yolofuel_v1',$=id=>document.getElementById(id);
+let S;try{S=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){S=null}
+if(!S||typeof S!=='object')S={};
+S.set=S.set||null;S.days=S.days||{};S.hits=S.hits||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+// read-only: Life Clock profile
+let CLK=null;try{CLK=JSON.parse(localStorage.getItem('yolojar_v1')||'null')}catch(e){}
+const dkey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const daysAgo=n=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-n);return d};
+let TODAY=dkey();
+function prune(){const keep=new Set([...Array(7)].map((_,i)=>dkey(daysAgo(i))));for(const k in S.days)if(!keep.has(k))delete S.days[k];
+ const cut=dkey(daysAgo(400));for(const k in S.hits)if(k<cut)delete S.hits[k]}
+const r1=x=>Math.round(x*10)/10;
+// ---- targets
+function targets(s){if(!s)return null;
+ const kg=s.u==='kg'?+s.w:+s.w*0.45359237, cm=s.u==='kg'?+s.hcm:((+s.hft||0)*12+(+s.hin||0))*2.54;
+ if(!(kg>25&&cm>100&&s.age>=15))return null;
+ const bmr=10*kg+6.25*cm-5*s.age+(s.sex==='f'?-161:5), tdee=bmr*s.act;
+ const add=s.goal==='build'?[250,500]:s.goal==='lose'?[-500,-500]:[0,0];
+ const kcal=Math.round(tdee+(add[0]+add[1])/2), p=Math.round(1.6*kg), f=Math.round(kcal*0.275/9), c=Math.max(0,Math.round((kcal-4*p-9*f)/4));
+ return{kg,cm,bmr:Math.round(bmr),tdee:Math.round(tdee),kcal,kLo:Math.round(tdee+add[0]),kHi:Math.round(tdee+add[1]),p,f,fLo:Math.round(kcal*.25/9),fHi:Math.round(kcal*.30/9),c,meal:Math.round(0.4*kg)}}
+// ---- micro targets (NIH ODS RDA/AI, adults 19+)
+function microT(s){const m=!s||s.sex!=='f',a=s&&s.age?+s.age:40;
+ return{vd:a>70?20:15, ca:m?(a>70?1200:1000):(a>50?1200:1000), fe:m?8:(a>50?8:18), mg:m?(a>30?420:400):(a>30?320:310), k:m?3400:2600}}
+const MIC=[['vd','Vitamin D','µg'],['ca','Calcium','mg'],['fe','Iron','mg'],['mg','Magnesium','mg'],['k','Potassium','mg']];
+// ---- day ops
+const day=()=>(S.days[TODAY]=S.days[TODAY]||[]);
+function addItem(it){const d=day(),ex=it.id&&d.find(x=>x.id===it.id);if(ex)ex.q+=1;else d.push(Object.assign({q:1},it));save();render();toast('Added '+it.n)}
+function tot(list){const t={p:0,c:0,f:0,kcal:0,vd:0,ca:0,fe:0,mg:0,k:0};(list||[]).forEach(x=>{for(const k in t)t[k]+=(x[k]||0)*x.q});return t}
+let tt;function toast(m){const e=$('toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1300)}
+// ---- food list
+const GROUPS=['All',...new Set(FOODS.map(f=>f.g))];let G='All';
+const SYN={egg:'egg',eggs:'egg',meat:'chicken|turkey|beef|steak|pork',fish:'salmon|tuna|tilapia|cod|sardine|shrimp',dairy:'milk|yogurt|cheese',beans:'bean|lentil|chickpea|edamame|hummus',nuts:'almond|walnut|peanut|seed',carbs:'rice|oat|bread|pasta|potato|tortilla|bagel|quinoa|granola',fruit:'banana|apple|orange|berr|grape|raisin|avocado',veg:'broccoli|spinach|carrot|pea|corn|mushroom|tomato',shake:'whey|milk|soy',protein:'chicken|turkey|beef|steak|pork|salmon|tuna|tilapia|cod|shrimp|egg|yogurt|cottage|whey|tofu'};
+function drawFoods(){const q=$('q').value.trim().toLowerCase();let re=null;
+ if(q){const s=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');re=new RegExp(SYN[q]?SYN[q]+'|'+s:s,'i')}
+ const list=FOODS.filter(f=>(G==='All'||f.g===G)&&(!re||re.test(f.n)||re.test(f.usda)));
+ $('foods').innerHTML=list.length?list.map(f=>`<button class="food" data-id="${f.id}"><span class="nm">${f.n}<span>${f.s} · ${f.kcal} kcal · C ${f.c} · F ${f.f}</span></span><span class="pp">${f.p} g P</span><span class="plus">+</span></button>`).join(''):'<p class="mut sm">No match. Try the custom food box below.</p>'}
+$('chips').innerHTML=GROUPS.map(g=>`<button data-g="${g}" class="${g===G?'on':''}">${g}</button>`).join('');
+$('chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;G=b.dataset.g;[...$('chips').children].forEach(x=>x.classList.toggle('on',x===b));drawFoods()};
+$('q').oninput=drawFoods;
+let pressT,longed=false;
+$('foods').addEventListener('click',e=>{const b=e.target.closest('.food');if(!b)return;if(longed){longed=false;return}
+ const f=FOODS.find(x=>x.id==b.dataset.id);const{g,usda,...it}=f;addItem(it)});
+$('foods').addEventListener('contextmenu',e=>{const b=e.target.closest('.food');if(!b)return;e.preventDefault();const f=FOODS.find(x=>x.id==b.dataset.id);alert(f.n+'\nUSDA: '+f.usda+'\nFDC ID '+f.id+' · '+f.s+' = '+f.gr+' g')});
+$('cadd').onclick=()=>{const n=$('cn').value.trim()||'Custom food',p=+$('cp').value||0,c=+$('cc').value||0,f=+$('cf').value||0;let k=+$('ck').value||0;
+ if(!k)k=Math.round(4*p+4*c+9*f);if(!k&&!p){toast('Add grams or calories');return}
+ addItem({n,s:'custom',p:r1(p),c:r1(c),f:r1(f),kcal:k,vd:0,ca:0,fe:0,mg:0,k:0,cu:1});['cn','cp','cc','cf','ck'].forEach(i=>$(i).value='')};
+$('log').onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;const d=day(),i=+b.dataset.i;if(b.dataset.a==='m'){d[i].q-=1;if(d[i].q<=0)d.splice(i,1)}else d[i].q+=1;save();render()};
+// ---- setup
+let U='lb',SX='m',GL='build';
+function seg(id,attr,val){[...$(id).children].forEach(b=>b.classList.toggle('on',b.dataset[attr]===val))}
+function setUnits(u){const prev=U;U=u;seg('units','u',u);$('wLab').textContent='Weight ('+u+')';$('hImp').style.display=u==='lb'?'':'none';$('hMet').style.display=u==='kg'?'':'none';
+ if(prev!==u&&$('w').value){$('w').value=u==='kg'?r1($('w').value*0.45359237):Math.round($('w').value/0.45359237)}
+ if(prev!==u){if(u==='kg'&&$('hft').value)$('hcm').value=Math.round(((+$('hft').value||0)*12+(+$('hin').value||0))*2.54);
+  if(u==='lb'&&$('hcm').value){const t=Math.round($('hcm').value/2.54);$('hft').value=Math.floor(t/12);$('hin').value=t%12}}}
+$('units').onclick=e=>{const b=e.target.closest('button');if(b)setUnits(b.dataset.u)};
+$('sex').onclick=e=>{const b=e.target.closest('button');if(b){SX=b.dataset.s;seg('sex','s',SX)}};
+$('goal').onclick=e=>{const b=e.target.closest('button');if(b){GL=b.dataset.g;seg('goal','g',GL)}};
+function loadSetup(){const s=S.set||{};U=s.u||'lb';SX=s.sex||(CLK&&CLK.sex)||'m';GL=s.goal||'build';
+ setUnits(U);seg('sex','s',SX);seg('goal','g',GL);$('w').value=s.w||'';$('hft').value=s.hft||'';$('hin').value=s.hin??'';$('hcm').value=s.hcm||'';
+ $('age').value=s.age||(CLK&&CLK.age)||'';$('act').value=s.act||'1.55';
+ $('fromClock').textContent=(!S.set&&CLK&&CLK.age)?'Age and sex filled in from your Life Clock.':''}
+$('save').onclick=()=>{const s={u:U,w:+$('w').value,hft:+$('hft').value,hin:+$('hin').value||0,hcm:+$('hcm').value,age:+$('age').value,sex:SX,act:+$('act').value,goal:GL};
+ if(!targets(s)){toast('Check weight, height and age');return}S.set=s;save();render();toast('Targets set');$('heroCard').scrollIntoView({behavior:'smooth'})};
+// ---- render
+function bar(id,v,t,cap){const e=$(id),pc=t?Math.min(100,v/t*100):0;e.style.width=pc+'%';e.className=t&&v>t*(cap||1.1)?'over':(t&&v>=t*.95&&id==='pBar'?'ok':'')}
+function streak(T){let n=0;for(let i=1;i<400;i++){if(S.hits[dkey(daysAgo(i))])n++;else break}
+ const hitToday=T&&tot(day()).p>=T.p;return n+(hitToday?1:0)}
+function render(){prune();const T=targets(S.set),t=tot(day()),d=day();
+ if(T){if(t.p>=T.p)S.hits[TODAY]=1;else delete S.hits[TODAY];save()}
+ $('pNow').innerHTML=Math.round(t.p)+'<small> / '+(T?T.p:'—')+' g</small>';bar('pBar',t.p,T&&T.p,9);
+ $('pLeft').innerHTML=!T?'Fill in your setup below to get your targets.':t.p>=T.p?'<span class="g">Protein target hit today ✓</span>':(T.p-Math.round(t.p))+' g to go';
+ const st=streak(T);$('streak').textContent='Protein streak: '+st+(st===1?' day':' days');
+ $('kTxt').textContent=Math.round(t.kcal)+' / '+(T?T.kcal:'—')+' kcal';bar('kBar',t.kcal,T&&T.kcal);
+ $('cTxt').textContent=Math.round(t.c)+' / '+(T?T.c:'—')+' g';bar('cBar',t.c,T&&T.c);
+ $('fTxt').textContent=Math.round(t.f)+' / '+(T?T.f:'—')+' g';bar('fBar',t.f,T&&T.f);
+ $('log').innerHTML=d.length?d.map((x,i)=>`<div class="it"><span class="nm">${x.q>1?x.q+'× ':''}${esc(x.n)}<br><span>${x.s}${x.id?' · FDC '+x.id:''} · ${Math.round(x.kcal*x.q)} kcal</span></span><b style="color:var(--gold2)">${r1(x.p*x.q)} g</b><button class="x" data-i="${i}" data-a="m" aria-label="remove one">−</button><button class="x" data-i="${i}" data-a="p" aria-label="add one">+</button></div>`).join(''):'<p class="mut sm">Nothing logged yet today.</p>';
+ $('mealTip').innerHTML=T?`Tip: aim for about <b>${T.meal} g protein per meal</b> (0.4 g/kg) across 4 meals.`:'Tip: spread protein over 3–4 meals.';
+ const M=microT(S.set);
+ $('micros').innerHTML=MIC.map(([k,nm,u])=>{const v=t[k],pc=Math.round(v/M[k]*100),help=d.filter(x=>(x[k]||0)>0).sort((a,b)=>b[k]*b.q-a[k]*a.q).slice(0,3).map(x=>esc(x.n.split(',')[0])+' '+r1(x[k]*x.q)+' '+u);
+  const ok=pc>=100;return`<div class="micro"><div class="row"><span>${ok?'<span class="g">✓</span>':'<span class="mut">○</span>'} ${nm}</span><span class="${ok?'g':pc>=50?'a':'mut'}">${k==='fe'||k==='vd'?r1(v):Math.round(v)} / ${M[k]} ${u} · ${pc}%</span></div><div class="help">${help.length?'Helping: '+help.join(' · '):'No logged food adds much yet.'}</div></div>`}).join('')+'<p class="note">Get these from food first. Vitamin D can be blank for some foods in the USDA data (shrimp, chia seeds, bagel), so it may read low.</p>';
+ const H=[...Array(7)].map((_,i)=>{const dd=daysAgo(6-i),k=dkey(dd),p=tot(S.days[k]).p;return{k,p,lab:i===6?'Today':dd.toLocaleDateString(undefined,{weekday:'short'})}});
+ const mx=Math.max(T?T.p:1,...H.map(h=>h.p),1);
+ $('hist').innerHTML=H.map(h=>`<div><b class="${S.hits[h.k]?'ok':''}" style="height:${Math.max(3,h.p/mx*60)}px"></b>${Math.round(h.p)}g<br>${h.lab}</div>`).join('');
+ $('targets').innerHTML=T?`<div class="row"><span>Resting burn (Mifflin-St Jeor)</span><b>${T.bmr} kcal</b></div><div class="row"><span>With activity</span><b>${T.tdee} kcal</b></div><div class="row"><span>Calorie target</span><b>${T.kLo===T.kHi?T.kcal:T.kLo+'–'+T.kHi} kcal</b></div><div class="row"><span>Protein (1.6 g/kg ≈ 0.7 g/lb)</span><b class="g">${T.p} g</b></div><div class="row"><span>Fat (25–30%)</span><b>${T.fLo}–${T.fHi} g</b></div><div class="row"><span>Carbs (the rest)</span><b>~${T.c} g</b></div>${T.kLo!==T.kHi?'<p class="note">Meters use the middle of the range.</p>':''}`:''}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+loadSetup();drawFoods();render();
+if(!S.set)$('setupCard').scrollIntoView();
+setInterval(()=>{const k=dkey();if(k!==TODAY){TODAY=k;render()}},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){const k=dkey();if(k!==TODAY){TODAY=k;render()}}});
+</script></body></html>
